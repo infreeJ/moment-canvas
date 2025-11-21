@@ -5,6 +5,13 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
+### User defined
+**/src/main/resources/application-secret.yml
+
+### DB Data
+db/data/
+**/db/data/
+
 ### STS ###
 .apt_generated
 .classpath

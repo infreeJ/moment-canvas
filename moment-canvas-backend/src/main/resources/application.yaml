@@ -1,3 +1,12 @@
 spring:
+  config:
+    import: optional:classpath:application-secret.yml # .gitignore
   application:
     name: moment-canvas
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+server:
+  port: 9090
