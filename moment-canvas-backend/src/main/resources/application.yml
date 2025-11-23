@@ -9,7 +9,11 @@ spring:
     show-sql: true
   ai:
     openai:
-      api-key: ${OPENAI_API_KEY}
+      api-key: ${OPENAI_API_KEY} # OpenAI API KEY
+  messages:
+    basename: messages # 파일명이 messages.yml 일 경우
+    encoding: UTF-8
+    always-use-message-format: true # 메시지 파라미터 처리
 
 server:
   port: 9090
