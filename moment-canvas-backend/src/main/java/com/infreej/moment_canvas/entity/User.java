@@ -2,10 +2,6 @@ package com.infreej.moment_canvas.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -26,13 +22,10 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 200)
     private String pwd;
 
-    @Column(nullable = false, length = 30)
-    private String name;
-
     @Column
     private Integer age;
 
-    @Column
+    @Column(length = 10)
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
