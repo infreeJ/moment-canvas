@@ -1,4 +1,4 @@
-package com.infreej.moment_canvas.code;
+package com.infreej.moment_canvas.common.code;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
