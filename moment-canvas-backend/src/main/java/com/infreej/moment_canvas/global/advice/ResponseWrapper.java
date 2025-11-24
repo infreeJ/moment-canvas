@@ -1,5 +1,7 @@
 package com.infreej.moment_canvas.global.advice;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infreej.moment_canvas.global.annotation.SetSuccess;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import com.infreej.moment_canvas.global.response.SuccessResponse;
@@ -21,6 +23,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 public class ResponseWrapper implements ResponseBodyAdvice<Object> {
 
     private final MessageUtil messageUtil;
+    private final ObjectMapper objectMapper;
 
     // return된 컨트롤러에 @SetSuccess 어노테이션이 붙어있다면 가로채서 beforeBodyWrite()를 실행한다.
     @Override
@@ -39,6 +42,15 @@ public class ResponseWrapper implements ResponseBodyAdvice<Object> {
 
         String code = successCode.getCode();
         String msg = messageUtil.getMessage(successCode.getMessageKey());
+
+        // 리턴 타입이 String 이라면 직접 JSON String 으로 변환해서 리턴
+        if (body instanceof String) {
+            try {
+                return objectMapper.writeValueAsString(SuccessResponse.of(successCode, msg, body));
+            } catch (JsonProcessingException e) {
+                throw new RuntimeException("JSON 변환 중 에러 발생", e);
+            }
+        }
 
         return SuccessResponse.of(successCode, msg, body);
     }

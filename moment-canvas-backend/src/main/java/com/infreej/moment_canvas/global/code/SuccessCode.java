@@ -39,7 +39,7 @@ public enum SuccessCode {
 
 
     // ==================== 이미지 관련 성공 (4xxx) ====================
-    IMAGE_CREATED(HttpStatus.CREATED, "S4001", "success.image.created"),
+    IMAGE_GENERATED(HttpStatus.OK, "S4001", "success.image.generated"),
     IMAGE_SUCCESS(HttpStatus.OK, "S4002", "success.image.success"),
     IMAGE_UPDATED(HttpStatus.OK, "S4003", "success.image.updated"),
     IMAGE_DELETED(HttpStatus.OK, "S4004", "success.image.deleted");
