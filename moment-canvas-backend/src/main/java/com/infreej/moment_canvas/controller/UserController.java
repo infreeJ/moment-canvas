@@ -6,6 +6,7 @@ import com.infreej.moment_canvas.common.util.MessageUtil;
 import com.infreej.moment_canvas.dto.request.SignupRequest;
 import com.infreej.moment_canvas.dto.request.UpdateRequest;
 import com.infreej.moment_canvas.dto.response.UserResponse;
+import com.infreej.moment_canvas.entity.User;
 import com.infreej.moment_canvas.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,7 +35,18 @@ public class UserController {
         return ResponseEntity.ok(SuccessResponse.of(code, msg, userResponse));
     }
 
-    @Operation(summary = "유저 정보변경", description = "유저 정보 변경 API 입니다. \n - 변경이 필요한 정보만 작성하세요.")
+    @Operation(summary = "유저 정보 조회", description = "유저 정보 조회 API 입니다.")
+    @GetMapping("/user/{userId}")
+    public ResponseEntity<SuccessResponse<UserResponse>> findById(@PathVariable long userId) {
+
+        UserResponse userResponse = userService.findById(userId);
+
+        String code = SuccessCode.USER_SUCCESS.getCode();
+        String msg = messageUtil.getMessage(SuccessCode.USER_SUCCESS.getMessageKey());
+        return ResponseEntity.ok(SuccessResponse.of(code, msg, userResponse));
+    }
+
+    @Operation(summary = "유저 정보 변경", description = "유저 정보 변경 API 입니다. \n - 변경이 필요한 정보만 작성하세요.")
     @PatchMapping("/user")
     public ResponseEntity<SuccessResponse<UserResponse>> update(@RequestBody UpdateRequest updateRequest) {
 

@@ -9,6 +9,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -21,6 +23,14 @@ public class UserServiceImpl implements UserService {
 
         User user = signupRequest.toEntity();
         return UserResponse.from(userRepository.save(user));
+    }
+
+    public UserResponse findById(long id) {
+
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+
+        return UserResponse.from(user);
     }
 
     @Transactional
