@@ -3,6 +3,7 @@ package com.infreej.moment_canvas.domain.diary.controller;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
+import com.infreej.moment_canvas.domain.diary.dto.response.DiarySummaryResponse;
 import com.infreej.moment_canvas.domain.diary.service.DiaryService;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import com.infreej.moment_canvas.global.response.SuccessResponse;
@@ -52,9 +53,9 @@ public class DiaryController {
 
     @Operation(summary = "특정 유저의 일기 목록 조회", description = "일기 목록 조회 API 입니다.")
     @GetMapping("/diary/{userId}/list")
-    public ResponseEntity<SuccessResponse<List<DiaryResponse>>> findDiaryListByUserId(@PathVariable long userId) {
+    public ResponseEntity<SuccessResponse<List<DiarySummaryResponse>>> findDiaryListByUserId(@PathVariable long userId) {
 
-        List<DiaryResponse> diaryResponseList = diaryService.findDiaryListByUserId(userId);
+        List<DiarySummaryResponse> diaryResponseList = diaryService.findDiaryListByUserId(userId);
 
         String code = SuccessCode.DIARY_SUCCESS.getMessageKey();
         String msg = messageUtil.getMessage(SuccessCode.DIARY_SUCCESS.getMessageKey());

@@ -3,6 +3,7 @@ package com.infreej.moment_canvas.domain.diary.service;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
+import com.infreej.moment_canvas.domain.diary.dto.response.DiarySummaryResponse;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ public interface DiaryService {
 
     public DiaryResponse findDiaryById(long diaryId);
 
-    public List<DiaryResponse> findDiaryListByUserId(long userId);
+    public List<DiarySummaryResponse> findDiaryListByUserId(long userId);
 
     public DiaryResponse update(DiaryUpdateRequest diaryUpdateRequest);
 
