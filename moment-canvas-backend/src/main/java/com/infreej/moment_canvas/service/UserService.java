@@ -1,9 +1,12 @@
 package com.infreej.moment_canvas.service;
 
 import com.infreej.moment_canvas.dto.request.SignupRequest;
-import com.infreej.moment_canvas.dto.response.SignupResponse;
+import com.infreej.moment_canvas.dto.request.UpdateRequest;
+import com.infreej.moment_canvas.dto.response.UserResponse;
 
 public interface UserService {
 
-    public SignupResponse signup(SignupRequest signupRequest);
+    public UserResponse signup(SignupRequest signupRequest);
+
+    public UserResponse update(UpdateRequest updateRequest);
 }

@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class SignupResponse {
+public class UserResponse {
     private long userId;
     private String loginId;
     private Integer age;
@@ -20,8 +20,8 @@ public class SignupResponse {
     private String savedProfileImageName;
     private LocalDateTime createdAt;
 
-    public static SignupResponse from(User user) {
-        return SignupResponse.builder()
+    public static UserResponse from(User user) {
+        return UserResponse.builder()
                 .userId(user.getId())
                 .loginId(user.getLoginId())
                 .age(user.getAge())
