@@ -7,4 +7,6 @@ public interface DiaryService {
 
     public DiaryResponse create(CreateRequest createRequest);
 
+    public DiaryResponse findDiaryById(long diaryId);
+
     }

@@ -28,4 +28,19 @@ public class DiaryServiceImpl implements DiaryService{
 
         return DiaryResponse.from(diaryRepository.save(diary));
     }
+
+
+    @Override
+    @Transactional
+    public DiaryResponse findDiaryById(long diaryId) {
+
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new IllegalArgumentException("일기를 찾을 수 없습니다."));
+
+        return DiaryResponse.from(diary);
+    }
 }
+
+
+
+

@@ -39,7 +39,7 @@ public class UserController {
     @GetMapping("/user/{userId}")
     public ResponseEntity<SuccessResponse<UserResponse>> findById(@PathVariable long userId) {
 
-        UserResponse userResponse = userService.findById(userId);
+        UserResponse userResponse = userService.findUserById(userId);
 
         String code = SuccessCode.USER_SUCCESS.getCode();
         String msg = messageUtil.getMessage(SuccessCode.USER_SUCCESS.getMessageKey());

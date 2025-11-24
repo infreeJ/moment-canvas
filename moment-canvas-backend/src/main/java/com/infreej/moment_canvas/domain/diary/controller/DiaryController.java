@@ -10,10 +10,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "Diary", description = "일기 API")
 @RestController
@@ -36,4 +33,25 @@ public class DiaryController {
         return ResponseEntity.ok(SuccessResponse.of(code, msg, diaryResponse));
     }
 
+
+    @Operation(summary = "일기 상세 조회", description = "일기 상세 조회 API 입니다.")
+    @GetMapping("/diary/{diaryId}")
+    public ResponseEntity<SuccessResponse<DiaryResponse>> findDiaryById(@PathVariable long diaryId) {
+
+        DiaryResponse diaryResponse = diaryService.findDiaryById(diaryId);
+
+        String code = SuccessCode.DIARY_CREATED.getMessageKey();
+        String msg = messageUtil.getMessage(SuccessCode.DIARY_CREATED.getMessageKey());
+
+        return ResponseEntity.ok(SuccessResponse.of(code, msg, diaryResponse));
+    }
+
 }
+
+
+
+
+
+
+
+
