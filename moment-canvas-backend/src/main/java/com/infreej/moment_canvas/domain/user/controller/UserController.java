@@ -1,5 +1,6 @@
 package com.infreej.moment_canvas.domain.user.controller;
 
+import com.infreej.moment_canvas.global.annotation.TimeCheck;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import com.infreej.moment_canvas.global.response.SuccessResponse;
 import com.infreej.moment_canvas.global.util.MessageUtil;
@@ -35,6 +36,7 @@ public class UserController {
         return ResponseEntity.ok(SuccessResponse.of(code, msg, userResponse));
     }
 
+    @TimeCheck
     @Operation(summary = "유저 정보 조회", description = "유저 정보 조회 API 입니다.")
     @GetMapping("/user/{userId}")
     public ResponseEntity<SuccessResponse<UserResponse>> findById(@PathVariable long userId) {
