@@ -10,6 +10,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class DiaryServiceImpl implements DiaryService{
@@ -38,6 +41,18 @@ public class DiaryServiceImpl implements DiaryService{
                 .orElseThrow(() -> new IllegalArgumentException("일기를 찾을 수 없습니다."));
 
         return DiaryResponse.from(diary);
+    }
+
+
+    @Override
+    @Transactional
+    public List<DiaryResponse> findDiaryListByUserId(long userId) {
+
+        List<Diary> diaryList = diaryRepository.findAllByUser_UserIdOrderByCreatedAtDesc(userId);
+
+        return diaryList.stream()
+                .map(DiaryResponse::from)
+                .collect(Collectors.toList());
     }
 }
 

@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Diary", description = "일기 API")
 @RestController
 @RequiredArgsConstructor
@@ -40,10 +42,23 @@ public class DiaryController {
 
         DiaryResponse diaryResponse = diaryService.findDiaryById(diaryId);
 
-        String code = SuccessCode.DIARY_CREATED.getMessageKey();
-        String msg = messageUtil.getMessage(SuccessCode.DIARY_CREATED.getMessageKey());
+        String code = SuccessCode.DIARY_SUCCESS.getMessageKey();
+        String msg = messageUtil.getMessage(SuccessCode.DIARY_SUCCESS.getMessageKey());
 
         return ResponseEntity.ok(SuccessResponse.of(code, msg, diaryResponse));
+    }
+
+
+    @Operation(summary = "특정 유저의 일기 목록 조회", description = "일기 목록 조회 API 입니다.")
+    @GetMapping("/diary/{userId}/list")
+    public ResponseEntity<SuccessResponse<List<DiaryResponse>>> findDiaryListByUserId(@PathVariable long userId) {
+
+        List<DiaryResponse> diaryResponseList = diaryService.findDiaryListByUserId(userId);
+
+        String code = SuccessCode.DIARY_SUCCESS.getMessageKey();
+        String msg = messageUtil.getMessage(SuccessCode.DIARY_SUCCESS.getMessageKey());
+
+        return ResponseEntity.ok(SuccessResponse.of(code, msg, diaryResponseList));
     }
 
 }
