@@ -1,0 +1,45 @@
+package com.infreej.moment_canvas.global.advice;
+
+import com.infreej.moment_canvas.global.annotation.SetSuccess;
+import com.infreej.moment_canvas.global.code.SuccessCode;
+import com.infreej.moment_canvas.global.response.SuccessResponse;
+import com.infreej.moment_canvas.global.util.MessageUtil;
+import lombok.RequiredArgsConstructor;
+import org.springframework.core.MethodParameter;
+import org.springframework.http.MediaType;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+
+/**
+ * 공통 응답 구조를 재사용하기 위한 모듈
+ */
+@RestControllerAdvice
+@RequiredArgsConstructor
+public class ResponseWrapper implements ResponseBodyAdvice<Object> {
+
+    private final MessageUtil messageUtil;
+
+    // return된 컨트롤러에 @SetSuccess 어노테이션이 붙어있다면 가로채서 beforeBodyWrite()를 실행한다.
+    @Override
+    public boolean supports(MethodParameter returnType, Class converterType) {
+        return returnType.hasMethodAnnotation(SetSuccess.class);
+    }
+
+    // 응답 구조 포장
+    @Override
+    public Object beforeBodyWrite(Object body, MethodParameter returnType, MediaType selectedContentType, Class selectedConverterType, ServerHttpRequest request, ServerHttpResponse response) {
+
+        SetSuccess annotation = returnType.getMethodAnnotation(SetSuccess.class);
+        SuccessCode successCode = annotation.value();
+
+        response.setStatusCode(successCode.getHttpStatus());
+
+        String code = successCode.getCode();
+        String msg = messageUtil.getMessage(successCode.getMessageKey());
+
+        return SuccessResponse.of(successCode, msg, body);
+    }
+}
