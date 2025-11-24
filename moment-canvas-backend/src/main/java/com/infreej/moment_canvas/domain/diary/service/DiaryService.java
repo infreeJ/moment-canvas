@@ -17,4 +17,6 @@ public interface DiaryService {
 
     public DiaryResponse update(DiaryUpdateRequest diaryUpdateRequest);
 
+    public void delete(long diaryId);
+
     }

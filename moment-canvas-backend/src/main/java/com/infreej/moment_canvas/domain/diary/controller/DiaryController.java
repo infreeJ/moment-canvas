@@ -76,6 +76,18 @@ public class DiaryController {
         return ResponseEntity.ok(SuccessResponse.of(code, msg, diaryResponse));
     }
 
+
+    @Operation(summary = "일기 삭제", description = "일기 삭제 API 입니다.")
+    @DeleteMapping("/diary/{diaryId}")
+    public ResponseEntity<SuccessResponse<Void>> delete(@PathVariable long diaryId) {
+        diaryService.delete(diaryId);
+
+        String code = SuccessCode.DIARY_DELETED.getCode();
+        String msg = messageUtil.getMessage(SuccessCode.DIARY_DELETED.getMessageKey());
+
+        return ResponseEntity.ok(SuccessResponse.of(code, msg));
+    }
+
 }
 
 

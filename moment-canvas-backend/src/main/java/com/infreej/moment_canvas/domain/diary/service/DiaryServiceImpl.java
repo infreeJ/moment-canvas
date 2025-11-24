@@ -98,7 +98,12 @@ public class DiaryServiceImpl implements DiaryService{
         return DiaryResponse.from(diary);
     }
 
+    @Override
+    @Transactional
+    public void delete(long diaryId) {
 
+        diaryRepository.deleteById(diaryId);
+    }
 
 
 }
