@@ -11,7 +11,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class CreateRequest {
+public class DiaryCreateRequest {
 
     private Long userId;
     private String title;

@@ -45,11 +45,12 @@ public class User extends BaseTimeEntity {
 
 
     // 유저 엔티티 정보 변경 메서드
-    public void updateUserInfo(Integer age, Gender gender, String persona, String orgProfileImageName) {
+    public void updateUserInfo(Integer age, Gender gender, String persona, String orgProfileImageName, String savedProfileImageName) {
         this.age = age;
         this.gender = gender;
         this.persona = persona;
         this.orgProfileImageName = orgProfileImageName;
+        this.savedProfileImageName = savedProfileImageName;
     }
 
     // 유저 엔티티 상태 변경 메서드

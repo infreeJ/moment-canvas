@@ -36,4 +36,15 @@ public class Diary extends BaseTimeEntity {
 
     @Column(length = 50)
     private String savedDiaryImageName;
+
+    // 일기 엔티티 정보 변경 메서드
+    public void updateDiaryInfo(String title, String content, Integer mood, String orgDiaryImageName, String savedDiaryImageName) {
+        this.title = title;
+        this.content = content;
+        this.mood = mood;
+        this.orgDiaryImageName = orgDiaryImageName;
+        this.savedDiaryImageName = savedDiaryImageName;
+    }
+
+
 }

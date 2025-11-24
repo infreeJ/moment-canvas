@@ -50,7 +50,8 @@ public class UserServiceImpl implements UserService {
                 updateRequest.getAge(),
                 updateRequest.getGender(),
                 updateRequest.getPersona(),
-                updateRequest.getOrgProfileImageName()
+                updateRequest.getOrgProfileImageName(),
+                updateRequest.getSavedProfileImageName()
         );
 
         return UserResponse.from(user);

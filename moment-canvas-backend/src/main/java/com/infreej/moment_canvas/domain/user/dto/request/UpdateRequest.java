@@ -14,4 +14,5 @@ public class UpdateRequest {
     private Gender gender;
     private String persona;
     private String orgProfileImageName;
+    private String savedProfileImageName;
 }

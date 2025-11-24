@@ -1,6 +1,7 @@
 package com.infreej.moment_canvas.domain.diary.service;
 
-import com.infreej.moment_canvas.domain.diary.dto.request.CreateRequest;
+import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
+import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
 import com.infreej.moment_canvas.domain.diary.entity.Diary;
 import com.infreej.moment_canvas.domain.diary.repository.DiaryRepository;
@@ -22,12 +23,12 @@ public class DiaryServiceImpl implements DiaryService{
 
     @Override
     @Transactional
-    public DiaryResponse create(CreateRequest createRequest) {
+    public DiaryResponse create(DiaryCreateRequest diaryCreateRequest) {
 
-        User user = userRepository.findById(createRequest.getUserId())
+        User user = userRepository.findById(diaryCreateRequest.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
 
-        Diary diary = createRequest.toEntity(user);
+        Diary diary = diaryCreateRequest.toEntity(user);
 
         return DiaryResponse.from(diaryRepository.save(diary));
     }
@@ -54,6 +55,30 @@ public class DiaryServiceImpl implements DiaryService{
                 .map(DiaryResponse::from)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    @Transactional
+    public DiaryResponse update(DiaryUpdateRequest diaryUpdateRequest) {
+
+        long diaryId = diaryUpdateRequest.getDiaryId();
+
+        Diary diary = diaryRepository.findById(diaryId)
+                .orElseThrow(() -> new IllegalArgumentException("일기를 찾을 수 없습니다."));
+
+        diary.updateDiaryInfo(
+                diaryUpdateRequest.getTitle(),
+                diaryUpdateRequest.getContent(),
+                diaryUpdateRequest.getMood(),
+                diaryUpdateRequest.getOrgDiaryImageName(),
+                diaryUpdateRequest.getSavedDiaryImageName()
+        );
+
+        return DiaryResponse.from(diary);
+    }
+
+
+
+
 }
 
 

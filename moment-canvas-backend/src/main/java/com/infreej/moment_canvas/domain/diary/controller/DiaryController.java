@@ -1,6 +1,7 @@
 package com.infreej.moment_canvas.domain.diary.controller;
 
-import com.infreej.moment_canvas.domain.diary.dto.request.CreateRequest;
+import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
+import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
 import com.infreej.moment_canvas.domain.diary.service.DiaryService;
 import com.infreej.moment_canvas.global.code.SuccessCode;
@@ -25,9 +26,9 @@ public class DiaryController {
 
     @Operation(summary = "일기 작성", description = "일기 작성 API 입니다. \n - orgDiaryImageName null 가능")
     @PostMapping("/diary")
-    public ResponseEntity<SuccessResponse<DiaryResponse>> create(@RequestBody CreateRequest createRequest) {
+    public ResponseEntity<SuccessResponse<DiaryResponse>> create(@RequestBody DiaryCreateRequest diaryCreateRequest) {
 
-        DiaryResponse diaryResponse = diaryService.create(createRequest);
+        DiaryResponse diaryResponse = diaryService.create(diaryCreateRequest);
 
         String code = SuccessCode.DIARY_CREATED.getCode();
         String msg = messageUtil.getMessage(SuccessCode.DIARY_CREATED.getMessageKey());
@@ -59,6 +60,19 @@ public class DiaryController {
         String msg = messageUtil.getMessage(SuccessCode.DIARY_SUCCESS.getMessageKey());
 
         return ResponseEntity.ok(SuccessResponse.of(code, msg, diaryResponseList));
+    }
+
+
+    @Operation(summary = "일기 정보 변경", description = "일기 정보 변경 API 입니다.")
+    @PatchMapping("/diary")
+    public ResponseEntity<SuccessResponse<DiaryResponse>> update(DiaryUpdateRequest diaryUpdateRequest) {
+
+        DiaryResponse diaryResponse = diaryService.update(diaryUpdateRequest);
+
+        String code = SuccessCode.DIARY_UPDATED.getCode();
+        String msg = messageUtil.getMessage(SuccessCode.DIARY_UPDATED.getMessageKey());
+
+        return ResponseEntity.ok(SuccessResponse.of(code, msg, diaryResponse));
     }
 
 }
