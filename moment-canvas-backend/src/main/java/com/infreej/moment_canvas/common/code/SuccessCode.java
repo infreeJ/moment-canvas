@@ -24,7 +24,8 @@ public enum SuccessCode {
     USER_CREATED(201, "S2001", "success.user.created"),
     USER_SUCCESS(200, "S2002", "success.user.success"),
     USER_UPDATED(200, "S2003", "success.user.updated"),
-    USER_DELETED(200, "S2004", "success.user.deleted"),
+    USER_STATUS_CHANGE(200, "S2004", "success.user.status.change"),
+    USER_WITHDRAWAL(200, "S2005", "success.user.withdrawal"),
     USER_LOGIN_ID_CHECKED(200, "S2011", "success.user.login.id.checked"),
     USER_PASSWORD_UPDATED(200, "S2012", "success.user.password.updated"),
 

@@ -13,8 +13,7 @@ public class User extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "user_id")
-    private Long id; // 고유번호
+    private Long userId; // 고유번호
 
     @Column(nullable = false, length = 30, unique = true)
     private String loginId; // 아이디
@@ -44,6 +43,7 @@ public class User extends BaseTimeEntity {
     private Status status = Status.ACTIVE; // 유저 상태: (ACTIVE, INACTIVE, WITHDRAWN)
 
 
+    // 유저 엔티티 정보 변경 메서드
     public void updateUserInfo(Integer age, Gender gender, String persona, String orgProfileImageName) {
         this.age = age;
         this.gender = gender;
@@ -51,6 +51,14 @@ public class User extends BaseTimeEntity {
         this.orgProfileImageName = orgProfileImageName;
     }
 
-    // TODO: status 변경 메서드 필요
+    // 유저 엔티티 상태 변경 메서드
+    public void statusChange(Status status) {
+        this.status = status;
+    }
+    
+    // 유저 엔티티 탈퇴 처리 메서드
+    public void withdrawal() {
+        this.status = Status.WITHDRAWN;
+    }
 
 }

@@ -4,9 +4,9 @@ import com.infreej.moment_canvas.common.code.SuccessCode;
 import com.infreej.moment_canvas.common.response.SuccessResponse;
 import com.infreej.moment_canvas.common.util.MessageUtil;
 import com.infreej.moment_canvas.dto.request.SignupRequest;
+import com.infreej.moment_canvas.dto.request.StatusChangeRequest;
 import com.infreej.moment_canvas.dto.request.UpdateRequest;
 import com.infreej.moment_canvas.dto.response.UserResponse;
-import com.infreej.moment_canvas.entity.User;
 import com.infreej.moment_canvas.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -56,5 +56,30 @@ public class UserController {
 
         return ResponseEntity.ok(SuccessResponse.of(code, msg, userResponse));
     }
+
+    @Operation(summary = "유저 상태 변경", description = "유저 정보 변경 API 입니다. \n - 활성화, 비활성화")
+    @PatchMapping("/user/status")
+    public ResponseEntity<SuccessResponse<Void>> statusChange(@RequestBody StatusChangeRequest statusChangeRequest) {
+
+        userService.statusChange(statusChangeRequest);
+
+        String code = SuccessCode.USER_STATUS_CHANGE.getCode();
+        String msg = messageUtil.getMessage(SuccessCode.USER_STATUS_CHANGE.getMessageKey());
+
+        return ResponseEntity.ok(SuccessResponse.of(code, msg));
+    }
+
+    @Operation(summary = "유저 탈퇴 처리", description = "유저 탈퇴 처리 API 입니다.")
+    @PatchMapping("/user/{userId}/withdrawal")
+    public ResponseEntity<SuccessResponse<Void>> withdrawal(@PathVariable long userId) {
+
+        userService.withdrawal(userId);
+
+        String code = SuccessCode.USER_WITHDRAWAL.getCode();
+        String msg = messageUtil.getMessage(SuccessCode.USER_WITHDRAWAL.getMessageKey());
+
+        return ResponseEntity.ok(SuccessResponse.of(code, msg));
+    }
+
 
 }

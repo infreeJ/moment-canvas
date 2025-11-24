@@ -22,7 +22,7 @@ public class UserResponse {
 
     public static UserResponse from(User user) {
         return UserResponse.builder()
-                .userId(user.getId())
+                .userId(user.getUserId())
                 .loginId(user.getLoginId())
                 .age(user.getAge())
                 .gender(user.getGender())
