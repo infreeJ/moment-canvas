@@ -1,7 +1,6 @@
 package com.infreej.moment_canvas.domain.image.service;
 
 import com.infreej.moment_canvas.domain.diary.dto.projection.DiaryContent;
-import com.infreej.moment_canvas.domain.diary.entity.Diary;
 import com.infreej.moment_canvas.domain.diary.repository.DiaryRepository;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageGenerateRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
@@ -17,6 +16,7 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.image.*;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -123,14 +123,59 @@ public class ImageServiceImpl implements ImageService {
     }
 
 
+    // 이미지 URL 다운로드
     @Override
-    public ImageSaveRequest downloadImage(ImageDownloadRequest imageDownloadRequest) throws IOException {
+    public ImageSaveRequest downloadUrlImage(ImageDownloadRequest imageDownloadRequest) throws IOException {
+
+        // 저장할 경로와 파일명 정보 생성
+        String imageUrl = imageDownloadRequest.getImageUrl();
+        // 불필요한 부분을 제거한 파일명 추출 (URL 방식)
+        String orgFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+        // 경로 및 파일명 생성
+        PathInfo pathInfo = createPathInfo(String.valueOf(imageDownloadRequest.getImageType()), orgFileName);
+
+        // URL에서 스트림을 열어 파일을 다운로드 및 저장
+        try (InputStream in = new URL(imageUrl).openStream()) {
+            Files.copy(in, pathInfo.destinationFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        // DB에 저장할 정보를 반환
+        return new ImageSaveRequest(pathInfo.orgFileName, pathInfo.savedFileName);
+    }
+
+
+    // 업로드된 파일(MultipartFile) 저장
+    @Override
+    public ImageSaveRequest saveUploadedImage(MultipartFile file, String imageType) throws IOException {
+
+        // 빈 파일 체크
+        if (file.isEmpty()) {
+            throw new IllegalArgumentException("파일이 비어있습니다.");
+        }
+
+        // 업로드된 파일의 원본 이름 가져오기
+        String orgFileName = file.getOriginalFilename();
+
+        // 저장할 경로와 파일명 정보 생성
+        PathInfo pathInfo = createPathInfo(imageType, orgFileName);
+
+        // MultipartFile의 transferTo 메서드를 사용하여 파일 저장
+        file.transferTo(pathInfo.destinationFile);
+
+        // DB에 저장할 정보를 반환
+        return new ImageSaveRequest(pathInfo.orgFileName, pathInfo.savedFileName);
+    }
+
+
+    // 디렉토리 생성 및 파일명 생성
+    private PathInfo createPathInfo(String imageType, String orgFileName) throws IOException {
 
         // 저장할 폴더는 백엔드 폴더의 두 단계 상위에 있다.
         String uploadBaseDir = "../../images/";
 
         // 폴더명과 일치시키도록 타입명에 문자열 추가
-        String subPath = imageDownloadRequest.getImageType() + "-images/";
+        String subPath = imageType + "-images/";
 
         // 이미지 종류에 따라 하위 폴더 경로를 결정 (diary-images, profile-images)
         Path destinationDirectory = Paths.get(uploadBaseDir, subPath);
@@ -141,11 +186,7 @@ public class ImageServiceImpl implements ImageService {
             System.out.println("디렉토리 생성됨: " + destinationDirectory);
         }
 
-        String imageUrl = imageDownloadRequest.getImageUrl();
         String fileExtension = "";
-
-        // 불필요한 부분을 제거한 파일명 추출
-        String orgFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
         int lastDot = orgFileName.lastIndexOf(".");
         if(lastDot > 0) {
             fileExtension = orgFileName.substring(lastDot);
@@ -154,20 +195,63 @@ public class ImageServiceImpl implements ImageService {
         // UUID로 저장할 파일명 생성
         String savedFileName = UUID.randomUUID().toString() + ".jpg";
 
-        // 가공된 파일명을 Request에 담기
-        ImageSaveRequest imageSaveRequest = new ImageSaveRequest(orgFileName, savedFileName);
-
         // 최종 저장 경로와 파일 이름 결합
         Path destinationFile = destinationDirectory.resolve(savedFileName);
 
-        // URL에서 스트림을 열어 파일을 다운로드 및 저장
-        try (InputStream in = new URL(imageDownloadRequest.getImageUrl()).openStream()) {
-            Files.copy(in, destinationFile, StandardCopyOption.REPLACE_EXISTING);
-        }
-
-        // DB에 저장할 정보를 반환
-        return imageSaveRequest;
+        return new PathInfo(orgFileName, savedFileName, destinationFile);
     }
+
+
+    // 내부에서만 사용할 데이터 운반용 클래스
+    private record PathInfo(String orgFileName, String savedFileName, Path destinationFile) {}
+
+
+
+//    @Override
+//    public ImageSaveRequest downloadUrlImage(ImageDownloadRequest imageDownloadRequest) throws IOException {
+//
+//        // 저장할 폴더는 백엔드 폴더의 두 단계 상위에 있다.
+//        String uploadBaseDir = "../../images/";
+//
+//        // 폴더명과 일치시키도록 타입명에 문자열 추가
+//        String subPath = imageDownloadRequest.getImageType() + "-images/";
+//
+//        // 이미지 종류에 따라 하위 폴더 경로를 결정 (diary-images, profile-images)
+//        Path destinationDirectory = Paths.get(uploadBaseDir, subPath);
+//
+//        // 하위 폴더가 존재하지 않으면 생성
+//        if (Files.notExists(destinationDirectory)) {
+//            Files.createDirectories(destinationDirectory);
+//            System.out.println("디렉토리 생성됨: " + destinationDirectory);
+//        }
+//
+//        String imageUrl = imageDownloadRequest.getImageUrl();
+//        String fileExtension = "";
+//
+//        // 불필요한 부분을 제거한 파일명 추출
+//        String orgFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+//        int lastDot = orgFileName.lastIndexOf(".");
+//        if(lastDot > 0) {
+//            fileExtension = orgFileName.substring(lastDot);
+//        }
+//
+//        // UUID로 저장할 파일명 생성
+//        String savedFileName = UUID.randomUUID().toString() + ".jpg";
+//
+//        // 가공된 파일명을 Request에 담기
+//        ImageSaveRequest imageSaveRequest = new ImageSaveRequest(orgFileName, savedFileName);
+//
+//        // 최종 저장 경로와 파일 이름 결합
+//        Path destinationFile = destinationDirectory.resolve(savedFileName);
+//
+//        // URL에서 스트림을 열어 파일을 다운로드 및 저장
+//        try (InputStream in = new URL(imageDownloadRequest.getImageUrl()).openStream()) {
+//            Files.copy(in, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+//        }
+//
+//        // DB에 저장할 정보를 반환
+//        return imageSaveRequest;
+//    }
 
 
 }
