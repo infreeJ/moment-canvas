@@ -16,3 +16,14 @@ services:
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci
+
+  # Redis
+  redis:
+    image: redis:latest
+    container_name: moment-canvas-redis
+    restart: always
+    ports:
+      - "6379:6379"      # 기본 포트 6379 개방
+    volumes:
+      - ./redis/data:/data  # Redis 데이터도 날아가지 않게 로컬에 저장
+    command: redis-server --requirepass 1234 --appendonly yes # 비밀번호 설정 및 지속성 설정
