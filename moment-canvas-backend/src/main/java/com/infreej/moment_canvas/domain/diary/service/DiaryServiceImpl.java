@@ -9,6 +9,8 @@ import com.infreej.moment_canvas.domain.diary.entity.Diary;
 import com.infreej.moment_canvas.domain.diary.repository.DiaryRepository;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
+import com.infreej.moment_canvas.global.code.ErrorCode;
+import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,9 +34,11 @@ public class DiaryServiceImpl implements DiaryService{
     @Transactional
     public DiaryResponse create(DiaryCreateRequest diaryCreateRequest) {
 
+        // 유저 조회
         User user = userRepository.findById(diaryCreateRequest.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        // 유저를 넣고 Entity로 변환
         Diary diary = diaryCreateRequest.toEntity(user);
 
         return DiaryResponse.from(diaryRepository.save(diary));
@@ -50,8 +54,9 @@ public class DiaryServiceImpl implements DiaryService{
     @Transactional
     public DiaryResponse findDiaryById(long diaryId) {
 
+        // 일기 조회
         Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new IllegalArgumentException("일기를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
         return DiaryResponse.from(diary);
     }
@@ -84,9 +89,11 @@ public class DiaryServiceImpl implements DiaryService{
 
         long diaryId = diaryUpdateRequest.getDiaryId();
 
+        // 일기 조회
         Diary diary = diaryRepository.findById(diaryId)
-                .orElseThrow(() -> new IllegalArgumentException("일기를 찾을 수 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
+        // 일기 필드 변경
         diary.updateDiaryInfo(
                 diaryUpdateRequest.getTitle(),
                 diaryUpdateRequest.getContent(),
@@ -102,6 +109,8 @@ public class DiaryServiceImpl implements DiaryService{
     @Transactional
     public void delete(long diaryId) {
 
+        // TODO: 권한 조회 후 삭제 필요
+        
         diaryRepository.deleteById(diaryId);
     }
 

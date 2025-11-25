@@ -73,10 +73,11 @@ public class ImageServiceImpl implements ImageService {
     @Override
     public String diaryImageGenerate(ImageGenerateRequest imageGenerateRequest) {
 
+        // TODO: 랭체인을 활용하여 프롬프트 생성과 이미지 생성을 결합
         String prompt = imagePromptGenerate(imageGenerateRequest);
 
         ImageOptions options = ImageOptionsBuilder.builder()
-                .model("dall-e-2")
+                .model("dall-e-2") // TODO: 배포 시 dall-e-3로 모델 변경
                 .width(1024)
                 .height(1024)
                 .build();

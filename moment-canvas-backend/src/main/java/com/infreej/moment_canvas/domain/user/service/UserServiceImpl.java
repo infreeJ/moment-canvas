@@ -6,6 +6,8 @@ import com.infreej.moment_canvas.domain.user.dto.request.UpdateRequest;
 import com.infreej.moment_canvas.domain.user.dto.response.UserResponse;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
+import com.infreej.moment_canvas.global.code.ErrorCode;
+import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,6 +22,8 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse signup(SignupRequest signupRequest) {
+        
+        // TODO: 데이터 무결성 검증 로직 필요
 
         // TODO: 암호화 필요
 
@@ -33,7 +37,7 @@ public class UserServiceImpl implements UserService {
     public UserResponse findUserById(long userId) {
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         return UserResponse.from(user);
     }
@@ -43,9 +47,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public UserResponse update(UpdateRequest updateRequest) {
 
+        // 엔티티 조회
         User user = userRepository.findById(updateRequest.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        // 엔티티 필드 수정
         user.updateUserInfo(
                 updateRequest.getAge(),
                 updateRequest.getGender(),
@@ -64,9 +70,11 @@ public class UserServiceImpl implements UserService {
 
         long userId = statusChangeRequest.getUserId();
 
+        // 엔티티 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        // 엔티티 상태 수정
         user.statusChange(
                 statusChangeRequest.getStatus()
         );
@@ -77,9 +85,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public void withdrawal(long userId) {
 
+        // 엔티티 조회
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 유저가 없습니다."));
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        // 엔티티의 status를 withdrawal로 변경
         user.withdrawal();
     }
 
