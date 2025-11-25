@@ -1,5 +1,6 @@
 package com.infreej.moment_canvas.global.config;
 
+import com.infreej.moment_canvas.global.jwt.JwtFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,6 +15,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration //설정 클래스임을 명시
 @EnableWebSecurity // Security의 웹 보완 기능을 활성화해서 모든 요청을 가로채고, 보안 규칙 적용
@@ -21,7 +23,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-//    private final JwtFilter jwtFilter;
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -50,11 +52,11 @@ public class SecurityConfig {
                         .anyRequest().permitAll()
 //                        .anyRequest().authenticated() // TODO: 추후 authenticated로 변경 필요
 
-                );
+                )
 
-//                // JWT 필터 추가
-//                // JWT 검증이 먼저 이루어 지도록 커스텀 필터를 추가하고 순서 설정
-//                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+                // JWT 필터 추가
+                // JWT 검증이 먼저 이루어 지도록 커스텀 필터를 추가하고 순서 설정
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

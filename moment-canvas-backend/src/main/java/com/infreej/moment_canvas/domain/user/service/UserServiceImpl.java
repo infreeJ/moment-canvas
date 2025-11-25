@@ -9,6 +9,7 @@ import com.infreej.moment_canvas.domain.user.repository.UserRepository;
 import com.infreej.moment_canvas.global.code.ErrorCode;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
 
     @Override
@@ -25,7 +27,8 @@ public class UserServiceImpl implements UserService {
         
         // TODO: 데이터 무결성 검증 로직 필요
 
-        // TODO: 암호화 필요
+        String encodedPassword = passwordEncoder.encode(signupRequest.getPwd());
+        signupRequest.setPwd(encodedPassword);
 
         User user = signupRequest.toEntity();
         return UserResponse.from(userRepository.save(user));

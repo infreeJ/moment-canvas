@@ -1,6 +1,7 @@
 package com.infreej.moment_canvas.domain.user.dto.response;
 
 import com.infreej.moment_canvas.domain.user.entity.Gender;
+import com.infreej.moment_canvas.domain.user.entity.Role;
 import com.infreej.moment_canvas.domain.user.entity.Status;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import lombok.*;
@@ -20,6 +21,7 @@ public class UserResponse {
     private String persona;
     private String savedProfileImageName;
     private Status status;
+    private Role role;
     private LocalDateTime createdAt;
 
     public static UserResponse from(User user) {
@@ -31,6 +33,7 @@ public class UserResponse {
                 .persona(user.getPersona())
                 .savedProfileImageName(user.getSavedProfileImageName())
                 .status(user.getStatus())
+                .role(user.getRole())
                 .createdAt(user.getCreatedAt())
                 .build();
     }

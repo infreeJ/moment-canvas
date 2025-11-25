@@ -43,6 +43,11 @@ public class User extends BaseTimeEntity {
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
     private Status status = Status.ACTIVE; // 유저 상태: (ACTIVE, INACTIVE, WITHDRAWN)
 
+    @Column(length = 20)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
+    private Role role = Role.USER;
+
 
     // 유저 엔티티 정보 변경 메서드
     public void updateUserInfo(Integer age, Gender gender, String persona, String orgProfileImageName, String savedProfileImageName) {
