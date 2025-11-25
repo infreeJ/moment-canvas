@@ -70,6 +70,7 @@ public class DiaryController {
     }
 
     @SetSuccess(SuccessCode.IMAGE_CREATED)
+    @Operation(summary = "생성된 일기 이미지 저장", description = "일기 저장 API 입니다.")
     @PostMapping("/diary/{diaryId}/image-save")
     public DiaryResponse diaryImageSave(@PathVariable long diaryId, @RequestBody ImageDownloadRequest imageDownloadRequest) throws IOException {
 

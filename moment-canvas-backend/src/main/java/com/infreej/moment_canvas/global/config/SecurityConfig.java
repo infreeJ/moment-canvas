@@ -30,7 +30,7 @@ public class SecurityConfig {
 
         // 화이트리스트
         String[] whiteList = {
-                "/swagger-ui/**", "/v3/api-docs/**", "/error"
+                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/error", "/favicon.ico"
         };
 
         http
@@ -48,10 +48,8 @@ public class SecurityConfig {
                         .requestMatchers(whiteList).permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/staff/**").hasAnyRole("ADMIN", "STAFF")
-                        .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/user").permitAll()
-                        .anyRequest().permitAll()
-//                        .anyRequest().authenticated() // TODO: 추후 authenticated로 변경 필요
-
+                        .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/user", "/v1/reissue").permitAll()
+                        .anyRequest().authenticated()
                 )
 
                 // JWT 필터 추가

@@ -6,4 +6,8 @@ import com.infreej.moment_canvas.domain.auth.dto.response.TokenResponse;
 public interface AuthService {
 
     public TokenResponse login(LoginRequest request);
+
+    public TokenResponse reissue(String refreshToken);
+
+    public void logout(String username);
 }

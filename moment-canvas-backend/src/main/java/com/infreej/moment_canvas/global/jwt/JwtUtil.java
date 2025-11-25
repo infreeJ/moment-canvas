@@ -13,32 +13,30 @@ import java.util.Date;
 @Component
 public class JwtUtil {
     private final SecretKey secretKey;
+    private final Long accessExpMs;  // accessToken 만료 시간
+    private final Long refreshExpMs; // refreshToken 만료 시간
 
-    /**
-     * 생성자에서 application.yml에 저장된 SecretKey 값을 가져와 설정
-     */
-    public JwtUtil(@Value("${spring.jwt.secret}") String secret) {
+    // 생성자에서 application.yml에 저장된 SecretKey 값을 가져와 설정
+    public JwtUtil(@Value("${spring.jwt.secret}") String secret,
+                   @Value("${spring.jwt.access-token-expiration}") Long accessExpMs,
+                   @Value("${spring.jwt.refresh-token-expiration}") Long refreshExpMs) {
         // 문자열을 바이트로 바꿔서 암호화 키 객체 생성
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
+        this.accessExpMs = accessExpMs;
+        this.refreshExpMs = refreshExpMs;
     }
 
-    /**
-     * JWT에서 username 추출
-     */
+    // JWT에서 username 추출
     public String getUsername(String token) {
         return getPayload(token).get("username", String.class);
     }
 
-    /**
-     * JWT에서 role(권한) 추출
-     */
+    // JWT에서 role(권한) 추출
     public String getRole(String token) {
         return getPayload(token).get("role", String.class);
     }
 
-    /**
-     * JWT 만료 여부 확인
-     */
+    // JWT 만료 여부 확인
     public Boolean isTokenExpired(String token) {
         return getPayload(token).getExpiration().before(new Date());
     }
@@ -52,11 +50,17 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    /**
-     * JWT 생성 메서드
-     * - username, role(권한), 만료 시간(expiredMs)을 포함한 JWT 발급
-     */
-    public String createJwt(String username, String role, Long expiredMs) {
+    public String createAccessToken(String username, String role) {
+        return createJwt(username, role, this.accessExpMs);
+    }
+
+    public String createRefreshToken(String username, String role) {
+        return createJwt(username, role, this.refreshExpMs);
+    }
+
+    // JWT 생성 메서드
+    // username, role(권한), 만료 시간(expiredMs)을 포함한 JWT 발급
+    private String createJwt(String username, String role, Long expiredMs) {
         return Jwts.builder()
                 .claim("username", username)
                 .claim("role", role)
