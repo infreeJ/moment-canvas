@@ -1,6 +1,8 @@
 package com.infreej.moment_canvas.domain.image.service;
 
 import com.infreej.moment_canvas.domain.image.dto.request.ImageGenerateRequest;
+import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
+import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
 import com.infreej.moment_canvas.domain.user.dto.projection.UserCharacteristic;
 import com.infreej.moment_canvas.domain.user.entity.Gender;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
@@ -10,6 +12,15 @@ import org.springframework.ai.chat.client.ChatClient;
 import org.springframework.ai.chat.model.ChatModel;
 import org.springframework.ai.image.*;
 import org.springframework.stereotype.Service;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -91,4 +102,53 @@ public class ImageServiceImpl implements ImageService {
 
         return imageUrl;
     }
+
+
+    @Override
+    public ImageSaveRequest downloadAndSaveImage(ImageDownloadRequest imageDownloadRequest) throws IOException {
+
+        // 저장할 폴더는 백엔드 폴더의 두 단계 상위에 있다.
+        String uploadBaseDir = "../../images/";
+
+        // 폴더명과 일치시키도록 타입명에 문자열 추가
+        String subPath = imageDownloadRequest.getImageType() + "-images/";
+
+        // 이미지 종류에 따라 하위 폴더 경로를 결정 (diary-images, profile-images)
+        Path destinationDirectory = Paths.get(uploadBaseDir, subPath);
+
+        // 하위 폴더가 존재하지 않으면 생성
+        if (Files.notExists(destinationDirectory)) {
+            Files.createDirectories(destinationDirectory);
+            System.out.println("디렉토리 생성됨: " + destinationDirectory);
+        }
+
+        String imageUrl = imageDownloadRequest.getImageUrl();
+        String fileExtension = "";
+
+        // 불필요한 부분을 제거한 파일명 추출
+        String orgFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+        int lastDot = orgFileName.lastIndexOf(".");
+        if(lastDot > 0) {
+            fileExtension = orgFileName.substring(lastDot);
+        }
+
+        // UUID로 저장할 파일명 생성
+        String savedFileName = UUID.randomUUID().toString() + ".jpg";
+
+        // 가공된 파일명을 Request에 담기
+        ImageSaveRequest imageSaveRequest = new ImageSaveRequest(orgFileName, savedFileName);
+
+        // 최종 저장 경로와 파일 이름 결합
+        Path destinationFile = destinationDirectory.resolve(savedFileName);
+
+        // URL에서 스트림을 열어 파일을 다운로드 및 저장
+        try (InputStream in = new URL(imageDownloadRequest.getImageUrl()).openStream()) {
+            Files.copy(in, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+        }
+
+        // DB에 저장할 정보를 반환
+        return imageSaveRequest;
+    }
+
+
 }

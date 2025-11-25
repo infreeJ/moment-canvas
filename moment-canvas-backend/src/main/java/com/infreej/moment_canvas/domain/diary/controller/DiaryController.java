@@ -5,6 +5,7 @@ import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiarySummaryResponse;
 import com.infreej.moment_canvas.domain.diary.service.DiaryService;
+import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.global.annotation.SetSuccess;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
@@ -12,6 +13,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @Tag(name = "Diary", description = "일기 API")
@@ -65,6 +67,13 @@ public class DiaryController {
     public void delete(@PathVariable long diaryId) {
 
         diaryService.delete(diaryId);
+    }
+
+    @SetSuccess(SuccessCode.IMAGE_CREATED)
+    @PostMapping("/diary/{diaryId}/image-save")
+    public DiaryResponse diaryImageSave(@PathVariable long diaryId, @RequestBody ImageDownloadRequest imageDownloadRequest) throws IOException {
+
+        return diaryService.diaryImageSave(diaryId, imageDownloadRequest);
     }
 
 }

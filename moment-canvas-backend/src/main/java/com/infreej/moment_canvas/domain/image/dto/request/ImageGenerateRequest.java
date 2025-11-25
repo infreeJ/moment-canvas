@@ -6,6 +6,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 이미지를 생성하기 위한 Request
+ */
 @Setter
 @Getter
 @AllArgsConstructor
