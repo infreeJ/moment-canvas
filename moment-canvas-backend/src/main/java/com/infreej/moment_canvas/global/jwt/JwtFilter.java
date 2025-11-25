@@ -1,8 +1,14 @@
 package com.infreej.moment_canvas.global.jwt;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.infreej.moment_canvas.domain.user.entity.Role;
 import com.infreej.moment_canvas.domain.user.entity.User;
+import com.infreej.moment_canvas.global.code.ErrorCode;
+import com.infreej.moment_canvas.global.response.ErrorResponse;
 import com.infreej.moment_canvas.global.security.CustomUserDetails;
+import com.infreej.moment_canvas.global.util.MessageUtil;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -23,6 +29,8 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtUtil jwtUtil;
+    private final ObjectMapper objectMapper;
+    private final MessageUtil messageUtil;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -39,10 +47,9 @@ public class JwtFilter extends OncePerRequestFilter {
         String token = authorizationHeader.substring(7);
 
         try {
-            // JWT 만료 여부 검증
+            // 토큰 만료 검사 (만료되면 ExpiredJwtException 발생)
             if (jwtUtil.isTokenExpired(token)) {
-                response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "JWT 토큰이 만료되었습니다.");
-                return;
+                throw new ExpiredJwtException(null, null, "만료된 토큰");
             }
 
             // JWT에서 사용자 정보 추출
@@ -64,11 +71,38 @@ public class JwtFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
 
+            // 성공했을 때만 다음 필터로 진행
+            filterChain.doFilter(request, response);
+
+        } catch (ExpiredJwtException e) {
+            // 토큰 만료 에러 (401)
+            log.warn("JWT Expired: {}", e.getMessage());
+            setErrorResponse(request, response, ErrorCode.AUTH_TOKEN_EXPIRED);
+        } catch (JwtException | IllegalArgumentException e) {
+            // 토큰 위조, 손상 등 기타 에러 (401)
+            log.warn("JWT Invalid: {}", e.getMessage());
+            setErrorResponse(request, response, ErrorCode.AUTH_INVALID_TOKEN);
         } catch (Exception e) {
-            log.error("JWT 필터 처리 중 오류 발생: {}", e.getMessage(), e);
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "유효하지 않은 토큰입니다.");
+            // 그 외 알 수 없는 서버 에러 (500)
+            log.error("JWT Filter Error", e);
+            setErrorResponse(request, response, ErrorCode.COMMON_INTERNAL_SERVER_ERROR);
         }
 
-        filterChain.doFilter(request, response);
+    }
+
+    // 필터에서 직접 JSON 응답을 내보내는 메서드
+    private void setErrorResponse(HttpServletRequest request, HttpServletResponse response, ErrorCode errorCode) throws IOException {
+        response.setStatus(errorCode.getStatus().value());
+        response.setContentType("application/json;charset=UTF-8");
+
+        // 에러 코드의 키를 실제 메시지로 변환
+        String message = messageUtil.getMessage(errorCode.getMessageKey());
+
+        // 요청한 URI 경로 가져오기
+        String path = request.getRequestURI();
+
+        ErrorResponse errorResponse = ErrorResponse.of(errorCode, message, path);
+
+        response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }
 }
