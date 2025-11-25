@@ -1,11 +1,16 @@
 package com.infreej.moment_canvas.domain.image.service;
 
+import com.infreej.moment_canvas.domain.diary.dto.projection.DiaryContent;
+import com.infreej.moment_canvas.domain.diary.entity.Diary;
+import com.infreej.moment_canvas.domain.diary.repository.DiaryRepository;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageGenerateRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
 import com.infreej.moment_canvas.domain.user.dto.projection.UserCharacteristic;
 import com.infreej.moment_canvas.domain.user.entity.Gender;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
+import com.infreej.moment_canvas.global.code.ErrorCode;
+import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -30,25 +35,40 @@ public class ImageServiceImpl implements ImageService {
     private final UserRepository userRepository;
     private final ImageModel imageModel;
     private final ChatModel chatModel;
+    private final DiaryRepository diaryRepository;
 
 
+    /**
+     * 이미지를 생성하기 위한 영문 프롬프트를 생성하는 메서드
+     * @return
+     */
     private String imagePromptGenerate(ImageGenerateRequest imageGenerateRequest) {
+        
+        // 유저 특징 조회
+        UserCharacteristic userCharacteristic = userRepository.findByUserId(imageGenerateRequest.getUserId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        UserCharacteristic userCharacteristic = userRepository.findByUserId(imageGenerateRequest.getUserId());
+        // 일기 내용 조회
+        DiaryContent diaryContent = diaryRepository.findDiaryContentByDiaryId(imageGenerateRequest.getDiaryId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
         ChatClient chatClient = ChatClient.builder(chatModel).build();
-        
-        // TODO: 작성하고 있는 상태에서 이미지 생성하는 것이 아닌 이미 작성된 일기를 조회해서 데이터를 사용하는 방식으로 변경 필요
 
-        String title = imageGenerateRequest.getTitle();
-        String content = imageGenerateRequest.getContent();
-        int mood = imageGenerateRequest.getMood();
-        String style = imageGenerateRequest.getStyle();
-        String option = imageGenerateRequest.getOption();
+        // 사용자 정보
         int age = userCharacteristic.getAge();
         Gender gender = userCharacteristic.getGender();
         String persona = userCharacteristic.getPersona();
 
+        // 일기 정보
+        String title = diaryContent.getTitle();
+        String content = diaryContent.getContent();
+        int mood = diaryContent.getMood();
+
+        // 이미지 생성 정보
+        String style = imageGenerateRequest.getStyle();
+        String option = imageGenerateRequest.getOption();
+
+        // prompt 생성 AI의 persona
         String systemPersona = """
 				You are a world-class prompt engineer specializing in creating prompts for AI image generators like DALL-E and Midjourney. Your primary mission is to translate a user's diary entry and several creative options into a single, masterful, and visually rich English prompt.
 				Synthesize the 'Main Scene' from the diary's title and content, capturing the core emotion and atmosphere. Seamlessly integrate the 'User's Persona' as the main character in this scene. Incorporate any 'Additional User Requests' as specific, concrete details. Finally, conclude the prompt by describing the 'Desired Art Style' in a detailed and artistic manner.
@@ -67,16 +87,15 @@ public class ImageServiceImpl implements ImageService {
                 - 일기 작성자의 성별: %s
                 - 일기 작성자의 특징: %s
                 """;
-
         String userRequest = String.format(userRequestTemplate, title, content, mood, style, option, age, gender, persona);
 
+        // 이미지 생성 프롬프트 조합
         String prompt = chatClient.prompt()
                 .system(systemPersona)
                 .user(userRequest)
                 .call()
                 .content();
-
-
+        
         log.info("결과: {}", prompt);
         return prompt;
     }
@@ -105,7 +124,7 @@ public class ImageServiceImpl implements ImageService {
 
 
     @Override
-    public ImageSaveRequest downloadAndSaveImage(ImageDownloadRequest imageDownloadRequest) throws IOException {
+    public ImageSaveRequest downloadImage(ImageDownloadRequest imageDownloadRequest) throws IOException {
 
         // 저장할 폴더는 백엔드 폴더의 두 단계 상위에 있다.
         String uploadBaseDir = "../../images/";

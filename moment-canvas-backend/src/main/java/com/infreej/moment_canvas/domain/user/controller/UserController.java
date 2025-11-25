@@ -1,7 +1,6 @@
 package com.infreej.moment_canvas.domain.user.controller;
 
 import com.infreej.moment_canvas.global.annotation.SetSuccess;
-import com.infreej.moment_canvas.global.annotation.TimeCheck;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import com.infreej.moment_canvas.domain.user.dto.request.SignupRequest;
 import com.infreej.moment_canvas.domain.user.dto.request.StatusChangeRequest;
@@ -31,7 +30,6 @@ public class UserController {
     }
 
     @SetSuccess(SuccessCode.USER_SUCCESS)
-    @TimeCheck
     @Operation(summary = "유저 정보 조회", description = "유저 정보 조회 API 입니다.")
     @GetMapping("/user/{userId}")
     public UserResponse findById(@PathVariable long userId) {

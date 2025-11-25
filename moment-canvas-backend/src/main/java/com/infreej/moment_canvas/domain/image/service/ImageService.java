@@ -10,5 +10,5 @@ public interface ImageService {
 
     public String diaryImageGenerate(ImageGenerateRequest imageGenerateRequest);
 
-    public ImageSaveRequest downloadAndSaveImage(ImageDownloadRequest imageDownloadRequest) throws IOException;
+    public ImageSaveRequest downloadImage(ImageDownloadRequest imageDownloadRequest) throws IOException;
 }

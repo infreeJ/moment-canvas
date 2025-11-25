@@ -135,7 +135,7 @@ public class DiaryServiceImpl implements DiaryService{
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
         // org, saved가 채워져서 반환된다.
-        ImageSaveRequest imageSaveRequest = imageService.downloadAndSaveImage(imageDownloadRequest);
+        ImageSaveRequest imageSaveRequest = imageService.downloadImage(imageDownloadRequest);
 
         // 일기 이미지 업데이트
         diary.updateDiaryImage(imageSaveRequest.getOrgImageName(), imageSaveRequest.getSavedImageName());
