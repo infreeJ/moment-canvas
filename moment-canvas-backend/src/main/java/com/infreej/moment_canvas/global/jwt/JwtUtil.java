@@ -44,7 +44,7 @@ public class JwtUtil {
     // 토큰 내용을 꺼내는 내부 메서드
     private Claims getPayload(String token) {
         return Jwts.parser()
-                .verifyWith(secretKey)
+                .verifyWith(secretKey) // Secret Key로 검증
                 .build()
                 .parseSignedClaims(token)
                 .getPayload();

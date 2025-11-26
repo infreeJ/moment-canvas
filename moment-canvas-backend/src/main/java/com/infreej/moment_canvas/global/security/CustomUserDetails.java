@@ -1,5 +1,6 @@
 package com.infreej.moment_canvas.global.security;
 
+import com.infreej.moment_canvas.domain.user.entity.Status;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -42,7 +43,7 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return user.getStatus() == Status.ACTIVE;
     }
 
     @Override

@@ -37,6 +37,7 @@ public class AuthServiceImpl implements AuthService {
                 new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPwd());
 
         // 검증 로직 실행 (CustomUserDetailsService -> loadUserByUsername 실행)
+        // CustomUserDetails에 정의되어 있는 상태들을 검사한다.
         // 비밀번호가 틀리거나 유저가 없으면 예외 발생
         Authentication authentication = authenticationManager.authenticate(authenticationToken);
 
@@ -77,7 +78,7 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public TokenResponse reissue(String refreshToken) {
 
-        // 리프레시 토큰 유효성 검사 (만료 여부 등)
+        // 리프레시 토큰 유효성 검사 (secretKey 서명 및 만료 여부 등)
         if (jwtUtil.isTokenExpired(refreshToken)) {
             throw new BusinessException(ErrorCode.AUTH_TOKEN_EXPIRED);
         }
@@ -86,7 +87,7 @@ public class AuthServiceImpl implements AuthService {
         String username = jwtUtil.getUsername(refreshToken);
         String role = jwtUtil.getRole(refreshToken);
 
-        // Redis에서 해당 유저의 리프레시 토큰 가져오기
+        // Redis 저장 값과 비교하여 Redis에서 해당 유저의 리프레시 토큰 가져오기
         RefreshToken storedToken = refreshTokenRepository.findById(username)
                 .orElseThrow(() -> new BusinessException(ErrorCode.AUTH_INVALID_TOKEN));
 
