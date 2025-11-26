@@ -9,6 +9,7 @@ import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.global.annotation.SetSuccess;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
@@ -26,7 +27,7 @@ public class DiaryController {
 
 
     @SetSuccess(SuccessCode.DIARY_CREATED)
-    @Operation(summary = "일기 작성", description = "일기 작성 API 입니다. \n - orgDiaryImageName null 가능")
+    @Operation(summary = "일기 작성", security = @SecurityRequirement(name = "JWT"), description = "일기 작성 API 입니다. \n - orgDiaryImageName null 가능")
     @PostMapping("/diary")
     public DiaryResponse create(@RequestBody DiaryCreateRequest diaryCreateRequest) {
 
@@ -35,7 +36,7 @@ public class DiaryController {
 
 
     @SetSuccess(SuccessCode.DIARY_SUCCESS)
-    @Operation(summary = "일기 상세 조회", description = "일기 상세 조회 API 입니다.")
+    @Operation(summary = "일기 상세 조회", security = @SecurityRequirement(name = "JWT"), description = "일기 상세 조회 API 입니다.")
     @GetMapping("/diary/{diaryId}")
     public DiaryResponse findDiaryById(@PathVariable long diaryId) {
 
@@ -44,7 +45,7 @@ public class DiaryController {
 
 
     @SetSuccess(SuccessCode.DIARY_SUCCESS)
-    @Operation(summary = "특정 유저의 일기 목록 조회", description = "일기 목록 조회 API 입니다.")
+    @Operation(summary = "특정 유저의 일기 목록 조회", security = @SecurityRequirement(name = "JWT"), description = "일기 목록 조회 API 입니다.")
     @GetMapping("/diary/{userId}/list")
     public List<DiarySummaryResponse> findDiaryListByUserId(@PathVariable long userId) {
 
@@ -53,7 +54,7 @@ public class DiaryController {
 
 
     @SetSuccess(SuccessCode.DIARY_UPDATED)
-    @Operation(summary = "일기 정보 변경", description = "일기 정보 변경 API 입니다.")
+    @Operation(summary = "일기 정보 변경", security = @SecurityRequirement(name = "JWT"), description = "일기 정보 변경 API 입니다.")
     @PatchMapping("/diary")
     public DiaryResponse update(DiaryUpdateRequest diaryUpdateRequest) {
 
@@ -62,7 +63,7 @@ public class DiaryController {
 
 
     @SetSuccess(SuccessCode.DIARY_DELETED)
-    @Operation(summary = "일기 삭제", description = "일기 삭제 API 입니다.")
+    @Operation(summary = "일기 삭제", security = @SecurityRequirement(name = "JWT"), description = "일기 삭제 API 입니다.")
     @DeleteMapping("/diary/{diaryId}")
     public void delete(@PathVariable long diaryId) {
 
@@ -70,7 +71,7 @@ public class DiaryController {
     }
 
     @SetSuccess(SuccessCode.IMAGE_CREATED)
-    @Operation(summary = "생성된 일기 이미지 저장", description = "일기 저장 API 입니다.")
+    @Operation(summary = "생성된 일기 이미지 저장", security = @SecurityRequirement(name = "JWT"), description = "일기 저장 API 입니다.")
     @PostMapping("/diary/{diaryId}/image-save")
     public DiaryResponse diaryImageSave(@PathVariable long diaryId, @RequestBody ImageDownloadRequest imageDownloadRequest) throws IOException {
 

@@ -14,7 +14,7 @@ public class SwaggerConfig {
     @Bean
     public OpenAPI openAPI() {
 
-        // 1. Security 스키마 설정 JWT 토큰 사용 설정
+        // Security 스키마 설정 JWT 토큰 사용 설정
         String jwt = "JWT";
         SecurityRequirement securityRequirement = new SecurityRequirement().addList(jwt);
 
@@ -28,7 +28,6 @@ public class SwaggerConfig {
 
         return new OpenAPI()
                 .components(components)
-                .addSecurityItem(securityRequirement)
                 .info(apiInfo());
     }
 
@@ -36,6 +35,6 @@ public class SwaggerConfig {
         return new Info()
                 .title("Moment Canvas API") // API 제목
                 .description("Moment Canvas 프로젝트 API 명세서") // 설명
-                .version("1.0.0");
+                .version("v1");
     }
 }

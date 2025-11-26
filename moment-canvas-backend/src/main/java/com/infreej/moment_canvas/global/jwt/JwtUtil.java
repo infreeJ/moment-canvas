@@ -46,7 +46,7 @@ public class JwtUtil {
         return Jwts.parser()
                 .verifyWith(secretKey)
                 .build()
-                .parseSignedClaims(token) // parseClaimsJws -> parseSignedClaims (0.12.x 권장)
+                .parseSignedClaims(token)
                 .getPayload();
     }
 

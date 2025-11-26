@@ -6,6 +6,7 @@ import com.infreej.moment_canvas.global.annotation.SetSuccess;
 import com.infreej.moment_canvas.global.annotation.TimeCheck;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,7 +22,7 @@ public class ImageController {
 
     private final ImageService imageService;
 
-    @Operation(summary = "일기 이미지 생성", description = "OpenAI API를 사용하는 일기 이미지 생성 API 입니다.")
+    @Operation(summary = "일기 이미지 생성", security = @SecurityRequirement(name = "JWT"), description = "OpenAI API를 사용하는 일기 이미지 생성 API 입니다.")
     @TimeCheck
     @SetSuccess(SuccessCode.IMAGE_GENERATED)
     @PostMapping("/image/generate")

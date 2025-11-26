@@ -8,6 +8,7 @@ import com.infreej.moment_canvas.global.annotation.SetSuccess;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import com.infreej.moment_canvas.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -25,7 +26,7 @@ public class AuthController {
     private final AuthService authService;
 
     @Operation(summary = "로그인", description = "로그인 성공 시 Access Token을 발급합니다.")
-    @SetSuccess(SuccessCode.AUTH_LOGIN_SUCCESS) // 아까 만든 공통 응답 어노테이션 활용!
+    @SetSuccess(SuccessCode.AUTH_LOGIN_SUCCESS)
     @PostMapping("/login")
     public TokenResponse login(@RequestBody LoginRequest request) {
         return authService.login(request);
@@ -39,7 +40,7 @@ public class AuthController {
         return authService.reissue(request.getRefreshToken());
     }
 
-    @Operation(summary = "로그아웃", description = "서버에서 Refresh Token을 삭제합니다. (Access Token은 클라이언트에서 삭제)")
+    @Operation(summary = "로그아웃", security = @SecurityRequirement(name = "JWT"), description = "서버에서 Refresh Token을 삭제합니다. (Access Token은 클라이언트에서 삭제)")
     @SetSuccess(SuccessCode.AUTH_LOGOUT_SUCCESS)
     @PostMapping("/logout")
     public void logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
