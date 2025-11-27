@@ -1,5 +1,8 @@
 package com.infreej.moment_canvas.domain.diary.service;
 
+import com.infreej.moment_canvas.domain.ai.dto.request.ImageGenerateRequest;
+import com.infreej.moment_canvas.domain.ai.service.AiService;
+import com.infreej.moment_canvas.domain.diary.dto.projection.DiaryContent;
 import com.infreej.moment_canvas.domain.diary.dto.projection.DiarySummary;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
@@ -10,6 +13,7 @@ import com.infreej.moment_canvas.domain.diary.repository.DiaryRepository;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
 import com.infreej.moment_canvas.domain.image.service.ImageService;
+import com.infreej.moment_canvas.domain.user.dto.projection.UserCharacteristic;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
 import com.infreej.moment_canvas.global.code.ErrorCode;
@@ -29,6 +33,7 @@ public class DiaryServiceImpl implements DiaryService{
     private final DiaryRepository diaryRepository;
     private final UserRepository userRepository;
     private final ImageService imageService;
+    private final AiService aiService;
 
     /**
      * 일기 저장
@@ -141,6 +146,20 @@ public class DiaryServiceImpl implements DiaryService{
         diary.updateDiaryImage(imageSaveRequest.getOrgImageName(), imageSaveRequest.getSavedImageName());
 
         return DiaryResponse.from(diary);
+    }
+
+    @Override
+    public String generateDiaryImage(ImageGenerateRequest imageGenerateRequest) {
+
+        // 유저 특징 조회
+        UserCharacteristic userCharacteristic = userRepository.findByUserId(imageGenerateRequest.getUserId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        // 일기 내용 조회
+        DiaryContent diaryContent = diaryRepository.findDiaryContentByDiaryId(imageGenerateRequest.getDiaryId())
+                .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
+
+        return aiService.imageGenerate(imageGenerateRequest, userCharacteristic, diaryContent);
     }
 
 

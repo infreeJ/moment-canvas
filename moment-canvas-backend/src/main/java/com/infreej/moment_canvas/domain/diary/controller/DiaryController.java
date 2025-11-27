@@ -1,5 +1,7 @@
 package com.infreej.moment_canvas.domain.diary.controller;
 
+import com.infreej.moment_canvas.domain.ai.dto.request.ImageGenerateRequest;
+import com.infreej.moment_canvas.domain.ai.service.AiService;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
@@ -7,6 +9,7 @@ import com.infreej.moment_canvas.domain.diary.dto.response.DiarySummaryResponse;
 import com.infreej.moment_canvas.domain.diary.service.DiaryService;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.global.annotation.SetSuccess;
+import com.infreej.moment_canvas.global.annotation.TimeCheck;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -76,6 +79,16 @@ public class DiaryController {
     public DiaryResponse diaryImageSave(@PathVariable long diaryId, @RequestBody ImageDownloadRequest imageDownloadRequest) throws IOException {
 
         return diaryService.diaryImageSave(diaryId, imageDownloadRequest);
+    }
+
+
+    @Operation(summary = "일기 이미지 생성", security = @SecurityRequirement(name = "JWT"), description = "OpenAI API를 사용하는 일기 이미지 생성 API 입니다.")
+    @TimeCheck
+    @SetSuccess(SuccessCode.IMAGE_GENERATED)
+    @PostMapping("/image/generate")
+    public String generateDiaryImage(@RequestBody ImageGenerateRequest imageGenerateRequest) {
+
+        return diaryService.generateDiaryImage(imageGenerateRequest);
     }
 
 }

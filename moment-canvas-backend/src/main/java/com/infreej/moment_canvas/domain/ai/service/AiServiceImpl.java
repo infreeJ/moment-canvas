@@ -27,36 +27,12 @@ public class AiServiceImpl implements AiService{
 
     /**
      * 이미지를 생성하기 위한 영문 프롬프트를 생성하는 메서드
-     * @return
      */
-    private String imagePromptGenerate(ImageGenerateRequest imageGenerateRequest) {
+    private String imagePromptGenerate(ImageGenerateRequest imageGenerateRequest, UserCharacteristic userCharacteristic, DiaryContent diaryContent) {
 
         // TODO: 해당 imagePromptGenerate 메서드는 DB 조회와 프롬프트 생성. 이렇게 2개의 책임을 가짐 -> 분리 필요
 
-        // 유저 특징 조회
-        UserCharacteristic userCharacteristic = userRepository.findByUserId(imageGenerateRequest.getUserId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
-
-        // 일기 내용 조회
-        DiaryContent diaryContent = diaryRepository.findDiaryContentByDiaryId(imageGenerateRequest.getDiaryId())
-                .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
-
-        ChatClient chatClient = ChatClient.builder(chatModel).build();
-
-        // 사용자 정보
-        int age = userCharacteristic.getAge();
-        Gender gender = userCharacteristic.getGender();
-        String persona = userCharacteristic.getPersona();
-
-        // 일기 정보
-        String title = diaryContent.getTitle();
-        String content = diaryContent.getContent();
-        int mood = diaryContent.getMood();
-
-        // 이미지 생성 정보
-        String style = imageGenerateRequest.getStyle();
-        String option = imageGenerateRequest.getOption();
-
+        // TODO: prompt.properties 만들어서 빼서 사용하자
         // prompt 생성 AI의 persona
         String systemPersona = """
 				You are a world-class prompt engineer specializing in creating prompts for AI image generators like DALL-E and Midjourney. Your primary mission is to translate a user's diary entry and several creative options into a single, masterful, and visually rich English prompt.
@@ -76,7 +52,22 @@ public class AiServiceImpl implements AiService{
                 - 일기 작성자의 성별: %s
                 - 일기 작성자의 특징: %s
                 """;
-        String userRequest = String.format(userRequestTemplate, title, content, mood, style, option, age, gender, persona);
+        String userRequest = String.format(
+                userRequestTemplate, // 템플릿
+                // 사용자 정보
+                diaryContent.getTitle(),
+                diaryContent.getContent(),
+                diaryContent.getMood(),
+                // 일기 정보
+                imageGenerateRequest.getStyle(),
+                imageGenerateRequest.getOption(),
+                // 이미지 생성 정보
+                userCharacteristic.getAge(),
+                userCharacteristic.getGender(),
+                userCharacteristic.getPersona()
+        );
+
+        ChatClient chatClient = ChatClient.builder(chatModel).build();
 
         // 이미지 생성 프롬프트 조합
         String prompt = chatClient.prompt()
@@ -85,15 +76,15 @@ public class AiServiceImpl implements AiService{
                 .call()
                 .content();
 
-        log.info("결과: {}", prompt);
+        log.info("이미지 생성 프롬프트: {}", prompt);
         return prompt;
     }
 
     @Override
-    public String diaryImageGenerate(ImageGenerateRequest imageGenerateRequest) {
+    public String imageGenerate(ImageGenerateRequest imageGenerateRequest, UserCharacteristic userCharacteristic, DiaryContent diaryContent) {
 
         // TODO: 랭체인을 활용하여 프롬프트 생성과 이미지 생성을 결합
-        String prompt = imagePromptGenerate(imageGenerateRequest);
+        String prompt = imagePromptGenerate(imageGenerateRequest, userCharacteristic, diaryContent);
 
         ImageOptions options = ImageOptionsBuilder.builder()
                 .model("dall-e-2") // TODO: 배포 시 dall-e-3로 모델 변경
@@ -109,7 +100,7 @@ public class AiServiceImpl implements AiService{
 
         String imageUrl = imageResponse.getResult().getOutput().getUrl();
 
-        log.info("생성된 URL: {}", imageUrl);
+        log.info("생성된 일기 이미지 URL: {}", imageUrl);
 
         return imageUrl;
     }
