@@ -1,7 +1,6 @@
 package com.infreej.moment_canvas.domain.diary.controller;
 
-import com.infreej.moment_canvas.domain.ai.dto.request.ImageGenerateRequest;
-import com.infreej.moment_canvas.domain.ai.service.AiService;
+import com.infreej.moment_canvas.domain.diary.dto.request.DiaryImageGenerateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
@@ -73,6 +72,17 @@ public class DiaryController {
         diaryService.delete(diaryId);
     }
 
+
+    @Operation(summary = "일기 이미지 생성", security = @SecurityRequirement(name = "JWT"), description = "OpenAI API를 사용하는 일기 이미지 생성 API 입니다.")
+    @TimeCheck
+    @SetSuccess(SuccessCode.IMAGE_GENERATED)
+    @PostMapping("/diary/image-generate")
+    public String generateDiaryImage(@RequestBody DiaryImageGenerateRequest diaryImageGenerateRequest) {
+
+        return diaryService.generateDiaryImage(diaryImageGenerateRequest);
+    }
+
+
     @SetSuccess(SuccessCode.IMAGE_CREATED)
     @Operation(summary = "생성된 일기 이미지 저장", security = @SecurityRequirement(name = "JWT"), description = "일기 저장 API 입니다.")
     @PostMapping("/diary/{diaryId}/image-save")
@@ -82,14 +92,6 @@ public class DiaryController {
     }
 
 
-    @Operation(summary = "일기 이미지 생성", security = @SecurityRequirement(name = "JWT"), description = "OpenAI API를 사용하는 일기 이미지 생성 API 입니다.")
-    @TimeCheck
-    @SetSuccess(SuccessCode.IMAGE_GENERATED)
-    @PostMapping("/image/generate")
-    public String generateDiaryImage(@RequestBody ImageGenerateRequest imageGenerateRequest) {
-
-        return diaryService.generateDiaryImage(imageGenerateRequest);
-    }
 
 }
 

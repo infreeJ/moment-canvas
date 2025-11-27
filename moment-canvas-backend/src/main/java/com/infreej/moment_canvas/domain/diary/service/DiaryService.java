@@ -1,6 +1,6 @@
 package com.infreej.moment_canvas.domain.diary.service;
 
-import com.infreej.moment_canvas.domain.ai.dto.request.ImageGenerateRequest;
+import com.infreej.moment_canvas.domain.diary.dto.request.DiaryImageGenerateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
@@ -24,6 +24,6 @@ public interface DiaryService {
 
     public DiaryResponse diaryImageSave(long diaryId, ImageDownloadRequest imageDownloadRequest) throws IOException;
 
-    public String generateDiaryImage(ImageGenerateRequest imageGenerateRequest);
+    public String generateDiaryImage(DiaryImageGenerateRequest diaryImageGenerateRequest);
 
     }
