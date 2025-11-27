@@ -1,6 +1,5 @@
-package com.infreej.moment_canvas.domain.image.dto.request;
+package com.infreej.moment_canvas.domain.ai.dto.request;
 
-import com.infreej.moment_canvas.domain.user.entity.Gender;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
