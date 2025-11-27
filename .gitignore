@@ -11,6 +11,7 @@ build/
 ### DB Data
 db/data/
 **/db/data/
+redis/
 
 ### STS ###
 .apt_generated
