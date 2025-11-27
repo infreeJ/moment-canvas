@@ -44,6 +44,8 @@ public class ImageServiceImpl implements ImageService {
      */
     private String imagePromptGenerate(ImageGenerateRequest imageGenerateRequest) {
         
+        // TODO: AI API를 호출하는 메서드가 image 클래스에 있음 -> 책임과 역할이 명확하지 않음 -> 분리 필요
+        
         // 유저 특징 조회
         UserCharacteristic userCharacteristic = userRepository.findByUserId(imageGenerateRequest.getUserId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
@@ -102,6 +104,8 @@ public class ImageServiceImpl implements ImageService {
 
     @Override
     public String diaryImageGenerate(ImageGenerateRequest imageGenerateRequest) {
+
+        // TODO: AI API를 호출하는 메서드가 image 클래스에 있음 -> 책임과 역할이 명확하지 않음 -> 분리 필요
 
         // TODO: 랭체인을 활용하여 프롬프트 생성과 이미지 생성을 결합
         String prompt = imagePromptGenerate(imageGenerateRequest);

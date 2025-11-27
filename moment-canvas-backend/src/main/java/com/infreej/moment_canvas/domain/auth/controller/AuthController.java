@@ -25,7 +25,7 @@ public class AuthController {
 
     private final AuthService authService;
 
-    @Operation(summary = "로그인", description = "로그인 성공 시 Access Token을 발급합니다.")
+    @Operation(summary = "로그인", description = "로그인 성공 시 Access/Refresh Token을 발급합니다.")
     @SetSuccess(SuccessCode.AUTH_LOGIN_SUCCESS)
     @PostMapping("/login")
     public TokenResponse login(@RequestBody LoginRequest request) {
