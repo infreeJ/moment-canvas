@@ -38,7 +38,16 @@ public enum ErrorCode {
     // ==================== 이미지 관련 에러 (4xxx) ====================
     IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "E4001", "error.image.not.found"),
     IMAGE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "E4002", "error.image.size.exceeded"),
-    IMAGE_EXTENSION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "E4003", "error.image.extension.not.supported");
+    IMAGE_EXTENSION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "E4003", "error.image.extension.not.supported"),
+    IMAGE_GENERATED_ERROR(HttpStatus.BAD_REQUEST, "E4003", "error.image.generated.error"),
+
+    // ==================== AI 관련 에러 (5xxx) ====================
+    AI_POLICY_VIOLATION(HttpStatus.BAD_REQUEST, "E5001", "ai.policy.violation"),
+    AI_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "E5002", "ai.invalid.request"),
+    AI_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "E5003", "ai.service.unavailable"),
+    AI_QUOTA_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "E5004", "ai.quota.exceeded"),
+    AI_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "E5005", "ai.auth.error"),
+    AI_UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E5006", "ai.unknown.error");
 
     private final HttpStatus status;
     private final String code;

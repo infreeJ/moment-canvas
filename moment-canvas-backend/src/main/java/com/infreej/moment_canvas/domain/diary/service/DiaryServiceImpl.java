@@ -167,14 +167,14 @@ public class DiaryServiceImpl implements DiaryService{
                 """;
         String userRequest = String.format(
                 userRequestTemplate, // 템플릿
-                // 사용자 정보
+                // 일기 정보 (DB에서 조회)
                 diaryContent.getTitle(),
                 diaryContent.getContent(),
                 diaryContent.getMood(),
-                // 일기 정보
+                // 이미지 생성 정보 (클라이언트로 부터 Request로 받음)
                 diaryImageGenerateRequest.getStyle(),
                 diaryImageGenerateRequest.getOption(),
-                // 이미지 생성 정보
+                // 사용자 정보 (DB에서 조회)
                 userCharacteristic.getAge(),
                 userCharacteristic.getGender(),
                 userCharacteristic.getPersona()

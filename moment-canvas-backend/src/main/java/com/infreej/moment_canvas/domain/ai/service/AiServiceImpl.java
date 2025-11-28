@@ -1,5 +1,8 @@
 package com.infreej.moment_canvas.domain.ai.service;
 
+import com.infreej.moment_canvas.global.code.ErrorCode;
+import com.infreej.moment_canvas.global.exception.BusinessException;
+import com.infreej.moment_canvas.global.exception.OpenAiException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
@@ -25,7 +28,6 @@ public class AiServiceImpl implements AiService{
     @Override
     public String generateImage(String systemPersona, String userRequest) {
 
-        // TODO: 랭체인을 활용하여 프롬프트 생성과 이미지 생성을 결합
         String prompt = generateImagePrompt(systemPersona, userRequest);
 
         ImageOptions options = ImageOptionsBuilder.builder()
@@ -40,10 +42,15 @@ public class AiServiceImpl implements AiService{
         ImagePrompt imagePrompt = new ImagePrompt(prompt, options);
         ImageResponse imageResponse = imageModel.call(imagePrompt);
 
-        String imageUrl = imageResponse.getResult().getOutput().getUrl();
+        String imageUrl;
+        try {
+            imageUrl = imageResponse.getResult().getOutput().getUrl();
+        } catch (NullPointerException e) {
+            log.error("이미지 생성에 실패했습니다. message: {}", e.getMessage());
+            throw new BusinessException(ErrorCode.IMAGE_GENERATED_ERROR);
+        }
 
-        log.info("생성된 일기 이미지 URL: {}", imageUrl);
-
+        log.info("생성된 이미지 URL: {}", imageUrl);
         return imageUrl;
     }
 
