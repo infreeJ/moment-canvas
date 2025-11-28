@@ -1,9 +1,7 @@
 package com.infreej.moment_canvas.domain.image.service;
 
-import com.infreej.moment_canvas.domain.diary.repository.DiaryRepository;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
-import com.infreej.moment_canvas.domain.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,10 +20,6 @@ import java.util.UUID;
 @Service
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
-
-    private final UserRepository userRepository;
-    private final DiaryRepository diaryRepository;
-
 
     // 이미지 URL 다운로드
     @Override

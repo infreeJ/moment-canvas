@@ -19,6 +19,8 @@ import com.infreej.moment_canvas.domain.user.repository.UserRepository;
 import com.infreej.moment_canvas.global.code.ErrorCode;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,12 +30,17 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@PropertySource(value = "classpath:prompt.properties", encoding = "UTF-8")
 public class DiaryServiceImpl implements DiaryService{
 
     private final DiaryRepository diaryRepository;
     private final UserRepository userRepository;
     private final ImageService imageService;
     private final AiService aiService;
+
+
+    @Value("${diary.image.persona}")
+    private String imageSystemPersona;
 
     /**
      * 일기 저장
@@ -144,11 +151,7 @@ public class DiaryServiceImpl implements DiaryService{
 
         // TODO: prompt.properties 만들어서 빼서 사용하자
         // prompt 생성 AI의 persona
-        String systemPersona = """
-				You are a world-class prompt engineer specializing in creating prompts for AI image generators like DALL-E and Midjourney. Your primary mission is to translate a user's diary entry and several creative options into a single, masterful, and visually rich English prompt.
-				Synthesize the 'Main Scene' from the diary's title and content, capturing the core emotion and atmosphere. Seamlessly integrate the 'User's Persona' as the main character in this scene. Incorporate any 'Additional User Requests' as specific, concrete details. Finally, conclude the prompt by describing the 'Desired Art Style' in a detailed and artistic manner.
-				The final output must be a single, cohesive paragraph, written in English, and ready to be used by an image generation AI.
-				""";
+        String systemPersona = imageSystemPersona;
 
         String userRequestTemplate = """
                 아래 정보를 바탕으로 이미지 생성 프롬프트를 만들어 주세요.
