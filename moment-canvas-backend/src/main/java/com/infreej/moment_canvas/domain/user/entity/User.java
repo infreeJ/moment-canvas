@@ -1,5 +1,6 @@
 package com.infreej.moment_canvas.domain.user.entity;
 
+import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
 import com.infreej.moment_canvas.domain.user.dto.request.UpdateRequest;
 import com.infreej.moment_canvas.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
@@ -62,6 +63,12 @@ public class User extends BaseTimeEntity {
         this.birthday = updateRequest.getBirthday();
         this.gender = updateRequest.getGender();
         this.persona = updateRequest.getPersona();
+    }
+
+
+    public void updateUserProfileImage(ImageSaveRequest imageSaveRequest) {
+        this.orgProfileImageName = imageSaveRequest.getOrgImageName();
+        this.savedProfileImageName = imageSaveRequest.getSavedImageName();
     }
 
     // 유저 엔티티 상태 변경 메서드

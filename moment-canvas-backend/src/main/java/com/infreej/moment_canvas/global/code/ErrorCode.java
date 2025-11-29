@@ -51,6 +51,9 @@ public enum ErrorCode {
 
     // ==================== ADMIN 관련 에러 (6xxx) ====================
     ADMIN_FORBIDDEN(HttpStatus.FORBIDDEN, "E5001", "admin.forbidden");
+
+
+
     private final HttpStatus status;
     private final String code;
     private final String messageKey;

@@ -12,8 +12,12 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Tag(name = "Users", description = "유저 API")
 @RestController
@@ -50,7 +54,13 @@ public class UserController {
 
 
     // TODO: 프로필 이미지 수정 컨트롤러 메서드 필요
+    @SetSuccess(SuccessCode.USER_UPDATED)
+    @Operation(summary = "유저 프로필 이미지 변경", security = @SecurityRequirement(name = "JWT"), description = "프로필 이미지 변경 API 입니다.")
+    @PatchMapping(value = "/user/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public String profileImageUpdate(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam MultipartFile profileImage) throws IOException {
 
+        return userService.profileImageUpdate(customUserDetails.getUser().getUserId(), profileImage);
+    }
 
 
     @SetSuccess(SuccessCode.USER_WITHDRAWAL)

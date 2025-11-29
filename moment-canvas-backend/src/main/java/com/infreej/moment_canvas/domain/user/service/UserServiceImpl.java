@@ -1,5 +1,8 @@
 package com.infreej.moment_canvas.domain.user.service;
 
+import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
+import com.infreej.moment_canvas.domain.image.dto.request.ImageType;
+import com.infreej.moment_canvas.domain.image.service.ImageService;
 import com.infreej.moment_canvas.domain.user.dto.request.SignupRequest;
 import com.infreej.moment_canvas.domain.admin.dto.request.StatusChangeRequest;
 import com.infreej.moment_canvas.domain.user.dto.request.UpdateRequest;
@@ -14,6 +17,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,6 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ImageService imageService;
 
 
     @Override
@@ -74,6 +81,22 @@ public class UserServiceImpl implements UserService {
         return UserResponse.from(user);
     }
 
+
+    @Override
+    @Transactional
+    public String profileImageUpdate(Long userId, MultipartFile profileImage) throws IOException {
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
+
+        // 로컬에 파일 저장
+        ImageSaveRequest imageSaveRequest = imageService.saveUploadedImage(profileImage, ImageType.Profile);
+
+        // 엔티티 수정
+        user.updateUserProfileImage(imageSaveRequest);
+
+        return imageSaveRequest.getSavedImageName();
+    }
 
 
     @Override

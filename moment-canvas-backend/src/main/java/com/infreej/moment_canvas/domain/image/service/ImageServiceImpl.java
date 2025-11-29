@@ -2,6 +2,9 @@ package com.infreej.moment_canvas.domain.image.service;
 
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
+import com.infreej.moment_canvas.domain.image.dto.request.ImageType;
+import com.infreej.moment_canvas.global.code.ErrorCode;
+import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -45,18 +48,19 @@ public class ImageServiceImpl implements ImageService {
 
     // 업로드된 파일(MultipartFile) 저장
     @Override
-    public ImageSaveRequest saveUploadedImage(MultipartFile file, String imageType) throws IOException {
+    public ImageSaveRequest saveUploadedImage(MultipartFile file, ImageType imageType) throws IOException {
 
         // 빈 파일 체크
         if (file.isEmpty()) {
-            throw new IllegalArgumentException("파일이 비어있습니다.");
+            log.info("파일이 비어있습니다.");
+            throw new BusinessException(ErrorCode.IMAGE_NOT_FOUND);
         }
 
         // 업로드된 파일의 원본 이름 가져오기
         String orgFileName = file.getOriginalFilename();
 
         // 저장할 경로와 파일명 정보 생성
-        PathInfo pathInfo = createPathInfo(imageType, orgFileName);
+        PathInfo pathInfo = createPathInfo(String.valueOf(imageType), orgFileName);
 
         // MultipartFile의 transferTo 메서드를 사용하여 파일 저장
         file.transferTo(pathInfo.destinationFile);
