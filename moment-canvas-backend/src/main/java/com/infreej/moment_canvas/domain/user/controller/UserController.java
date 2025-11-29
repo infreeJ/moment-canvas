@@ -58,9 +58,9 @@ public class UserController {
     @SetSuccess(SuccessCode.USER_STATUS_CHANGE)
     @Operation(summary = "유저 상태 변경", security = @SecurityRequirement(name = "JWT"), description = "유저 정보 변경 API 입니다. \n - 활성화, 비활성화")
     @PatchMapping("/user/status")
-    public void statusChange(@RequestBody StatusChangeRequest statusChangeRequest) {
+    public void statusChange(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody StatusChangeRequest statusChangeRequest) {
 
-        userService.statusChange(statusChangeRequest);
+        userService.statusChange(customUserDetails.getUser().getRole(), statusChangeRequest);
     }
 
     @SetSuccess(SuccessCode.USER_WITHDRAWAL)

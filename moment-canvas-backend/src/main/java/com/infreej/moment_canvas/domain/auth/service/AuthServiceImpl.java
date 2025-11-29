@@ -31,6 +31,8 @@ public class AuthServiceImpl implements AuthService {
     @Override
     @Transactional
     public TokenResponse login(LoginRequest request) {
+        
+        // TODO: 존재하지 않는 아이디를 받으면 403 발생. 예외처리 필요
 
         // ID/PW를 기반으로 인증 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken =

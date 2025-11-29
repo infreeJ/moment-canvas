@@ -47,8 +47,10 @@ public enum ErrorCode {
     AI_SERVICE_UNAVAILABLE(HttpStatus.SERVICE_UNAVAILABLE, "E5003", "ai.service.unavailable"),
     AI_QUOTA_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "E5004", "ai.quota.exceeded"),
     AI_AUTH_ERROR(HttpStatus.UNAUTHORIZED, "E5005", "ai.auth.error"),
-    AI_UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E5006", "ai.unknown.error");
+    AI_UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E5006", "ai.unknown.error"),
 
+    // ==================== ADMIN 관련 에러 (6xxx) ====================
+    ADMIN_FORBIDDEN(HttpStatus.FORBIDDEN, "E5001", "admin.forbidden");
     private final HttpStatus status;
     private final String code;
     private final String messageKey;
