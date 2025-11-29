@@ -3,7 +3,7 @@ package com.infreej.moment_canvas.domain.user.controller;
 import com.infreej.moment_canvas.global.annotation.SetSuccess;
 import com.infreej.moment_canvas.global.code.SuccessCode;
 import com.infreej.moment_canvas.domain.user.dto.request.SignupRequest;
-import com.infreej.moment_canvas.domain.user.dto.request.StatusChangeRequest;
+import com.infreej.moment_canvas.domain.admin.dto.request.StatusChangeRequest;
 import com.infreej.moment_canvas.domain.user.dto.request.UpdateRequest;
 import com.infreej.moment_canvas.domain.user.dto.response.UserResponse;
 import com.infreej.moment_canvas.domain.user.service.UserService;
@@ -52,16 +52,6 @@ public class UserController {
     // TODO: 프로필 이미지 수정 컨트롤러 메서드 필요
 
 
-    /**
-     * ADMIN 전용
-     */
-    @SetSuccess(SuccessCode.USER_STATUS_CHANGE)
-    @Operation(summary = "유저 상태 변경", security = @SecurityRequirement(name = "JWT"), description = "유저 정보 변경 API 입니다. \n - 활성화, 비활성화")
-    @PatchMapping("/user/status")
-    public void statusChange(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody StatusChangeRequest statusChangeRequest) {
-
-        userService.statusChange(customUserDetails.getUser().getRole(), statusChangeRequest);
-    }
 
     @SetSuccess(SuccessCode.USER_WITHDRAWAL)
     @Operation(summary = "유저 탈퇴 처리", security = @SecurityRequirement(name = "JWT"), description = "유저 탈퇴 처리 API 입니다.")

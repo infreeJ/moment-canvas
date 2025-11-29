@@ -16,6 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class SignupRequest {
 
+    // TODO: 정규식 적용 안됨. 원인 파악 필요
     @Pattern(regexp = "^[a-zA-Z]{8,16}$", message = "아이디는 영문 8~16자여야 합니다.")
     private String loginId;
     @Pattern(

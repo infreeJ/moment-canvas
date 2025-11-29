@@ -1,4 +1,4 @@
-package com.infreej.moment_canvas.domain.user.dto.request;
+package com.infreej.moment_canvas.domain.admin.dto.request;
 
 import com.infreej.moment_canvas.domain.user.entity.Status;
 import lombok.AllArgsConstructor;
