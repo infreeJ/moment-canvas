@@ -11,7 +11,7 @@ public interface UserService {
 
     public UserResponse findUserById(long userId);
 
-    public UserResponse update(UpdateRequest updateRequest);
+    public UserResponse update(Long userId, UpdateRequest updateRequest);
 
     public void statusChange(StatusChangeRequest statusChangeRequest);
 

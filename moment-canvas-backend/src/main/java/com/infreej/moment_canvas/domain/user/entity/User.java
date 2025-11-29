@@ -1,5 +1,6 @@
 package com.infreej.moment_canvas.domain.user.entity;
 
+import com.infreej.moment_canvas.domain.user.dto.request.UpdateRequest;
 import com.infreej.moment_canvas.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -52,13 +53,15 @@ public class User extends BaseTimeEntity {
     private Role role = Role.USER; // 권한: (USER, VIP, ADMIN)
 
 
-    // 유저 엔티티 정보 변경 메서드
-    public void updateUserInfo(LocalDate birthday, Gender gender, String persona, String orgProfileImageName, String savedProfileImageName) {
-        this.birthday = birthday;
-        this.gender = gender;
-        this.persona = persona;
-        this.orgProfileImageName = orgProfileImageName;
-        this.savedProfileImageName = savedProfileImageName;
+    /**
+     * 유저 엔티티 정보 변경 메서드
+     * 각 값들은 상태값으로 관리되기 때문에 null로 들어오지 않으므로 null 처리가 필요없다.
+     * @param updateRequest 유저 수정 요청 정보
+     */
+    public void updateUserInfo(UpdateRequest updateRequest) {
+        this.birthday = updateRequest.getBirthday();
+        this.gender = updateRequest.getGender();
+        this.persona = updateRequest.getPersona();
     }
 
     // 유저 엔티티 상태 변경 메서드

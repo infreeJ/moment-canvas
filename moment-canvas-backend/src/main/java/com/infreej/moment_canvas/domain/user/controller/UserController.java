@@ -43,10 +43,13 @@ public class UserController {
     @SetSuccess(SuccessCode.USER_UPDATED)
     @Operation(summary = "유저 정보 변경", security = @SecurityRequirement(name = "JWT"), description = "유저 정보 변경 API 입니다. \n - 변경이 필요한 정보만 작성하세요.")
     @PatchMapping("/user")
-    public UserResponse update(@RequestBody UpdateRequest updateRequest) {
+    public UserResponse update(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody UpdateRequest updateRequest) {
 
-        return userService.update(updateRequest);
+        return userService.update(customUserDetails.getUser().getUserId(), updateRequest);
     }
+
+
+    // TODO: 프로필 이미지 수정 컨트롤러 메서드 필요
 
 
     /**

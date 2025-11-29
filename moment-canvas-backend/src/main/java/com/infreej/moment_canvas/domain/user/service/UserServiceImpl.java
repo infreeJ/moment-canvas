@@ -53,22 +53,22 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * 유저 정보 수정 메서드
+     * - 프로필 이미지 수정은 ImageServiceImpl.java 에서 따로 처리한다.
+     * @param userId PK
+     * @param updateRequest 유저 요청 정보
+     */
     @Override
     @Transactional
-    public UserResponse update(UpdateRequest updateRequest) {
+    public UserResponse update(Long userId, UpdateRequest updateRequest) {
 
         // 엔티티 조회
-        User user = userRepository.findById(updateRequest.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         // 엔티티 필드 수정
-        user.updateUserInfo(
-                updateRequest.getBirthday(),
-                updateRequest.getGender(),
-                updateRequest.getPersona(),
-                updateRequest.getOrgProfileImageName(),
-                updateRequest.getSavedProfileImageName()
-        );
+        user.updateUserInfo(updateRequest);
 
         return UserResponse.from(user);
     }
