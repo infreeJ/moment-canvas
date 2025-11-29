@@ -30,7 +30,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-@PropertySource(value = "classpath:prompt.properties", encoding = "UTF-8")
+@PropertySource(value = "classpath:persona.properties", encoding = "UTF-8")
 public class DiaryServiceImpl implements DiaryService{
 
     private final DiaryRepository diaryRepository;
@@ -139,6 +139,7 @@ public class DiaryServiceImpl implements DiaryService{
      * @return generateImage를 통해 반환된 이미지 URL
      */
     @Override
+    @Transactional
     public String generateDiaryImage(DiaryImageGenerateRequest diaryImageGenerateRequest) {
 
         // 유저 특징 조회
@@ -149,7 +150,6 @@ public class DiaryServiceImpl implements DiaryService{
         DiaryContent diaryContent = diaryRepository.findDiaryContentByDiaryId(diaryImageGenerateRequest.getDiaryId())
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
-        // TODO: prompt.properties 만들어서 빼서 사용하자
         // prompt 생성 AI의 persona
         String systemPersona = imageSystemPersona;
 
@@ -161,7 +161,7 @@ public class DiaryServiceImpl implements DiaryService{
                 - 오늘의 기분: %s (1 = 나쁨 / 5 = 좋음)
                 - 희망하는 그림 스타일: %s
                 - 추가 요청사항: %s
-                - 일기 작성자의 나이: %s
+                - 일기 작성자의 생년월일: %s
                 - 일기 작성자의 성별: %s
                 - 일기 작성자의 특징: %s
                 """;
@@ -175,7 +175,7 @@ public class DiaryServiceImpl implements DiaryService{
                 diaryImageGenerateRequest.getStyle(),
                 diaryImageGenerateRequest.getOption(),
                 // 사용자 정보 (DB에서 조회)
-                userCharacteristic.getAge(),
+                userCharacteristic.getBirthday(),
                 userCharacteristic.getGender(),
                 userCharacteristic.getPersona()
         );

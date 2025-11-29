@@ -4,6 +4,9 @@ import com.infreej.moment_canvas.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import javax.validation.constraints.Pattern;
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "users")
 @Getter
@@ -23,7 +26,7 @@ public class User extends BaseTimeEntity {
     private String pwd; // 비밀번호
 
     @Column
-    private Integer age; // 나이
+    private LocalDate birthday; // 생년월일
 
     @Column(length = 10)
     @Enumerated(EnumType.STRING)
@@ -46,12 +49,12 @@ public class User extends BaseTimeEntity {
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
-    private Role role = Role.USER;
+    private Role role = Role.USER; // 권한: (USER, VIP, ADMIN)
 
 
     // 유저 엔티티 정보 변경 메서드
-    public void updateUserInfo(Integer age, Gender gender, String persona, String orgProfileImageName, String savedProfileImageName) {
-        this.age = age;
+    public void updateUserInfo(LocalDate birthday, Gender gender, String persona, String orgProfileImageName, String savedProfileImageName) {
+        this.birthday = birthday;
         this.gender = gender;
         this.persona = persona;
         this.orgProfileImageName = orgProfileImageName;

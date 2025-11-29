@@ -26,6 +26,11 @@ public class JwtUtil {
         this.refreshExpMs = refreshExpMs;
     }
 
+    // JWT에서 userId 추출
+    public Long getUserId(String token) {
+        return getPayload(token).get("userId", Long.class);
+    }
+
     // JWT에서 username 추출
     public String getUsername(String token) {
         return getPayload(token).get("username", String.class);
@@ -50,18 +55,19 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public String createAccessToken(String username, String role) {
-        return createJwt(username, role, this.accessExpMs);
+    public String createAccessToken(Long userId, String username, String role) {
+        return createJwt(userId, username, role, this.accessExpMs);
     }
 
-    public String createRefreshToken(String username, String role) {
-        return createJwt(username, role, this.refreshExpMs);
+    public String createRefreshToken(Long userId, String username, String role) {
+        return createJwt(userId, username, role, this.refreshExpMs);
     }
 
     // JWT 생성 메서드
     // username, role(권한), 만료 시간(expiredMs)을 포함한 JWT 발급
-    private String createJwt(String username, String role, Long expiredMs) {
+    private String createJwt(Long userId, String username, String role, Long expiredMs) {
         return Jwts.builder()
+                .claim("userId", userId)
                 .claim("username", username)
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis())) // 발급 시간

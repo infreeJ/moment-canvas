@@ -6,6 +6,7 @@ import com.infreej.moment_canvas.domain.user.entity.Status;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Getter
@@ -16,7 +17,7 @@ import java.time.LocalDateTime;
 public class UserResponse {
     private long userId;
     private String loginId;
-    private Integer age;
+    private LocalDate birthday;
     private Gender gender;
     private String persona;
     private String savedProfileImageName;
@@ -28,7 +29,7 @@ public class UserResponse {
         return UserResponse.builder()
                 .userId(user.getUserId())
                 .loginId(user.getLoginId())
-                .age(user.getAge())
+                .birthday(user.getBirthday())
                 .gender(user.getGender())
                 .persona(user.getPersona())
                 .savedProfileImageName(user.getSavedProfileImageName())

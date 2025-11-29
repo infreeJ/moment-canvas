@@ -46,14 +46,15 @@ public class AuthServiceImpl implements AuthService {
 
         // 인증 성공 후 유저 정보 꺼내기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-        String username = userDetails.getUsername();
 
+        Long userId = userDetails.getUser().getUserId();
+        String username = userDetails.getUsername();
         // Role 가져오기
         String role = userDetails.getUser().getRole().toString(); // "ADMIN" or "USER"
 
         // JWT 생성
-        String accessToken = jwtUtil.createAccessToken(username, role);
-        String refreshToken = jwtUtil.createRefreshToken(username, role);
+        String accessToken = jwtUtil.createAccessToken(userId, username, role);
+        String refreshToken = jwtUtil.createRefreshToken(userId, username, role);
 
         // Redis에 저장
         RefreshToken redisToken = RefreshToken.builder()
@@ -105,9 +106,11 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(ErrorCode.USER_ACCOUNT_DISABLED);
         }
 
+        Long userId = user.getUserId();
+
         // 모든 검증 통과 -> 새로운 Access Token, Refresh Token 발급
-        String newAccessToken = jwtUtil.createAccessToken(username, role);
-        String newRefreshToken = jwtUtil.createRefreshToken(username, role);
+        String newAccessToken = jwtUtil.createAccessToken(userId, username, role);
+        String newRefreshToken = jwtUtil.createRefreshToken(userId, username, role);
 
         // Redis 정보 업데이트
         RefreshToken updateToken = RefreshToken.builder()

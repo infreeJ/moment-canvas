@@ -9,12 +9,14 @@ import com.infreej.moment_canvas.domain.user.repository.UserRepository;
 import com.infreej.moment_canvas.global.code.ErrorCode;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
@@ -24,9 +26,14 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserResponse signup(SignupRequest signupRequest) {
-        
-        // TODO: 데이터 무결성 검증 로직 필요
 
+        // 아이디 중복 체크
+        if(userRepository.existsByLoginId(signupRequest.getLoginId())) {
+            log.info("이미 사용 중인 아이디입니다.");
+            throw new BusinessException(ErrorCode.USER_DUPLICATE_LOGINID);
+        }
+
+        // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signupRequest.getPwd());
         signupRequest.setPwd(encodedPassword);
 
@@ -56,7 +63,7 @@ public class UserServiceImpl implements UserService {
 
         // 엔티티 필드 수정
         user.updateUserInfo(
-                updateRequest.getAge(),
+                updateRequest.getBirthday(),
                 updateRequest.getGender(),
                 updateRequest.getPersona(),
                 updateRequest.getOrgProfileImageName(),
