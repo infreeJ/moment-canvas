@@ -16,6 +16,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
 
 @Configuration //설정 클래스임을 명시
 @EnableWebSecurity // Security의 웹 보완 기능을 활성화해서 모든 요청을 가로채고, 보안 규칙 적용
@@ -34,6 +39,8 @@ public class SecurityConfig {
         };
 
         http
+                // CORS 설정
+                .cors(corsConfigurer -> corsConfigurer.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable) // CSRF 비활성화
                 .formLogin(AbstractHttpConfigurer::disable) // Form 로그인 비활성화
                 .httpBasic(AbstractHttpConfigurer::disable) // HTTP Basic 비활성화
@@ -58,6 +65,33 @@ public class SecurityConfig {
 
         return http.build();
     }
+
+
+    // CORS 설정
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration configuration = new CorsConfiguration();
+
+        // 프론트엔드 주소 허용
+        configuration.setAllowedOrigins(List.of("http://localhost:5173"));
+
+        // 허용할 HTTP 메서드
+        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
+
+        // 허용할 헤더
+        configuration.setAllowedHeaders(List.of("*"));
+
+        // 클라이언트가 응답 헤더에서 볼 수 있는 값
+        configuration.setExposedHeaders(List.of("Authorization"));
+
+        // 쿠키나 인증 정보를 포함한 요청을 허용할지
+        configuration.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", configuration); // 모든 경로에 대해 적용
+        return source;
+    }
+
 
     @Bean
     public PasswordEncoder passwordEncoder() {
