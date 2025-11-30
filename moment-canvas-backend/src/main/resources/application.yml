@@ -11,5 +11,8 @@ spring:
     openai:
       api-key: ${OPENAI_API_KEY} # OpenAI API KEY
 
+file:
+  upload-dir: file:../../images/  # 로컬용
+
 server:
   port: 9090

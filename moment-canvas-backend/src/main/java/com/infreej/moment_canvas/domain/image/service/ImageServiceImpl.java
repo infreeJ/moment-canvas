@@ -7,6 +7,7 @@ import com.infreej.moment_canvas.global.code.ErrorCode;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,6 +25,9 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
+    @Value("${file.upload-dir}")
+    private String uploadDir;
+
     /**
      * 이미지 URL 다운로드 메서드
      * @param imageDownloadRequest url, type
@@ -34,8 +38,15 @@ public class ImageServiceImpl implements ImageService {
 
         // 저장할 경로와 파일명 정보 생성
         String imageUrl = imageDownloadRequest.getImageUrl();
-        // 불필요한 부분을 제거한 파일명 추출 (URL 방식)
-        String orgFileName = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+
+        // 쿼리 스트링 제거
+        String urlWithoutQuery = imageUrl;
+        int queryIndex = imageUrl.indexOf("?");
+        if (queryIndex != -1) {
+            urlWithoutQuery = imageUrl.substring(0, queryIndex);
+        }
+        // 순수 파일명 추출
+        String orgFileName = urlWithoutQuery.substring(urlWithoutQuery.lastIndexOf("/") + 1);
 
         // 경로 및 파일명 생성
         PathInfo pathInfo = createPathInfo(String.valueOf(imageDownloadRequest.getImageType()), orgFileName);
@@ -87,14 +98,13 @@ public class ImageServiceImpl implements ImageService {
      */
     private PathInfo createPathInfo(String imageType, String orgFileName) throws IOException {
 
-        // 저장할 폴더는 백엔드 폴더의 두 단계 상위에 있다.
-        String uploadBaseDir = "../../images/";
+        String purePath = uploadDir.replace("file:", "");
 
         // 폴더명과 일치시키도록 타입명에 문자열 추가
         String subPath = imageType + "-images/";
 
         // 이미지 종류에 따라 하위 폴더 경로를 결정 (diary-images, profile-images)
-        Path destinationDirectory = Paths.get(uploadBaseDir, subPath);
+        Path destinationDirectory = Paths.get(purePath, subPath);
 
         // 하위 폴더가 존재하지 않으면 생성
         if (Files.notExists(destinationDirectory)) {
@@ -102,14 +112,14 @@ public class ImageServiceImpl implements ImageService {
             System.out.println("디렉토리 생성됨: " + destinationDirectory);
         }
 
-        String fileExtension = "";
+        String fileExtension = ".jpg";
         int lastDot = orgFileName.lastIndexOf(".");
         if(lastDot > 0) {
             fileExtension = orgFileName.substring(lastDot);
         }
 
         // UUID로 저장할 파일명 생성
-        String savedFileName = UUID.randomUUID().toString() + ".jpg";
+        String savedFileName = UUID.randomUUID().toString() + fileExtension;
 
         // 최종 저장 경로와 파일 이름 결합
         Path destinationFile = destinationDirectory.resolve(savedFileName);
