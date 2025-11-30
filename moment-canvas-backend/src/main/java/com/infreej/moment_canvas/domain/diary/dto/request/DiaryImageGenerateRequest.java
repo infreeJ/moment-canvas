@@ -14,7 +14,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DiaryImageGenerateRequest {
 
-    private long userId; // 유저 정보를 꺼내기 위한 PK
     private long diaryId; // 일기 정보를 꺼내기 위한 PK
     private String style; // 이미지 스타일
     private String option; // 추가 요청 사항

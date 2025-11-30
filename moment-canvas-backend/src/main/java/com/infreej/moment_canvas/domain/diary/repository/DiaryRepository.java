@@ -16,4 +16,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
     // diaryId와 userId가 동시에 일치하는 일기만 조회
     Optional<Diary> findByDiaryIdAndUser_UserId(Long diaryId, Long userId);
+
+    // diaryId와 userId가 동시에 일치하는 일기만 조회
+    Optional<DiaryContent> findDiaryContentByDiaryIdAndUser_UserId(Long diaryId, Long userId);
 }

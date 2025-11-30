@@ -79,18 +79,18 @@ public class DiaryController {
     @TimeCheck
     @SetSuccess(SuccessCode.IMAGE_GENERATED)
     @PostMapping("/diary/image-generate")
-    public String generateDiaryImage(@RequestBody DiaryImageGenerateRequest diaryImageGenerateRequest) {
+    public String generateDiaryImage(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody DiaryImageGenerateRequest diaryImageGenerateRequest) {
 
-        return diaryService.generateDiaryImage(diaryImageGenerateRequest);
+        return diaryService.generateDiaryImage(customUserDetails.getUser().getUserId(), diaryImageGenerateRequest);
     }
 
 
     @SetSuccess(SuccessCode.IMAGE_CREATED)
     @Operation(summary = "생성된 일기 이미지 저장", security = @SecurityRequirement(name = "JWT"), description = "일기 저장 API 입니다.")
     @PostMapping("/diary/{diaryId}/image-save")
-    public DiaryResponse diaryImageSave(@PathVariable long diaryId, @RequestBody ImageDownloadRequest imageDownloadRequest) throws IOException {
+    public DiaryResponse diaryImageSave(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long diaryId, @RequestBody ImageDownloadRequest imageDownloadRequest) throws IOException {
 
-        return diaryService.diaryImageSave(diaryId, imageDownloadRequest);
+        return diaryService.diaryImageSave(customUserDetails.getUser().getUserId(), diaryId, imageDownloadRequest);
     }
 
 

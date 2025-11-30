@@ -22,8 +22,9 @@ public interface DiaryService {
 
     public void delete(long userId, long diaryId);
 
-    public DiaryResponse diaryImageSave(long diaryId, ImageDownloadRequest imageDownloadRequest) throws IOException;
+    public String generateDiaryImage(long userId, DiaryImageGenerateRequest diaryImageGenerateRequest);
 
-    public String generateDiaryImage(DiaryImageGenerateRequest diaryImageGenerateRequest);
+    public DiaryResponse diaryImageSave(long userId, long diaryId, ImageDownloadRequest imageDownloadRequest) throws IOException;
+
 
     }

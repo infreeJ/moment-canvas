@@ -114,9 +114,7 @@ public class DiaryServiceImpl implements DiaryService{
         diary.updateDiaryInfo(
                 diaryUpdateRequest.getTitle(),
                 diaryUpdateRequest.getContent(),
-                diaryUpdateRequest.getMood(),
-                diaryUpdateRequest.getOrgDiaryImageName(),
-                diaryUpdateRequest.getSavedDiaryImageName()
+                diaryUpdateRequest.getMood()
         );
 
         return DiaryResponse.from(diary);
@@ -144,14 +142,15 @@ public class DiaryServiceImpl implements DiaryService{
      */
     @Override
     @Transactional
-    public String generateDiaryImage(DiaryImageGenerateRequest diaryImageGenerateRequest) {
+    public String generateDiaryImage(long userId, DiaryImageGenerateRequest diaryImageGenerateRequest) {
 
         // 유저 특징 조회
-        UserCharacteristic userCharacteristic = userRepository.findByUserId(diaryImageGenerateRequest.getUserId())
+        UserCharacteristic userCharacteristic = userRepository.findByUserId(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
-        // 일기 내용 조회
-        DiaryContent diaryContent = diaryRepository.findDiaryContentByDiaryId(diaryImageGenerateRequest.getDiaryId())
+        // 일기 내용(DiaryContent) 조회(현재 접속된 사용자의 일기 중 diaryId가 일치하는 것을 찾는다.)
+        // 일치하지 않을 경우 403이 아닌 404를 응답하기 때문에 보안적으로 더 안전하다.
+        DiaryContent diaryContent = diaryRepository.findDiaryContentByDiaryIdAndUser_UserId(diaryImageGenerateRequest.getDiaryId(), userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
         // prompt 생성 AI의 persona
@@ -197,10 +196,11 @@ public class DiaryServiceImpl implements DiaryService{
      */
     @Override
     @Transactional
-    public DiaryResponse diaryImageSave(long diaryId, ImageDownloadRequest imageDownloadRequest) throws IOException {
+    public DiaryResponse diaryImageSave(long userId, long diaryId, ImageDownloadRequest imageDownloadRequest) throws IOException {
 
-        // 일기 조회
-        Diary diary = diaryRepository.findById(diaryId)
+        // 일기 조회(현재 접속된 사용자의 일기 중 diaryId가 일치하는 것을 찾는다.)
+        // 일치하지 않을 경우 403이 아닌 404를 응답하기 때문에 보안적으로 더 안전하다.
+        Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
         // org, saved가 채워져서 반환된다.

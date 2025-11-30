@@ -14,7 +14,5 @@ public class DiaryUpdateRequest {
     private String title;
     private String content;
     private int mood;
-    private String orgDiaryImageName;
-    private String savedDiaryImageName;
     // TODO: 이미지 필드는 필요한가? 확인 필요
 }
