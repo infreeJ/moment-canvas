@@ -32,7 +32,7 @@ public enum ErrorCode {
 
     // ==================== 일기 관련 에러 (3xxx) ====================
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "E3001", "error.diary.not.found"),
-    DIARY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "E3002", "error.diary.access.denied"), // 남의 일기 수정 시도 등
+    DIARY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "E3002", "error.diary.access.denied"), // 남의 일기 접근 시도
 
 
     // ==================== 이미지 관련 에러 (4xxx) ====================

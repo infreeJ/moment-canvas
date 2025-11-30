@@ -13,4 +13,7 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     List<DiarySummary> findAllByUser_UserIdOrderByCreatedAtDesc(long userId);
 
     Optional<DiaryContent> findDiaryContentByDiaryId(Long diaryId);
+
+    // diaryId와 userId가 동시에 일치하는 일기만 조회
+    Optional<Diary> findByDiaryIdAndUser_UserId(Long diaryId, Long userId);
 }

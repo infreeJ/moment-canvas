@@ -13,7 +13,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DiaryCreateRequest {
 
-    private Long userId;
     private String title;
     private String content;
     private int mood;

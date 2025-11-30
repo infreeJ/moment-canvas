@@ -16,7 +16,6 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class SignupRequest {
 
-    // TODO: 정규식 적용 안됨. 원인 파악 필요
     @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]{4,16}$",
             message = "아이디는 영문과 숫자를 포함한 4~16자여야 하며, 영문은 필수입니다.")
     private String loginId;

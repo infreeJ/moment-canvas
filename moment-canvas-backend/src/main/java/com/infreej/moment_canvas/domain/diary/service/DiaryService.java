@@ -12,15 +12,15 @@ import java.util.List;
 
 public interface DiaryService {
 
-    public DiaryResponse create(DiaryCreateRequest diaryCreateRequest);
+    public DiaryResponse create(Long userId, DiaryCreateRequest diaryCreateRequest);
 
-    public DiaryResponse findDiaryById(long diaryId);
+    public DiaryResponse findDiaryById(Long userId, long diaryId);
 
     public List<DiarySummaryResponse> findDiaryListByUserId(long userId);
 
-    public DiaryResponse update(DiaryUpdateRequest diaryUpdateRequest);
+    public DiaryResponse update(long userId, DiaryUpdateRequest diaryUpdateRequest);
 
-    public void delete(long diaryId);
+    public void delete(long userId, long diaryId);
 
     public DiaryResponse diaryImageSave(long diaryId, ImageDownloadRequest imageDownloadRequest) throws IOException;
 

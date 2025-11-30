@@ -49,10 +49,10 @@ public class DiaryServiceImpl implements DiaryService{
      */
     @Override
     @Transactional
-    public DiaryResponse create(DiaryCreateRequest diaryCreateRequest) {
+    public DiaryResponse create(Long userId, DiaryCreateRequest diaryCreateRequest) {
 
         // 유저 조회
-        User user = userRepository.findById(diaryCreateRequest.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         // 유저를 넣고 Entity로 변환
@@ -69,10 +69,11 @@ public class DiaryServiceImpl implements DiaryService{
      */
     @Override
     @Transactional
-    public DiaryResponse findDiaryById(long diaryId) {
+    public DiaryResponse findDiaryById(Long userId, long diaryId) {
 
-        // 일기 조회
-        Diary diary = diaryRepository.findById(diaryId)
+        // 일기 조회(현재 접속된 사용자의 일기 중 diaryId가 일치하는 것을 찾는다.)
+        // 일치하지 않을 경우 403이 아닌 404를 응답하기 때문에 보안적으로 더 안전하다.
+        Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
         return DiaryResponse.from(diary);
@@ -102,12 +103,11 @@ public class DiaryServiceImpl implements DiaryService{
      */
     @Override
     @Transactional
-    public DiaryResponse update(DiaryUpdateRequest diaryUpdateRequest) {
+    public DiaryResponse update(long userId, DiaryUpdateRequest diaryUpdateRequest) {
 
-        long diaryId = diaryUpdateRequest.getDiaryId();
-
-        // 일기 조회
-        Diary diary = diaryRepository.findById(diaryId)
+        // 일기 조회(현재 접속된 사용자의 일기 중 diaryId가 일치하는 것을 찾는다.)
+        // 일치하지 않을 경우 403이 아닌 404를 응답하기 때문에 보안적으로 더 안전하다.
+        Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryUpdateRequest.getDiaryId(), userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
         // 일기 필드 변경
@@ -124,11 +124,15 @@ public class DiaryServiceImpl implements DiaryService{
 
     @Override
     @Transactional
-    public void delete(long diaryId) {
+    public void delete(long userId, long diaryId) {
 
-        // TODO: 권한 조회 후 삭제 필요
-        
-        diaryRepository.deleteById(diaryId);
+        // 일기 조회(현재 접속된 사용자의 일기 중 diaryId가 일치하는 것을 찾는다.)
+        // 일치하지 않을 경우 403이 아닌 404를 응답하기 때문에 보안적으로 더 안전하다.
+        Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
+
+        // 조회한 엔티티를 그대로 넘겨줘서 삭제한다.
+        diaryRepository.delete(diary);
     }
 
 
