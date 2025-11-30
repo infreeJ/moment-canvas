@@ -17,7 +17,6 @@ import lombok.Setter;
 @NoArgsConstructor
 public class DiaryCreateRequest {
 
-    // TODO: 입력값이 null이 아니도록 검증 필요
     private String title;
     private String content;
     private int mood;
