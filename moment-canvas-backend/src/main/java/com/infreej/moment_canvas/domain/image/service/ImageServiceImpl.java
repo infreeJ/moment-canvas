@@ -24,7 +24,11 @@ import java.util.UUID;
 @RequiredArgsConstructor
 public class ImageServiceImpl implements ImageService {
 
-    // 이미지 URL 다운로드
+    /**
+     * 이미지 URL 다운로드 메서드
+     * @param imageDownloadRequest url, type
+     * @return ImageSaveRequest DB에 이미지를 저장하기 위한 Request
+     */
     @Override
     public ImageSaveRequest downloadUrlImage(ImageDownloadRequest imageDownloadRequest) throws IOException {
 
@@ -46,7 +50,12 @@ public class ImageServiceImpl implements ImageService {
     }
 
 
-    // 업로드된 파일(MultipartFile) 저장
+    /**
+     * 업로드된 파일(MultipartFile) 저장
+     * @param file 사용자가 업로드한 이미지
+     * @param imageType 이미지 타입
+     * @return ImageSaveRequest DB에 이미지를 저장하기 위한 Request
+     */
     @Override
     public ImageSaveRequest saveUploadedImage(MultipartFile file, ImageType imageType) throws IOException {
 
@@ -70,7 +79,12 @@ public class ImageServiceImpl implements ImageService {
     }
 
 
-    // 디렉토리 생성 및 파일명 생성
+    /**
+     * 디렉토리 생성 및 파일명 생성용 내부 메서드
+     * @param imageType 이미지 타입
+     * @param orgFileName 원본 이미지명
+     * @return 경로
+     */
     private PathInfo createPathInfo(String imageType, String orgFileName) throws IOException {
 
         // 저장할 폴더는 백엔드 폴더의 두 단계 상위에 있다.
@@ -104,7 +118,12 @@ public class ImageServiceImpl implements ImageService {
     }
 
 
-    // 내부에서만 사용할 데이터 운반용 클래스
+    /**
+     * 내부에서만 사용할 데이터 운반용 클래스
+     * @param orgFileName 원본 이미지명
+     * @param savedFileName 저장된 이미지명
+     * @param destinationFile 경로
+     */
     private record PathInfo(String orgFileName, String savedFileName, Path destinationFile) {}
 
 

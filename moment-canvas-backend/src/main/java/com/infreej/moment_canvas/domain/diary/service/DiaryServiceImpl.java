@@ -68,7 +68,7 @@ public class DiaryServiceImpl implements DiaryService{
      * @return DiaryResponse
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long userId, long diaryId) {
 
         // 일기 조회(현재 접속된 사용자의 일기 중 diaryId가 일치하는 것을 찾는다.)
@@ -86,7 +86,7 @@ public class DiaryServiceImpl implements DiaryService{
      * @return List<DiarySummaryResponse> (content가 제외된 일기 상세 정보)
      */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public List<DiarySummaryResponse> findDiaryListByUserId(long userId) {
 
         List<DiarySummary> diaryList = diaryRepository.findAllByUser_UserIdOrderByCreatedAtDesc(userId);
@@ -120,6 +120,12 @@ public class DiaryServiceImpl implements DiaryService{
         return DiaryResponse.from(diary);
     }
 
+
+    /**
+     * 일기 삭제
+     * @param userId 유저 PK
+     * @param diaryId 일기 PK
+     */
     @Override
     @Transactional
     public void delete(long userId, long diaryId) {

@@ -44,7 +44,6 @@ public class AuthController {
     @SetSuccess(SuccessCode.AUTH_LOGOUT_SUCCESS)
     @PostMapping("/logout")
     public void logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        // @AuthenticationPrincipal: 현재 로그인한 사용자의 정보를 바로 가져옴
         authService.logout(userDetails.getUsername());
     }
 }

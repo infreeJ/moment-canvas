@@ -28,8 +28,10 @@ public class AiServiceImpl implements AiService{
     @Override
     public String generateImage(String systemPersona, String userRequest) {
 
+        // 이미지 프롬프트 생성 메서드 호출
         String prompt = generateImagePrompt(systemPersona, userRequest);
 
+        // 이미지 모델 옵션 설정
         ImageOptions options = ImageOptionsBuilder.builder()
                 .model("dall-e-2") // TODO: 배포 시 dall-e-3로 모델 변경
 //                .style("")
@@ -39,8 +41,8 @@ public class AiServiceImpl implements AiService{
                 .N(1)
                 .build();
 
-        ImagePrompt imagePrompt = new ImagePrompt(prompt, options);
-        ImageResponse imageResponse = imageModel.call(imagePrompt);
+        ImagePrompt imagePrompt = new ImagePrompt(prompt, options); // 프롬프트 조합
+        ImageResponse imageResponse = imageModel.call(imagePrompt); // OpneAI 호출
 
         String imageUrl;
         try {

@@ -32,6 +32,12 @@ public class AuthServiceImpl implements AuthService {
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
 
+
+    /**
+     * 로그인 메서드
+     * @param loginRequest 아이디, 비밀번호
+     * @return accessToken, RefreshToken 반환
+     */
     @Override
     @Transactional
     public TokenResponse login(LoginRequest loginRequest) {
@@ -71,6 +77,7 @@ public class AuthServiceImpl implements AuthService {
                 .build();
         refreshTokenRepository.save(redisToken);
 
+        // 토큰 반환
         return TokenResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
@@ -133,8 +140,11 @@ public class AuthServiceImpl implements AuthService {
                 .build();
     }
 
-
-    // 로그아웃
+    
+    /**
+     * 로그아웃 메서드
+     * @param username loginId
+     */
     @Override
     @Transactional
     public void logout(String username) {

@@ -4,10 +4,8 @@ import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageType;
 import com.infreej.moment_canvas.domain.image.service.ImageService;
 import com.infreej.moment_canvas.domain.user.dto.request.SignupRequest;
-import com.infreej.moment_canvas.domain.admin.dto.request.StatusChangeRequest;
 import com.infreej.moment_canvas.domain.user.dto.request.UpdateRequest;
 import com.infreej.moment_canvas.domain.user.dto.response.UserResponse;
-import com.infreej.moment_canvas.domain.user.entity.Role;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
 import com.infreej.moment_canvas.global.code.ErrorCode;
@@ -31,6 +29,11 @@ public class UserServiceImpl implements UserService {
     private final ImageService imageService;
 
 
+    /**
+     * 회원가입 메서드
+     * @param signupRequest 회원 정보
+     * @return 유저 정보
+     */
     @Override
     @Transactional
     public UserResponse signup(SignupRequest signupRequest) {
@@ -50,8 +53,13 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * 유저 정보 조회(마이페이지 용도)
+     * @param userId 유저 PK
+     * @return 유저 정보
+     */
     @Override
-    @Transactional
+    @Transactional(readOnly = true)
     public UserResponse findUserById(long userId) {
 
         User user = userRepository.findById(userId)
@@ -82,6 +90,12 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * 프로필 이미지 업데이터 메서드
+     * @param userId 유저 PK
+     * @param profileImage 업로드된 이미지
+     * @return 저장된 프로필 이미지명
+     */
     @Override
     @Transactional
     public String profileImageUpdate(Long userId, MultipartFile profileImage) throws IOException {
@@ -99,6 +113,10 @@ public class UserServiceImpl implements UserService {
     }
 
 
+    /**
+     * 유저 탈퇴 메서드 (논리 삭제)
+     * @param userId 유저 PK
+     */
     @Override
     @Transactional
     public void withdrawal(long userId) {

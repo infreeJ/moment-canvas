@@ -9,22 +9,26 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
+/**
+ * 사용자 정보 Response
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 public class UserResponse {
-    private long userId;
-    private String loginId;
-    private LocalDate birthday;
-    private Gender gender;
-    private String persona;
-    private String savedProfileImageName;
-    private Status status;
-    private Role role;
-    private LocalDateTime createdAt;
+    private long userId; // 유저 PK
+    private String loginId; // 아이디
+    private LocalDate birthday; // 생년월일
+    private Gender gender; // 성별
+    private String persona; // 특징
+    private String savedProfileImageName; // 저장된 프로필 이미지명
+    private Status status; // 상태
+    private Role role; // 권한
+    private LocalDateTime createdAt; // 가입일
 
+    // Dto 변환 메서드
     public static UserResponse from(User user) {
         return UserResponse.builder()
                 .userId(user.getUserId())

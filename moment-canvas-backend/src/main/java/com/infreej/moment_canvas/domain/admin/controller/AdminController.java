@@ -21,7 +21,7 @@ public class AdminController {
 
 
     @SetSuccess(SuccessCode.USER_STATUS_CHANGE)
-    @Operation(summary = "유저 상태 변경", security = @SecurityRequirement(name = "JWT"), description = "유저 정보 변경 API 입니다. \n - 활성화, 비활성화")
+    @Operation(summary = "유저 상태 변경", security = @SecurityRequirement(name = "JWT"), description = "유저 상태 변경 API 입니다. \n * ADMIN만 접근 가능합니다. \n * ACTIVE or INACTIVE or WITHDRAWAL")
     @PatchMapping("/user/status")
     public void statusChange(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody StatusChangeRequest statusChangeRequest) {
 

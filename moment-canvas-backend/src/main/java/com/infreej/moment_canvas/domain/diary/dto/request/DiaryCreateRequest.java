@@ -7,18 +7,24 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+
+/**
+ * 일기 저장 요청 Request
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class DiaryCreateRequest {
 
+    // TODO: 입력값이 null이 아니도록 검증 필요
     private String title;
     private String content;
     private int mood;
     private String orgDiaryImageName;
 
 
+    // Entity 변환 메서드
     public Diary toEntity(User user) {
         return Diary.builder()
                 .user(user)

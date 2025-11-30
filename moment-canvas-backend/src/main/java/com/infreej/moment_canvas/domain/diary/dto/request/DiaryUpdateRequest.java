@@ -5,14 +5,16 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+/**
+ * 일기 정보를 수정하기 위한 Request
+ */
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class DiaryUpdateRequest {
-    private Long diaryId;
-    private String title;
-    private String content;
-    private int mood;
-    // TODO: 이미지 필드는 필요한가? 확인 필요
+    private Long diaryId; // 일기 PK
+    private String title; // 제목
+    private String content; // 본문
+    private int mood; // 기분
 }

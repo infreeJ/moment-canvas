@@ -65,7 +65,7 @@ public class User extends BaseTimeEntity {
         this.persona = updateRequest.getPersona();
     }
 
-
+    // 프로필 이미지 변경 메서드
     public void updateUserProfileImage(ImageSaveRequest imageSaveRequest) {
         this.orgProfileImageName = imageSaveRequest.getOrgImageName();
         this.savedProfileImageName = imageSaveRequest.getSavedImageName();

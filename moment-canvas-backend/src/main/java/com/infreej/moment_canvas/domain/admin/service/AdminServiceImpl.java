@@ -18,6 +18,11 @@ public class AdminServiceImpl implements AdminService {
 
     private final UserRepository userRepository;
 
+    /**
+     * 유저 상태 변경 메서드
+     * @param role 권한 검증용 파라미터 (ADMIN만 접근 가능)
+     * status = ACTIVE or INACTIVE or WITHDRAWAL
+     */
     @Override
     @Transactional
     public void statusChange(Role role, StatusChangeRequest statusChangeRequest) {
@@ -35,8 +40,6 @@ public class AdminServiceImpl implements AdminService {
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         // 엔티티 상태 수정
-        user.statusChange(
-                statusChangeRequest.getStatus()
-        );
+        user.statusChange(statusChangeRequest.getStatus());
     }
 }

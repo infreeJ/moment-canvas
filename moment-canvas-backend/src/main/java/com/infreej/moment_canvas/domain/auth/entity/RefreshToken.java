@@ -7,6 +7,10 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
 
+/**
+ * Redis에 저장되는 엔티티
+ * 만료 시간 2주
+ */
 @Getter
 @Builder
 @AllArgsConstructor

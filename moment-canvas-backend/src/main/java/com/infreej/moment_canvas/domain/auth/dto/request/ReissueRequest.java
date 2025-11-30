@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+/**
+ * 토큰 재발급 용도의 Request
+ */
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor

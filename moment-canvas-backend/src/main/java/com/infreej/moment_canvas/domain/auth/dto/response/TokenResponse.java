@@ -4,6 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * 토큰 응답용 Response
+ */
 @Getter
 @Builder
 @AllArgsConstructor
