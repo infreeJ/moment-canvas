@@ -12,6 +12,7 @@ import com.infreej.moment_canvas.global.exception.BusinessException;
 import com.infreej.moment_canvas.global.jwt.JwtUtil;
 import com.infreej.moment_canvas.global.security.CustomUserDetails;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,8 +20,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class AuthServiceImpl implements AuthService {
 
     private final AuthenticationManager authenticationManager;
@@ -30,13 +34,17 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     @Transactional
-    public TokenResponse login(LoginRequest request) {
-        
-        // TODO: 존재하지 않는 아이디를 받으면 403 발생. 예외처리 필요
+    public TokenResponse login(LoginRequest loginRequest) {
+
+        // 아이디 중복 체크
+        if(!userRepository.existsByLoginId(loginRequest.getLoginId())) {
+            log.info("존재하지 않는 아이디입니다.");
+            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
+        }
 
         // ID/PW를 기반으로 인증 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken =
-                new UsernamePasswordAuthenticationToken(request.getLoginId(), request.getPwd());
+                new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(), loginRequest.getPwd());
 
         // 검증 로직 실행 (CustomUserDetailsService -> loadUserByUsername 실행)
         // CustomUserDetails에 정의되어 있는 상태들을 검사한다.
@@ -48,11 +56,9 @@ public class AuthServiceImpl implements AuthService {
 
         // 인증 성공 후 유저 정보 꺼내기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
-
         Long userId = userDetails.getUser().getUserId();
         String username = userDetails.getUsername();
-        // Role 가져오기
-        String role = userDetails.getUser().getRole().toString(); // "ADMIN" or "USER"
+        String role = userDetails.getUser().getRole().toString(); // "ADMIN" or "USER" or VIP
 
         // JWT 생성
         String accessToken = jwtUtil.createAccessToken(userId, username, role);

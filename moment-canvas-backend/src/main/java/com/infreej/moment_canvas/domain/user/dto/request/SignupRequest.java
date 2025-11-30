@@ -2,12 +2,12 @@ package com.infreej.moment_canvas.domain.user.dto.request;
 
 import com.infreej.moment_canvas.domain.user.entity.Gender;
 import com.infreej.moment_canvas.domain.user.entity.User;
+import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Getter
@@ -17,7 +17,8 @@ import java.time.LocalDate;
 public class SignupRequest {
 
     // TODO: 정규식 적용 안됨. 원인 파악 필요
-    @Pattern(regexp = "^[a-zA-Z]{8,16}$", message = "아이디는 영문 8~16자여야 합니다.")
+    @Pattern(regexp = "^(?=.*[a-zA-Z])[a-zA-Z0-9]{4,16}$",
+            message = "아이디는 영문과 숫자를 포함한 4~16자여야 하며, 영문은 필수입니다.")
     private String loginId;
     @Pattern(
             regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*()_\\-+=\\[\\]{};:,.?])[A-Za-z\\d!@#$%^&*()_\\-+=\\[\\]{};:,.?]{8,50}$",

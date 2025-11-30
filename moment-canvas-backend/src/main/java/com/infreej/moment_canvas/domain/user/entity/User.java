@@ -46,7 +46,7 @@ public class User extends BaseTimeEntity {
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
-    private Status status = Status.ACTIVE; // 유저 상태: (ACTIVE, INACTIVE, WITHDRAWN)
+    private Status status = Status.ACTIVE; // 유저 상태: (ACTIVE, INACTIVE, WITHDRAWAL)
 
     @Column(length = 20)
     @Enumerated(EnumType.STRING)
@@ -78,7 +78,7 @@ public class User extends BaseTimeEntity {
     
     // 유저 엔티티 탈퇴 처리 메서드
     public void withdrawal() {
-        this.status = Status.WITHDRAWN;
+        this.status = Status.WITHDRAWAL;
     }
 
 }

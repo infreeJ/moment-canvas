@@ -11,6 +11,7 @@ import com.infreej.moment_canvas.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -29,9 +30,9 @@ public class UserController {
 
 
     @SetSuccess(SuccessCode.USER_CREATED)
-    @Operation(summary = "유저 회원가입", description = "유저 가입 요청 API 입니다. \n * loginId, pwd를 제외한 나머지는 null 가능")
+    @Operation(summary = "유저 회원가입", description = "유저 가입 요청 API 입니다. \n * loginId, pwd를 제외한 나머지는 null 가능 \n * 아이디는 영문과 숫자를 포함한 4~16자여야 하며, 영문은 필수입니다. \n 비밀번호는 영문 소문자, 대문자, 숫자, 특수문자를 모두 포함해야 하며 8~50자여야 합니다.")
     @PostMapping("/user")
-    public UserResponse signup(@RequestBody SignupRequest signupRequest) {
+    public UserResponse signup(@RequestBody @Valid SignupRequest signupRequest) {
 
         return userService.signup(signupRequest);
     }
@@ -53,7 +54,6 @@ public class UserController {
     }
 
 
-    // TODO: 프로필 이미지 수정 컨트롤러 메서드 필요
     @SetSuccess(SuccessCode.USER_UPDATED)
     @Operation(summary = "유저 프로필 이미지 변경", security = @SecurityRequirement(name = "JWT"), description = "프로필 이미지 변경 API 입니다.")
     @PatchMapping(value = "/user/profile-image", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
