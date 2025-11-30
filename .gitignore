@@ -1,46 +1,14 @@
-HELP.md
-.gradle
-build/
-!gradle/wrapper/gradle-wrapper.jar
-!**/src/main/**/build/
-!**/src/test/**/build/
+### OS 관련 ###
+.DS_Store
+Thumbs.db
 
-### User defined
-**/src/main/resources/application-secret.yml
-
-### DB Data
-db/data/
-**/db/data/
-**/redis
-redis/
-
-### STS ###
-.apt_generated
-.classpath
-.factorypath
-.project
-.settings
-.springBeans
-.sts4-cache
-bin/
-!**/src/main/**/bin/
-!**/src/test/**/bin/
-
-### IntelliJ IDEA ###
-.idea
+### IntelliJ IDEA (프로젝트 전체 설정) ###
+.idea/
 *.iws
-*.iml
 *.ipr
-out/
-!**/src/main/**/out/
-!**/src/test/**/out/
 
-### NetBeans ###
-/nbproject/private/
-/nbbuild/
-/dist/
-/nbdist/
-/.nb-gradle/
-
-### VS Code ###
+### VS Code (프로젝트 전체 설정) ###
 .vscode/
+
+### 기타 ###
+*.log
