@@ -2,7 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit2, Trash2, Sparkles, Image as ImageIcon, Loader2 } from 'lucide-react';
 import { diaryApi, type DiaryResponse } from '../api/diaryApi';
+import ImageGenerationModal from '../components/ImageGenerationModal';
 
+// 감정 매핑용 데이터
 const MOODS = [
    { value: 1, emoji: '😡', label: '최악' },
    { value: 2, emoji: '😢', label: '우울' },
@@ -11,23 +13,32 @@ const MOODS = [
    { value: 5, emoji: '🥰', label: '최고' },
 ];
 
-const IMAGE_ROOT = 'http://localhost:9090/images/diary-images';
+// 백엔드 이미지 경로
+const IMAGE_ROOT = 'http://localhost:8080/images/diary-images';
 
 const DiaryDetail = () => {
-   const { id } = useParams<{ id: string }>(); // URL에서 diaryId 추출
+   const { id } = useParams<{ id: string }>();
    const navigate = useNavigate();
 
    const [diary, setDiary] = useState<DiaryResponse | null>(null);
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState('');
 
+   // 이미지 로드 실패 여부
+   const [imageError, setImageError] = useState(false);
+
+   // 이미지 생성 모달 상태
+   const [isGenModalOpen, setIsGenModalOpen] = useState(false);
+
    useEffect(() => {
       const fetchDiary = async () => {
          if (!id) return;
          try {
             const response = await diaryApi.getDiaryById(id);
+            // 백엔드 ResponseWrapper에 의해 success 필드로 성공 여부 판단
             if (response.success) {
                setDiary(response.data);
+               setImageError(false); // 데이터가 바뀌면 에러 상태 초기화
             } else {
                throw new Error(response.message);
             }
@@ -42,7 +53,6 @@ const DiaryDetail = () => {
       fetchDiary();
    }, [id]);
 
-   // 해당 mood 숫자에 맞는 이모지 찾기
    const getMoodEmoji = (moodValue: number) => {
       const mood = MOODS.find((m) => m.value === moodValue);
       return mood ? mood.emoji : '😐';
@@ -94,17 +104,15 @@ const DiaryDetail = () => {
             {/* 본문 카드 */}
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
-               {/* 이미지 영역 (캔버스) */}
+               {/* 1. 이미지 영역 (캔버스) */}
                <div className="relative w-full aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
-                  {diary.savedDiaryImageName ? (
+                  {diary.savedDiaryImageName && !imageError ? (
                      // 이미지가 있는 경우
                      <img
                         src={`${IMAGE_ROOT}/${diary.savedDiaryImageName}`}
                         alt={diary.title}
-                        className="w-full h-full object-contain bg-black/5" // object-contain으로 원본 비율 유지
-                        onError={(e) => {
-                           e.currentTarget.src = 'https://via.placeholder.com/800x600?text=Image+Load+Error';
-                        }}
+                        className="w-full h-full object-contain bg-black/5"
+                        onError={() => setImageError(true)}
                      />
                   ) : (
                      // 이미지가 없는 경우 (AI 생성 유도)
@@ -112,20 +120,27 @@ const DiaryDetail = () => {
                         <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-4">
                            <Sparkles className="w-10 h-10 text-indigo-400" />
                         </div>
-                        <h3 className="text-lg font-bold text-gray-900 mb-2">아직 그려진 그림이 없어요</h3>
+
+                        <h3 className="text-lg font-bold text-gray-900 mb-2">
+                           {imageError ? "이미지를 불러올 수 없어요" : "아직 그려진 그림이 없어요"}
+                        </h3>
                         <p className="text-sm text-gray-500 mb-6 max-w-sm">
-                           AI가 당신의 일기를 읽고 멋진 그림을 그려드릴 수 있습니다.
-                           <br />지금 바로 추억을 시각화해보세요!
+                           {imageError
+                              ? "파일 경로가 잘못되었거나 삭제되었습니다."
+                              : "AI가 당신의 일기를 읽고 멋진 그림을 그려드릴 수 있습니다.\n지금 바로 추억을 시각화해보세요!"
+                           }
                         </p>
 
-                        {/* AI 이미지 생성 버튼 */}
-                        <button
-                           onClick={() => alert("다음 단계에서 AI 이미지 생성을 구현할 예정입니다! 🎨")}
-                           className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all"
-                        >
-                           <Sparkles className="w-5 h-5" />
-                           AI 그림 그려줘
-                        </button>
+                        {/* 에러 상황이 아닐 때만 생성 버튼 노출 */}
+                        {!imageError && (
+                           <button
+                              onClick={() => setIsGenModalOpen(true)} // ✅ 모달 열기
+                              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all"
+                           >
+                              <Sparkles className="w-5 h-5" />
+                              AI 그림 그려줘
+                           </button>
+                        )}
                      </div>
                   )}
                </div>
@@ -158,8 +173,21 @@ const DiaryDetail = () => {
                   </div>
                </div>
             </div>
-
          </div>
+
+         {/* 이미지 생성 모달 */}
+         {/* diaryId가 확실히 있을 때만 렌더링 */}
+         {diary && (
+            <ImageGenerationModal
+               isOpen={isGenModalOpen}
+               onClose={() => setIsGenModalOpen(false)}
+               diaryId={diary.diaryId}
+               onImageSaved={() => {
+                  // 이미지가 저장되면 페이지를 새로고침하여 이미지를 보여줌
+                  window.location.reload();
+               }}
+            />
+         )}
       </div>
    );
 };

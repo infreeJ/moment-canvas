@@ -26,6 +26,13 @@ export interface DiaryResponse {
   createdAt?: string; // 상세 조회 시 필요할 수 있음
 }
 
+// 이미지 생성 요청 DTO
+export interface DiaryImageGenerateRequest {
+  diaryId: number;
+  style: string;
+  option: string;
+}
+
 // 공통 응답 래퍼
 interface ApiResponse<T> {
   success: boolean;
@@ -51,6 +58,15 @@ export const diaryApi = {
   getDiaryById: async (diaryId: string) => {
     const response = await httpClient.get<ApiResponse<DiaryResponse>>(`/diary/${diaryId}`);
     return response.data;
-  }
+  },
+
+  // 일기 이미지 생성 요청
+  generateImage: async (data: DiaryImageGenerateRequest) => {
+    const response = await httpClient.post<ApiResponse<string>>('/diary/image-generate', data);
+    // axios의 data(=ApiResponse) 안의 data(=이미지URL)를 반환
+    return response.data.data;
+  },
+
+
 };
 
