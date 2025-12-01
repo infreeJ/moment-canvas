@@ -7,7 +7,7 @@ interface FailedRequest {
    reject: (error: unknown) => void;
 }
 
-const BASE_URL = 'http://localhost:8080/v1';
+const BASE_URL = 'http://localhost:9090/v1';
 
 export const httpClient = axios.create({
    baseURL: BASE_URL,
@@ -104,7 +104,7 @@ httpClient.interceptors.response.use(
             const newAccessToken = data.data.accessToken;
             const newRefreshToken = data.data.refreshToken;
 
-            console.log('🔄 토큰 재발급 성공!');
+            console.log('토큰 재발급 성공!');
 
             // Redux Store 업데이트
             // (User 정보는 유지하고 토큰만 갈아끼우기 위해 기존 유저 정보 가져옴)

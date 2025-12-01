@@ -35,6 +35,11 @@ export const authApi = {
       return response.data; // { success: true, data: { accessToken... }, ... } 전체 반환
    },
 
+   // 3. 로그아웃 요청
+   logout: async () => {
+      await httpClient.post('/logout');
+   },
+
    // 내 정보 조회
    // 반환 타입: ApiResponse<User>
    fetchCurrentUser: async (accessToken: string) => {

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Menu, Search, Bell, Plus, User, LogOut } from 'lucide-react';
 import Modal from './Modal';
@@ -6,24 +6,48 @@ import LoginForm from '../../domain/auth/pages/LoginForm';
 // Redux 관련 import 추가
 import { useAppSelector, useAppDispatch } from '../../global/store/hooks';
 import { logout } from '../../global/store/slices/authSlice';
+import { authApi } from '../api/authApi';
 
 const Navbar = () => {
    const navigate = useNavigate();
    const dispatch = useAppDispatch();
-
-   // Redux Store에서 인증 상태와 유저 정보 가져오기
    const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
-   // 모달 상태는 UI 상태이므로 로컬 useState 유지
    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
+   // 드롭다운 메뉴 상태
+   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+   const profileMenuRef = useRef<HTMLDivElement>(null);
 
    const openLoginModal = () => setIsLoginModalOpen(true);
    const closeLoginModal = () => setIsLoginModalOpen(false);
 
-   const handleLogout = () => {
-      // Redux 액션 디스패치
-      dispatch(logout());
-      navigate('/');
+   // 드롭다운 외부 클릭 시 닫기 감지
+   useEffect(() => {
+      const handleClickOutside = (event: MouseEvent) => {
+         if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
+            setIsProfileMenuOpen(false);
+         }
+      };
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => document.removeEventListener('mousedown', handleClickOutside);
+   }, []);
+
+   // 로그아웃 핸들러 (핵심 로직)
+   const handleLogout = async () => {
+      try {
+         // 서버에 로그아웃 요청 (Refresh Token 삭제 등)
+         await authApi.logout();
+         console.log("서버 로그아웃 성공");
+      } catch (error) {
+         console.error("서버 로그아웃 실패 (그래도 프론트는 로그아웃 처리함):", error);
+      } finally {
+         // 서버 응답 성공 여부와 관계없이 프론트엔드 상태 초기화 (무조건 실행)
+         dispatch(logout());
+         // 드롭다운 닫기 및 홈으로 이동
+         setIsProfileMenuOpen(false);
+         navigate('/');
+      }
    };
 
    return (
@@ -32,6 +56,7 @@ const Navbar = () => {
             <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
                <div className="flex justify-between items-center h-16">
 
+                  {/* 좌측: 로고 */}
                   <div className="flex items-center gap-4">
                      <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <Menu className="w-6 h-6 text-gray-600" />
@@ -50,6 +75,7 @@ const Navbar = () => {
                      </div>
                   </div>
 
+                  {/* 중앙: 검색바 */}
                   <div className="hidden md:flex flex-1 max-w-xl mx-8">
                      <div className="relative w-full">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -63,8 +89,8 @@ const Navbar = () => {
                      </div>
                   </div>
 
+                  {/* 우측: 메뉴 영역 */}
                   <div className="flex items-center gap-2 sm:gap-4">
-                     {/* isAuthenticated 값에 따라 UI 분기 처리 */}
                      {isAuthenticated ? (
                         <>
                            <button
@@ -80,22 +106,50 @@ const Navbar = () => {
                               <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                            </button>
 
-                           <div className="relative group">
-                              <button className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border border-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                                 {/* 유저 프로필 이미지가 없으면 기본값 사용 */}
+                           {/* 프로필 드롭다운 메뉴 */}
+                           <div className="relative" ref={profileMenuRef}>
+                              <button
+                                 onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
+                                 className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border border-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all"
+                              >
                                  <img
                                     src={user?.profileImage || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
                                     alt="User Avatar"
                                     className="w-full h-full object-cover"
                                  />
                               </button>
-                              {/* (옵션) 여기에 드롭다운 메뉴 추가하여 로그아웃 버튼 배치 가능 */}
-                           </div>
 
-                           {/* 임시 로그아웃 버튼 (나중에 드롭다운 안으로 이동 추천) */}
-                           <button onClick={handleLogout} className="p-2 text-gray-500 hover:text-red-500">
-                              <LogOut className="w-5 h-5" />
-                           </button>
+                              {/* 드롭다운 본문 */}
+                              {isProfileMenuOpen && (
+                                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 border border-gray-100 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
+                                    <div className="px-4 py-3 border-b border-gray-100">
+                                       <p className="text-sm text-gray-500">환영합니다!</p>
+                                       <p className="text-sm font-bold text-gray-900 truncate">
+                                          {user?.loginId}
+                                       </p>
+                                    </div>
+
+                                    <button
+                                       onClick={() => {
+                                          setIsProfileMenuOpen(false);
+                                          // navigate('/mypage'); 
+                                       }}
+                                       className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
+                                    >
+                                       <User className="w-4 h-4" />
+                                       마이페이지
+                                    </button>
+
+                                    <button
+                                       onClick={handleLogout}
+                                       className="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 flex items-center gap-2"
+                                    >
+                                       <LogOut className="w-4 h-4" />
+                                       로그아웃
+                                    </button>
+                                 </div>
+                              )}
+                           </div>
                         </>
                      ) : (
                         <>
