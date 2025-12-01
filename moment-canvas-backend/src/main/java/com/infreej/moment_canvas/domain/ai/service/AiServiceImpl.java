@@ -34,9 +34,8 @@ public class AiServiceImpl implements AiService{
         // 이미지 모델 옵션 설정
         ImageOptions options = ImageOptionsBuilder.builder()
                 .model("dall-e-2") // TODO: 배포 시 dall-e-3로 모델 변경
-//                .style("")
-//                .responseFormat("")
-                .width(1024)
+//                .style("vivid") // TODO: style("vivid") 활성화
+                .width(1024) // TODO: width(1792) 으로 변경
                 .height(1024)
                 .N(1)
                 .build();
