@@ -104,7 +104,7 @@ const DiaryDetail = () => {
             {/* 본문 카드 */}
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
-               {/* 1. 이미지 영역 (캔버스) */}
+               {/* 이미지 영역 (캔버스) */}
                <div className="relative w-full aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
                   {diary.savedDiaryImageName && !imageError ? (
                      // 이미지가 있는 경우

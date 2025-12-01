@@ -92,7 +92,7 @@ const DiaryList = () => {
                      className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full transform hover:-translate-y-1"
                   >
                      {/* 이미지 영역 */}
-                     <div className="relative aspect-[4/3] bg-gray-100 overflow-hidden">
+                     <div className="relative aspect-video bg-gray-100 overflow-hidden">
                         {diary.savedDiaryImageName ? (
                            <img
                               src={`${IMAGE_ROOT}/${diary.savedDiaryImageName}`}

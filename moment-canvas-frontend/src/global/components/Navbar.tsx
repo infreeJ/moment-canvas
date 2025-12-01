@@ -7,6 +7,8 @@ import { useAppSelector, useAppDispatch } from '../../global/store/hooks';
 import { logout } from '../../global/store/slices/authSlice';
 import { authApi } from '../../global/api/authApi';
 
+const IMAGE_ROOT = 'http://localhost:9090/images/profile-images';
+
 const Navbar = () => {
    const navigate = useNavigate();
    const location = useLocation();
@@ -133,7 +135,11 @@ const Navbar = () => {
                                  className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border border-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-all"
                               >
                                  <img
-                                    src={user?.profileImage || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
+                                    src={
+                                       user?.savedProfileImageName
+                                          ? `${IMAGE_ROOT}/${user.savedProfileImageName}`
+                                          : "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                                    }
                                     alt="User Avatar"
                                     className="w-full h-full object-cover"
                                  />
