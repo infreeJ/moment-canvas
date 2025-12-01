@@ -55,6 +55,7 @@ public class SecurityConfig {
                         .requestMatchers(whiteList).permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/vip/**").hasAnyRole("ADMIN", "VIP")
+                        .requestMatchers("/images/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/user", "/v1/reissue").permitAll()
                         .anyRequest().authenticated()
                 )

@@ -1,28 +1,40 @@
-import React, { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { Menu, Search, Bell, Plus, User, LogOut } from 'lucide-react';
 import Modal from './Modal';
 import LoginForm from '../../domain/auth/pages/LoginForm';
-// Redux 관련 import 추가
 import { useAppSelector, useAppDispatch } from '../../global/store/hooks';
 import { logout } from '../../global/store/slices/authSlice';
-import { authApi } from '../api/authApi';
+import { authApi } from '../../global/api/authApi';
 
 const Navbar = () => {
    const navigate = useNavigate();
+   const location = useLocation();
    const dispatch = useAppDispatch();
+
+   // Redux 상태
    const { isAuthenticated, user } = useAppSelector((state) => state.auth);
 
+   // 모달 및 드롭다운 상태
    const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-
-   // 드롭다운 메뉴 상태
    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
    const profileMenuRef = useRef<HTMLDivElement>(null);
 
    const openLoginModal = () => setIsLoginModalOpen(true);
    const closeLoginModal = () => setIsLoginModalOpen(false);
 
-   // 드롭다운 외부 클릭 시 닫기 감지
+   // 메뉴 활성화 스타일 계산 함수 (에러 해결됨)
+   const getMenuClass = (path: string) => {
+      const baseClass = "text-sm font-medium transition-colors duration-200";
+      const activeClass = "text-indigo-600 font-bold";
+      const inactiveClass = "text-gray-500 hover:text-indigo-500";
+
+      return location.pathname === path
+         ? `${baseClass} ${activeClass}`
+         : `${baseClass} ${inactiveClass}`;
+   };
+
+   // 드롭다운 외부 클릭 시 닫기
    useEffect(() => {
       const handleClickOutside = (event: MouseEvent) => {
          if (profileMenuRef.current && !profileMenuRef.current.contains(event.target as Node)) {
@@ -33,18 +45,15 @@ const Navbar = () => {
       return () => document.removeEventListener('mousedown', handleClickOutside);
    }, []);
 
-   // 로그아웃 핸들러 (핵심 로직)
+   // 로그아웃 핸들러
    const handleLogout = async () => {
       try {
-         // 서버에 로그아웃 요청 (Refresh Token 삭제 등)
          await authApi.logout();
          console.log("서버 로그아웃 성공");
       } catch (error) {
-         console.error("서버 로그아웃 실패 (그래도 프론트는 로그아웃 처리함):", error);
+         console.error("서버 로그아웃 실패 (프론트 강제 로그아웃 진행):", error);
       } finally {
-         // 서버 응답 성공 여부와 관계없이 프론트엔드 상태 초기화 (무조건 실행)
          dispatch(logout());
-         // 드롭다운 닫기 및 홈으로 이동
          setIsProfileMenuOpen(false);
          navigate('/');
       }
@@ -75,9 +84,10 @@ const Navbar = () => {
                      </div>
                   </div>
 
-                  {/* 중앙: 검색바 */}
-                  <div className="hidden md:flex flex-1 max-w-xl mx-8">
-                     <div className="relative w-full">
+                  {/* 중앙: 검색바 및 메뉴 */}
+                  <div className="hidden md:flex flex-1 max-w-xl mx-8 items-center">
+                     {/* 검색바 */}
+                     <div className="relative w-full mr-6">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                            <Search className="h-5 w-5 text-gray-400" />
                         </div>
@@ -87,9 +97,19 @@ const Navbar = () => {
                            placeholder="일기 검색..."
                         />
                      </div>
+
+                     {/* 일기 목록 버튼 */}
+                     <div className="flex-shrink-0">
+                        <button
+                           onClick={() => navigate('/diaries')}
+                           className={getMenuClass('/diaries')}
+                        >
+                           일기 목록
+                        </button>
+                     </div>
                   </div>
 
-                  {/* 우측: 메뉴 영역 */}
+                  {/* 우측: 사용자 메뉴 영역 */}
                   <div className="flex items-center gap-2 sm:gap-4">
                      {isAuthenticated ? (
                         <>
@@ -106,7 +126,7 @@ const Navbar = () => {
                               <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                            </button>
 
-                           {/* 프로필 드롭다운 메뉴 */}
+                           {/* 프로필 드롭다운 */}
                            <div className="relative" ref={profileMenuRef}>
                               <button
                                  onClick={() => setIsProfileMenuOpen(!isProfileMenuOpen)}
@@ -119,7 +139,6 @@ const Navbar = () => {
                                  />
                               </button>
 
-                              {/* 드롭다운 본문 */}
                               {isProfileMenuOpen && (
                                  <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg py-1 border border-gray-100 animate-in fade-in zoom-in-95 duration-200 origin-top-right">
                                     <div className="px-4 py-3 border-b border-gray-100">

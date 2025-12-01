@@ -34,7 +34,7 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
       }
 
       const { accessToken, refreshToken } = loginResponse.data;
-      console.log('1. 토큰 발급 성공:', accessToken);
+      console.log('토큰 발급 성공:', accessToken);
 
       // 획득한 토큰으로 유저 정보 조회 API 호출 -> 유저 정보 획득
       const userResponse = await authApi.fetchCurrentUser(accessToken);
