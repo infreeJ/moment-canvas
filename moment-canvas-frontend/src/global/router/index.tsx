@@ -3,15 +3,14 @@ import App from "../../App";
 import Home from "../pages/Home";
 import Signup from "../../domain/auth/pages/SignupForm";
 import DiaryList from "../../domain/diary/pages/DiaryList";
+import DiaryWrite from "../../domain/diary/pages/DiaryWrite";
 
 const routes = [ 
    { path: "/", element: <Home /> },
    { path: "/index.html", element: <Home /> }, // Spring Boot 리다이렉트 대응
    { path: "/signup", element: <Signup /> },
    { path: "/diaries", element: <DiaryList /> },
-   // 추후 추가 예시:
-   // { path: "/login", element: <Login /> },
-   // { path: "/write", element: <DiaryWrite /> },
+   { path: "/write", element: <DiaryWrite /> },
 ];
 
 // router 객체

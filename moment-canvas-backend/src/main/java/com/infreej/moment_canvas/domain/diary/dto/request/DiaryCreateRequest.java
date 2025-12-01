@@ -20,7 +20,6 @@ public class DiaryCreateRequest {
     private String title;
     private String content;
     private int mood;
-    private String orgDiaryImageName;
 
 
     // Entity 변환 메서드
@@ -30,7 +29,6 @@ public class DiaryCreateRequest {
                 .title(this.title)
                 .content(this.content)
                 .mood(this.mood)
-                .orgDiaryImageName(this.orgDiaryImageName)
                 .build();
     }
 }

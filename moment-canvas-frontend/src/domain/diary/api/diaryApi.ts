@@ -9,6 +9,23 @@ export interface DiarySummary {
   savedDiaryImageName?: string | null;
 }
 
+// 일기 작성 요청 (Request Body)
+export interface DiaryCreateRequest {
+  title: string;
+  content: string;
+  mood: number; // 1~5 척도
+}
+
+// 일기 상세/생성 응답 (Response Body)
+export interface DiaryResponse {
+  diaryId: number;
+  title: string;
+  content: string;
+  mood: number;
+  savedDiaryImageName?: string | null; // 이미지 생성 전에는 null
+  createdAt?: string; // 상세 조회 시 필요할 수 있음
+}
+
 // 공통 응답 래퍼
 interface ApiResponse<T> {
   success: boolean;
@@ -22,4 +39,12 @@ export const diaryApi = {
     const response = await httpClient.get<ApiResponse<DiarySummary[]>>('/diary/list');
     return response.data;
   },
+
+
+  // 일기 작성
+  create: async (data: DiaryCreateRequest) => {
+    const response = await httpClient.post<ApiResponse<DiaryResponse>>('/diary', data);
+    return response.data; // { success: true, data: { diaryId: 1, ... } }
+  }
 };
+
