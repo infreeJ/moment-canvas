@@ -14,7 +14,7 @@ const MOODS = [
 ];
 
 // 백엔드 이미지 경로
-const IMAGE_ROOT = 'http://localhost:8080/images/diary-images';
+const IMAGE_ROOT = 'http://localhost:9090/images/diary-images';
 
 const DiaryDetail = () => {
    const { id } = useParams<{ id: string }>();

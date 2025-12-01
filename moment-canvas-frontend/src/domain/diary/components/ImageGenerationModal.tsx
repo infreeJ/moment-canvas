@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { X, Sparkles, Wand2, RotateCcw, Save, Palette, Loader2 } from 'lucide-react';
-import { diaryApi } from '../api/diaryApi';
+import { X, Wand2, RotateCcw, Save, Palette, Loader2, Sparkles } from 'lucide-react';
+import { diaryApi } from '../api/diaryApi'; // 경로 확인
 
-// 🎨 제공할 스타일 프리셋
+// 스타일 프리셋 (기존 유지)
 const ART_STYLES = [
    { id: 'watercolor', label: '수채화', emoji: '🎨', desc: '감성적이고 부드러운 느낌' },
    { id: 'anime', label: '애니메이션', emoji: '✨', desc: '지브리 감성의 따뜻한 작화' },
@@ -15,11 +15,10 @@ interface ImageGenerationModalProps {
    isOpen: boolean;
    onClose: () => void;
    diaryId: number;
-   onImageSaved: () => void; // 저장이 완료되면 부모에게 알림 (목록 갱신 등)
+   onImageSaved: () => void;
 }
 
 const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageGenerationModalProps) => {
-   // 단계 관리: 'input' (입력) -> 'loading' (생성중) -> 'result' (결과확인)
    const [step, setStep] = useState<'input' | 'loading' | 'result'>('input');
 
    // 입력 상태
@@ -29,7 +28,10 @@ const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageG
    // 결과 상태
    const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
 
-   // 1. 이미지 생성 요청
+   // 저장 로딩 상태 추가
+   const [isSaving, setIsSaving] = useState(false);
+
+   // 이미지 생성 요청
    const handleGenerate = async () => {
       setStep('loading');
       try {
@@ -38,29 +40,44 @@ const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageG
             style: selectedStyle,
             option: option,
          });
-
          setGeneratedImageUrl(imageUrl);
          setStep('result');
       } catch (error) {
          console.error('이미지 생성 실패:', error);
          alert('이미지 생성에 실패했습니다. 잠시 후 다시 시도해주세요.');
-         setStep('input'); // 다시 입력 화면으로
+         setStep('input');
       }
    };
 
-   // 2. 재생성 (입력 화면으로 돌아가기)
+   // 재생성
    const handleRetry = () => {
       setGeneratedImageUrl(null);
       setStep('input');
    };
 
-   // 3. 저장 (다음 단계 구현 예정)
+   // 저장 (API 연결) 
    const handleSave = async () => {
       if (!generatedImageUrl) return;
-      // TODO: 저장 API 연결 (다음 스텝)
-      alert(`이 이미지를 저장합니다! (URL: ${generatedImageUrl}) \n*실제 저장 로직은 다음 단계에서 구현*`);
-      onImageSaved(); // 임시 완료 처리
-      onClose();
+
+      setIsSaving(true); // 로딩 시작
+
+      try {
+         await diaryApi.saveImage(diaryId, {
+            imageUrl: generatedImageUrl,
+            imageType: 'Diary', // Enum: 'Diary' 고정
+         });
+
+         alert('그림이 일기에 저장되었습니다! 🖼️');
+
+         onImageSaved(); // 부모 컴포넌트(상세페이지) 새로고침 트리거
+         onClose();      // 모달 닫기
+
+      } catch (error) {
+         console.error('이미지 저장 실패:', error);
+         alert('이미지 저장 중 오류가 발생했습니다.');
+      } finally {
+         setIsSaving(false); // 로딩 끝
+      }
    };
 
    if (!isOpen) return null;
@@ -77,18 +94,22 @@ const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageG
                   </div>
                   <h2 className="text-xl font-bold text-gray-900">AI 그림 생성</h2>
                </div>
-               <button onClick={onClose} className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors">
+               {/* 저장 중에는 닫기 버튼 비활성화 (실수 방지) */}
+               <button
+                  onClick={onClose}
+                  disabled={isSaving}
+                  className="p-2 text-gray-400 hover:bg-gray-100 rounded-full transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+               >
                   <X className="w-6 h-6" />
                </button>
             </div>
 
-            {/* 컨텐츠 영역 (스크롤 가능) */}
+            {/* 컨텐츠 영역 */}
             <div className="flex-1 overflow-y-auto p-6 sm:p-8">
 
                {/* STEP 1: 입력 화면 */}
                {step === 'input' && (
                   <div className="space-y-8">
-                     {/* 스타일 선택 */}
                      <section>
                         <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-4">
                            <Palette className="w-4 h-4" />
@@ -115,7 +136,6 @@ const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageG
                         </div>
                      </section>
 
-                     {/* 추가 옵션 입력 */}
                      <section>
                         <label className="flex items-center gap-2 text-sm font-bold text-gray-700 mb-2">
                            <Sparkles className="w-4 h-4" />
@@ -131,7 +151,7 @@ const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageG
                   </div>
                )}
 
-               {/* STEP 2: 로딩 화면 */}
+               {/* 생성 로딩 화면 */}
                {step === 'loading' && (
                   <div className="flex flex-col items-center justify-center py-12 text-center">
                      <div className="relative">
@@ -145,7 +165,7 @@ const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageG
                   </div>
                )}
 
-               {/* STEP 3: 결과 화면 */}
+               {/* 결과 화면 (저장 로딩 포함) */}
                {step === 'result' && generatedImageUrl && (
                   <div className="flex flex-col items-center">
                      <div className="relative w-full aspect-video bg-gray-100 rounded-2xl overflow-hidden shadow-inner mb-6 group">
@@ -195,17 +215,29 @@ const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageG
                   <>
                      <button
                         onClick={handleRetry}
-                        className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-white hover:border-gray-400 transition-all flex items-center gap-2"
+                        disabled={isSaving} // 저장 중엔 비활성화
+                        className="px-5 py-2.5 rounded-xl border border-gray-300 text-gray-700 font-medium hover:bg-white hover:border-gray-400 transition-all flex items-center gap-2 disabled:opacity-50"
                      >
                         <RotateCcw className="w-4 h-4" />
                         다시 만들기
                      </button>
+
                      <button
                         onClick={handleSave}
-                        className="px-6 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2"
+                        disabled={isSaving}
+                        className="px-6 py-2.5 rounded-xl bg-green-600 hover:bg-green-700 text-white font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all flex items-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
                      >
-                        <Save className="w-5 h-5" />
-                        이 그림 저장하기
+                        {isSaving ? (
+                           <>
+                              <Loader2 className="w-5 h-5 animate-spin" />
+                              저장 중...
+                           </>
+                        ) : (
+                           <>
+                              <Save className="w-5 h-5" />
+                              이 그림 저장하기
+                           </>
+                        )}
                      </button>
                   </>
                )}

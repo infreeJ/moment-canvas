@@ -33,6 +33,14 @@ export interface DiaryImageGenerateRequest {
   option: string;
 }
 
+// 이미지 저장 요청 DTO
+export type ImageType = 'Diary' | 'Profile';
+
+export interface ImageDownloadRequest {
+  imageUrl: string;
+  imageType: ImageType;
+}
+
 // 공통 응답 래퍼
 interface ApiResponse<T> {
   success: boolean;
@@ -65,6 +73,14 @@ export const diaryApi = {
     const response = await httpClient.post<ApiResponse<string>>('/diary/image-generate', data);
     // axios의 data(=ApiResponse) 안의 data(=이미지URL)를 반환
     return response.data.data;
+  },
+
+  saveImage: async (diaryId: number, data: ImageDownloadRequest) => {
+    const response = await httpClient.post<ApiResponse<DiaryResponse>>(
+      `/diary/${diaryId}/image-save`, 
+      data
+    );
+    return response.data; // 저장된 후 갱신된 DiaryResponse 반환
   },
 
 
