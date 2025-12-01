@@ -25,7 +25,7 @@ const Navbar = () => {
    const openLoginModal = () => setIsLoginModalOpen(true);
    const closeLoginModal = () => setIsLoginModalOpen(false);
 
-   // 메뉴 활성화 스타일 계산 함수 (에러 해결됨)
+   // 메뉴 활성화 스타일 계산 함수
    const getMenuClass = (path: string) => {
       const baseClass = "text-sm font-medium transition-colors duration-200";
       const activeClass = "text-indigo-600 font-bold";
@@ -157,7 +157,7 @@ const Navbar = () => {
                                     <button
                                        onClick={() => {
                                           setIsProfileMenuOpen(false);
-                                          // navigate('/mypage'); 
+                                          navigate('/mypage'); 
                                        }}
                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                     >

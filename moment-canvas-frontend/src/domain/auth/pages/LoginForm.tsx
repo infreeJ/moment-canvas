@@ -5,6 +5,7 @@ import { setCredentials } from '../../../global/store/slices/authSlice';
 import { authApi } from '../../../global/api/authApi';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { userApi } from '../../user/api/userApi';
 
 interface LoginFormProps {
   onClose: () => void;
@@ -37,13 +38,9 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
       console.log('토큰 발급 성공:', accessToken);
 
       // 획득한 토큰으로 유저 정보 조회 API 호출 -> 유저 정보 획득
-      const userResponse = await authApi.fetchCurrentUser(accessToken);
+      const userResponse = await userApi.fetchCurrentUser(accessToken);
 
-      if (!userResponse.success) {
-        throw new Error(userResponse.message || '유저 정보를 불러오는데 실패했습니다.');
-      }
-
-      const userData = userResponse.data;
+      const userData = userResponse;
       console.log('유저 정보 조회 성공:', userData);
 
       // Redux Store에 토큰과 유저 정보 저장

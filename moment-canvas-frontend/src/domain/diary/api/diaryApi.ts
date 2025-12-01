@@ -41,6 +41,14 @@ export interface ImageDownloadRequest {
   imageType: ImageType;
 }
 
+// 일기 수정 요청 DTO
+export interface DiaryUpdateRequest {
+  diaryId: number;
+  title: string;
+  content: string;
+  mood: number;
+}
+
 // 공통 응답 래퍼
 interface ApiResponse<T> {
   success: boolean;
@@ -62,6 +70,12 @@ export const diaryApi = {
     return response.data; // { success: true, data: { diaryId: 1, ... } }
   },
 
+  // 일기 수정 요청 
+  update: async (data: DiaryUpdateRequest) => {
+    const response = await httpClient.patch<ApiResponse<DiaryResponse>>('/diary', data);
+    return response.data;
+  },
+
   // 일기 상세 조회
   getDiaryById: async (diaryId: string) => {
     const response = await httpClient.get<ApiResponse<DiaryResponse>>(`/diary/${diaryId}`);
@@ -74,7 +88,9 @@ export const diaryApi = {
     // axios의 data(=ApiResponse) 안의 data(=이미지URL)를 반환
     return response.data.data;
   },
+  
 
+  // 일기 이미지 저장 요청
   saveImage: async (diaryId: number, data: ImageDownloadRequest) => {
     const response = await httpClient.post<ApiResponse<DiaryResponse>>(
       `/diary/${diaryId}/image-save`, 

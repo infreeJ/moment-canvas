@@ -54,15 +54,4 @@ export const authApi = {
       const response = await httpClient.post<ApiResponse<User>>('/user', data);
       return response.data;
    },
-
-   // 내 정보 조회
-   // 반환 타입: ApiResponse<User>
-   fetchCurrentUser: async (accessToken: string) => {
-      const response = await httpClient.get<ApiResponse<User>>('/user', {
-         headers: {
-            Authorization: `Bearer ${accessToken}`,
-         },
-      });
-      return response.data; // { success: true, data: { userId... }, ... } 전체 반환
-   },
 };

@@ -5,6 +5,7 @@ import Signup from "../../domain/auth/pages/SignupForm";
 import DiaryList from "../../domain/diary/pages/DiaryList";
 import DiaryWrite from "../../domain/diary/pages/DiaryWrite";
 import DiaryDetail from "../../domain/diary/pages/DiaryDetail";
+import MyPage from "../../domain/user/pages/MyPage";
 
 const routes = [ 
    { path: "/", element: <Home /> },
@@ -13,6 +14,8 @@ const routes = [
    { path: "/diaries", element: <DiaryList /> },
    { path: "/diary/:id", element: <DiaryDetail /> },
    { path: "/write", element: <DiaryWrite /> },
+   { path: "/edit/:id", element: <DiaryWrite /> },
+   { path: "/mypage", element: <MyPage /> },
 ];
 
 // router 객체

@@ -1,9 +1,8 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom'; // useParams 추가
 import { ArrowLeft, Save, Loader2, Sparkles } from 'lucide-react';
 import { diaryApi } from '../api/diaryApi';
 
-// 기분 선택을 위한 데이터 (Mood: 1 ~ 5)
 const MOODS = [
    { value: 1, emoji: '😡', label: '최악' },
    { value: 2, emoji: '😢', label: '우울' },
@@ -14,14 +13,43 @@ const MOODS = [
 
 const DiaryWrite = () => {
    const navigate = useNavigate();
-   const [isLoading, setIsLoading] = useState(false);
+   const { id } = useParams<{ id: string }>(); // URL에 id가 있으면 수정 모드
+   const isEditMode = Boolean(id); // 수정 모드 여부 플래그
 
-   // 폼 상태 관리
+   const [isLoading, setIsLoading] = useState(false);
+   const [isFetching, setIsFetching] = useState(false); // 초기 데이터 로딩 상태
+
    const [formData, setFormData] = useState({
       title: '',
       content: '',
-      mood: 3, // 기본값: 보통
+      mood: 3,
    });
+
+   // 수정 모드일 때 기존 데이터 불러오기
+   useEffect(() => {
+      if (isEditMode && id) {
+         const fetchOriginalDiary = async () => {
+            setIsFetching(true);
+            try {
+               const response = await diaryApi.getDiaryById(id);
+               if (response.success) {
+                  const { title, content, mood } = response.data;
+                  setFormData({ title, content, mood });
+               } else {
+                  alert('일기 정보를 불러올 수 없습니다.');
+                  navigate(-1);
+               }
+            } catch (error) {
+               console.error('일기 로드 실패:', error);
+               alert('일기 정보를 불러오는 중 오류가 발생했습니다.');
+               navigate(-1);
+            } finally {
+               setIsFetching(false);
+            }
+         };
+         fetchOriginalDiary();
+      }
+   }, [isEditMode, id, navigate]);
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target;
@@ -33,69 +61,87 @@ const DiaryWrite = () => {
    };
 
    const handleSubmit = async () => {
-      // 유효성 검사
       if (!formData.title.trim()) {
          alert('제목을 입력해주세요.');
          return;
       }
       if (!formData.content.trim()) {
-         alert('오늘의 이야기를 들려주세요.');
+         alert('내용을 입력해주세요.');
          return;
       }
 
       setIsLoading(true);
 
       try {
-         // API 호출
-         const response = await diaryApi.create({
-            title: formData.title,
-            content: formData.content,
-            mood: formData.mood,
-         });
+         if (isEditMode && id) {
+            // --- 수정 요청 (UPDATE) ---
+            const response = await diaryApi.update({
+               diaryId: Number(id),
+               title: formData.title,
+               content: formData.content,
+               mood: formData.mood,
+            });
 
-         if (!response.success) {
-            throw new Error(response.message || '일기 저장 실패');
+            if (!response.success) throw new Error(response.message);
+            console.log('일기 수정 성공');
+            navigate(`/diary/${id}`); // 수정 후 상세 페이지로 이동
+
+         } else {
+            // --- 작성 요청 (CREATE) ---
+            const response = await diaryApi.create({
+               title: formData.title,
+               content: formData.content,
+               mood: formData.mood,
+            });
+
+            if (!response.success) throw new Error(response.message);
+            console.log('일기 작성 성공');
+            navigate('/diaries'); // 작성 후 목록으로 이동
          }
 
-         console.log('일기 작성 성공:', response.data);
-
-         // 저장 성공 후, 생성된 일기 상세 페이지로 이동
-         // (아직 상세 페이지가 없으니 일단 목록으로 보냅니다. 추후 `/diary/${response.data.diaryId}`로 수정)
-         navigate('/diaries');
-
       } catch (error) {
-         console.error('일기 작성 에러:', error);
-         alert('일기를 저장하는 중 문제가 발생했습니다.');
+         console.error('저장 실패:', error);
+         alert('저장 중 문제가 발생했습니다.');
       } finally {
          setIsLoading(false);
       }
    };
 
+   if (isFetching) {
+      return (
+         <div className="min-h-screen flex items-center justify-center bg-gray-50">
+            <Loader2 className="w-10 h-10 text-indigo-600 animate-spin" />
+         </div>
+      );
+   }
+
    return (
       <div className="min-h-screen bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
          <div className="max-w-3xl mx-auto">
 
-            {/* 헤더: 뒤로가기 및 타이틀 */}
+            {/* 헤더 */}
             <div className="flex items-center justify-between mb-8">
                <button
                   onClick={() => navigate(-1)}
                   className="flex items-center text-gray-500 hover:text-gray-900 transition-colors"
                >
                   <ArrowLeft className="w-5 h-5 mr-1" />
-                  돌아가기
+                  취소
                </button>
-               <h1 className="text-2xl font-bold text-gray-900">오늘의 기록</h1>
-               <div className="w-20" /> {/* 중앙 정렬을 위한 더미 공간 */}
+               <h1 className="text-2xl font-bold text-gray-900">
+                  {isEditMode ? '일기 수정하기' : '오늘의 기록'}
+               </h1>
+               <div className="w-16" />
             </div>
 
-            {/* 작성 폼 카드 */}
+            {/* 폼 카드 */}
             <div className="bg-white rounded-3xl shadow-xl border border-gray-100 overflow-hidden">
                <div className="p-8 sm:p-10 space-y-8">
 
-                  {/* 기분 선택 (Mood) */}
+                  {/* 기분 선택 */}
                   <section>
                      <label className="block text-sm font-bold text-gray-700 mb-4 text-center">
-                        오늘 하루, 기분이 어떠셨나요?
+                        {isEditMode ? '기분이 바뀌셨나요?' : '오늘 하루, 기분이 어떠셨나요?'}
                      </label>
                      <div className="flex justify-center gap-2 sm:gap-6">
                         {MOODS.map((m) => (
@@ -103,11 +149,13 @@ const DiaryWrite = () => {
                               key={m.value}
                               type="button"
                               onClick={() => handleMoodChange(m.value)}
-                              className={`group relative w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl transition-all duration-200 ${formData.mood === m.value
-                                 ? 'bg-indigo-100 scale-110 shadow-inner ring-2 ring-indigo-500'
-                                 : 'bg-gray-50 hover:bg-gray-100 grayscale hover:grayscale-0'
+                              className={`
+                      group relative w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl transition-all duration-200
+                      ${formData.mood === m.value
+                                    ? 'bg-indigo-100 scale-110 shadow-inner ring-2 ring-indigo-500'
+                                    : 'bg-gray-50 hover:bg-gray-100 grayscale hover:grayscale-0'
                                  }
-                              `}
+                    `}
                            >
                               <span className="transform transition-transform group-hover:scale-125">
                                  {m.emoji}
@@ -135,7 +183,7 @@ const DiaryWrite = () => {
                         name="title"
                         value={formData.title}
                         onChange={handleChange}
-                        placeholder="오늘 하루를 한 줄로 표현해본다면?"
+                        placeholder="제목을 입력하세요"
                         className="block w-full px-4 py-3 rounded-xl border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-gray-400 text-lg font-medium"
                      />
                   </section>
@@ -151,7 +199,7 @@ const DiaryWrite = () => {
                         value={formData.content}
                         onChange={handleChange}
                         rows={12}
-                        placeholder="무슨 일이 있었나요? 편안하게 적어보세요. AI가 당신의 이야기를 그림으로 그려줄 거예요."
+                        placeholder="내용을 입력하세요..."
                         className="block w-full px-4 py-4 rounded-xl border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all placeholder-gray-400 resize-none leading-relaxed"
                      />
                   </section>
@@ -171,15 +219,18 @@ const DiaryWrite = () => {
                         ) : (
                            <>
                               <Save className="w-5 h-5 mr-2" />
-                              일기 저장하기
+                              {isEditMode ? '수정 완료' : '일기 저장하기'}
                            </>
                         )}
-                     </button> {/* 닫는 태그는 중괄호 밖으로 나와야 합니다 */}
+                     </button>
 
-                     <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
-                        <Sparkles className="w-3 h-3 text-yellow-400" />
-                        저장 후 AI 그림 생성을 요청할 수 있습니다.
-                     </p>
+                     {/* 수정 모드일 때는 AI 생성 문구를 굳이 보여주지 않아도 될 수 있음 */}
+                     {!isEditMode && (
+                        <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
+                           <Sparkles className="w-3 h-3 text-yellow-400" />
+                           저장 후 AI 그림 생성을 요청할 수 있습니다.
+                        </p>
+                     )}
                   </div>
 
                </div>

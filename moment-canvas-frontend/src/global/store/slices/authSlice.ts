@@ -9,14 +9,14 @@ export interface User {
 interface AuthState {
    user: User | null;
    accessToken: string | null;
-   refreshToken: string | null; // ✅ 추가됨
+   refreshToken: string | null;
    isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
    user: null,
    accessToken: null,
-   refreshToken: null, // ✅ 초기값 null
+   refreshToken: null,
    isAuthenticated: false,
 };
 

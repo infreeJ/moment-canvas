@@ -117,9 +117,6 @@ const DiaryList = () => {
                         <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-indigo-600 transition-colors">
                            {diary.title}
                         </h3>
-                        <p className="text-gray-500 text-sm line-clamp-3 leading-relaxed flex-grow">
-                           {diary.mood}
-                        </p>
                         <div className="mt-4 pt-4 border-t border-gray-50 flex justify-end">
                            <span className="text-sm font-medium text-gray-400 group-hover:text-indigo-500 transition-colors">
                               자세히 보기 &rarr;

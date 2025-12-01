@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit2, Trash2, Sparkles, Image as ImageIcon, Loader2 } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, Sparkles, Loader2, RotateCcw } from 'lucide-react'; // RotateCcw 아이콘 추가
 import { diaryApi, type DiaryResponse } from '../api/diaryApi';
 import ImageGenerationModal from '../components/ImageGenerationModal';
 
-// 감정 매핑용 데이터
 const MOODS = [
    { value: 1, emoji: '😡', label: '최악' },
    { value: 2, emoji: '😢', label: '우울' },
@@ -13,7 +12,6 @@ const MOODS = [
    { value: 5, emoji: '🥰', label: '최고' },
 ];
 
-// 백엔드 이미지 경로
 const IMAGE_ROOT = 'http://localhost:9090/images/diary-images';
 
 const DiaryDetail = () => {
@@ -24,21 +22,17 @@ const DiaryDetail = () => {
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState('');
 
-   // 이미지 로드 실패 여부
    const [imageError, setImageError] = useState(false);
-
-   // 이미지 생성 모달 상태
-   const [isGenModalOpen, setIsGenModalOpen] = useState(false);
+   const [isGenModalOpen, setIsGenModalOpen] = useState(false); // 모달 상태
 
    useEffect(() => {
       const fetchDiary = async () => {
          if (!id) return;
          try {
             const response = await diaryApi.getDiaryById(id);
-            // 백엔드 ResponseWrapper에 의해 success 필드로 성공 여부 판단
             if (response.success) {
                setDiary(response.data);
-               setImageError(false); // 데이터가 바뀌면 에러 상태 초기화
+               setImageError(false);
             } else {
                throw new Error(response.message);
             }
@@ -92,7 +86,11 @@ const DiaryDetail = () => {
                </button>
 
                <div className="flex gap-2">
-                  <button className="p-2 text-gray-400 hover:text-indigo-600 transition-colors" title="수정 (준비중)">
+                  <button
+                     onClick={() => navigate(`/edit/${id}`)}
+                     className="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
+                     title="글 내용 수정"
+                  >
                      <Edit2 className="w-5 h-5" />
                   </button>
                   <button className="p-2 text-gray-400 hover:text-red-600 transition-colors" title="삭제 (준비중)">
@@ -104,16 +102,31 @@ const DiaryDetail = () => {
             {/* 본문 카드 */}
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
-               {/* 이미지 영역 (캔버스) */}
-               <div className="relative w-full aspect-video bg-gray-100 flex items-center justify-center overflow-hidden">
+               {/* 1. 이미지 영역 (캔버스) */}
+               {/* group 클래스를 추가하여 호버 효과 감지 */}
+               <div className="relative w-full aspect-video bg-gray-100 flex items-center justify-center overflow-hidden group">
+
                   {diary.savedDiaryImageName && !imageError ? (
-                     // 이미지가 있는 경우
-                     <img
-                        src={`${IMAGE_ROOT}/${diary.savedDiaryImageName}`}
-                        alt={diary.title}
-                        className="w-full h-full object-contain bg-black/5"
-                        onError={() => setImageError(true)}
-                     />
+                     <>
+                        <img
+                           src={`${IMAGE_ROOT}/${diary.savedDiaryImageName}`}
+                           alt={diary.title}
+                           className="w-full h-full object-contain bg-black/5"
+                           onError={() => setImageError(true)}
+                        />
+
+                        {/* ✅ [추가됨] 이미지 수정(재생성) 버튼 */}
+                        {/* 평소엔 숨겨져 있다가(opacity-0), 이미지 영역에 마우스를 올리면 나타남(group-hover:opacity-100) */}
+                        <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
+                           <button
+                              onClick={() => setIsGenModalOpen(true)}
+                              className="flex items-center gap-2 px-6 py-3 bg-white/90 hover:bg-white text-gray-900 rounded-full font-bold shadow-lg transform translate-y-4 group-hover:translate-y-0 transition-all duration-300"
+                           >
+                              <RotateCcw className="w-5 h-5 text-indigo-600" />
+                              새로운 그림 그리기
+                           </button>
+                        </div>
+                     </>
                   ) : (
                      // 이미지가 없는 경우 (AI 생성 유도)
                      <div className="flex flex-col items-center text-gray-400 py-12 px-4 text-center">
@@ -131,23 +144,21 @@ const DiaryDetail = () => {
                            }
                         </p>
 
-                        {/* 에러 상황이 아닐 때만 생성 버튼 노출 */}
-                        {!imageError && (
-                           <button
-                              onClick={() => setIsGenModalOpen(true)} // ✅ 모달 열기
-                              className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all"
-                           >
-                              <Sparkles className="w-5 h-5" />
-                              AI 그림 그려줘
-                           </button>
-                        )}
+                        {/* 버튼 */}
+                        <button
+                           onClick={() => setIsGenModalOpen(true)}
+                           className="flex items-center gap-2 px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-full font-bold shadow-md hover:shadow-lg hover:scale-105 transition-all"
+                        >
+                           <Sparkles className="w-5 h-5" />
+                           {imageError ? "이미지 다시 생성하기" : "AI 그림 그려줘"}
+                        </button>
                      </div>
                   )}
                </div>
 
                {/* 2. 내용 영역 */}
                <div className="p-8 sm:p-10">
-                  {/* 타이틀 & 감정 */}
+                  {/* ... (기존 내용 유지) ... */}
                   <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
                      <div>
                         <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full mb-3">
@@ -167,7 +178,6 @@ const DiaryDetail = () => {
                      </div>
                   </div>
 
-                  {/* 본문 텍스트 */}
                   <div className="prose prose-lg max-w-none text-gray-600 leading-relaxed whitespace-pre-wrap">
                      {diary.content}
                   </div>
@@ -175,15 +185,14 @@ const DiaryDetail = () => {
             </div>
          </div>
 
-         {/* 이미지 생성 모달 */}
-         {/* diaryId가 확실히 있을 때만 렌더링 */}
+         {/* 이미지 생성 모달 (기존 로직 재사용) */}
          {diary && (
             <ImageGenerationModal
                isOpen={isGenModalOpen}
                onClose={() => setIsGenModalOpen(false)}
                diaryId={diary.diaryId}
                onImageSaved={() => {
-                  // 이미지가 저장되면 페이지를 새로고침하여 이미지를 보여줌
+                  // 저장 완료 시 새로고침 -> 백엔드가 이미지를 덮어썼으므로 새 이미지가 보임
                   window.location.reload();
                }}
             />
