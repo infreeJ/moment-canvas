@@ -1,20 +1,30 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, Search, Bell, Plus, User } from 'lucide-react';
+import { Menu, Search, Bell, Plus, User, LogOut } from 'lucide-react';
 import Modal from './Modal';
 import LoginForm from '../../domain/auth/pages/LoginForm';
+// Redux 관련 import 추가
+import { useAppSelector, useAppDispatch } from '../../global/store/hooks';
+import { logout } from '../../global/store/slices/authSlice';
 
 const Navbar = () => {
    const navigate = useNavigate();
-   // 로그인 모달 상태 관리
-   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
-   // 임시 로그인 상태 (추후 전역 상태로 교체)
-   const [isLoggedIn, setIsLoggedIn] = useState(false);
+   const dispatch = useAppDispatch();
 
-   // 모달 열기 핸들러
+   // Redux Store에서 인증 상태와 유저 정보 가져오기
+   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+
+   // 모달 상태는 UI 상태이므로 로컬 useState 유지
+   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+
    const openLoginModal = () => setIsLoginModalOpen(true);
-   // 모달 닫기 핸들러
    const closeLoginModal = () => setIsLoginModalOpen(false);
+
+   const handleLogout = () => {
+      // Redux 액션 디스패치
+      dispatch(logout());
+      navigate('/');
+   };
 
    return (
       <>
@@ -22,7 +32,6 @@ const Navbar = () => {
             <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
                <div className="flex justify-between items-center h-16">
 
-                  {/* 좌측: 로고 및 메뉴 */}
                   <div className="flex items-center gap-4">
                      <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <Menu className="w-6 h-6 text-gray-600" />
@@ -41,7 +50,6 @@ const Navbar = () => {
                      </div>
                   </div>
 
-                  {/* 중앙: 검색바 */}
                   <div className="hidden md:flex flex-1 max-w-xl mx-8">
                      <div className="relative w-full">
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -55,9 +63,9 @@ const Navbar = () => {
                      </div>
                   </div>
 
-                  {/* 우측: 버튼 영역 */}
                   <div className="flex items-center gap-2 sm:gap-4">
-                     {isLoggedIn ? (
+                     {/* isAuthenticated 값에 따라 UI 분기 처리 */}
+                     {isAuthenticated ? (
                         <>
                            <button
                               onClick={() => navigate('/write')}
@@ -74,20 +82,26 @@ const Navbar = () => {
 
                            <div className="relative group">
                               <button className="w-9 h-9 rounded-full bg-gray-200 overflow-hidden border border-gray-300 focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                                 {/* 유저 프로필 이미지가 없으면 기본값 사용 */}
                                  <img
-                                    src="https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                                    src={user?.profileImage || "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"}
                                     alt="User Avatar"
                                     className="w-full h-full object-cover"
                                  />
                               </button>
+                              {/* (옵션) 여기에 드롭다운 메뉴 추가하여 로그아웃 버튼 배치 가능 */}
                            </div>
+
+                           {/* 임시 로그아웃 버튼 (나중에 드롭다운 안으로 이동 추천) */}
+                           <button onClick={handleLogout} className="p-2 text-gray-500 hover:text-red-500">
+                              <LogOut className="w-5 h-5" />
+                           </button>
                         </>
                      ) : (
                         <>
                            <button className="p-2 sm:hidden text-gray-600">
                               <Search className="w-6 h-6" />
                            </button>
-                           {/* 로그인 버튼 클릭 시 모달 열기 */}
                            <button
                               onClick={openLoginModal}
                               className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 font-medium text-sm transition-colors"
@@ -103,8 +117,6 @@ const Navbar = () => {
             </div>
          </nav>
 
-         {/* --- 로그인 모달 배치 --- */}
-         {/* Navbar 바깥이 아니라 Fragment(<>) 안에 두어 렌더링 */}
          <Modal
             isOpen={isLoginModalOpen}
             onClose={closeLoginModal}
