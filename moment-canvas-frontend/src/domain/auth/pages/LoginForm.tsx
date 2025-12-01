@@ -31,7 +31,7 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
         throw new Error(loginResponse.message || '로그인에 실패했습니다.');
       }
 
-      const { accessToken } = loginResponse.data;
+      const { accessToken, refreshToken } = loginResponse.data;
       console.log('1. 토큰 발급 성공:', accessToken);
 
       // 획득한 토큰으로 유저 정보 조회 API 호출 -> 유저 정보 획득
@@ -48,6 +48,7 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
       dispatch(setCredentials({
         user: userData,
         accessToken: accessToken,
+        refreshToken: refreshToken,
       }));
 
       // 성공 시 모달 닫기

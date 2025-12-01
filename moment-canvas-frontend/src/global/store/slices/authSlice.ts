@@ -1,21 +1,23 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-// 유저 타입 정의 (백엔드 UserResponse 참고)
 export interface User {
    userId: number;
    loginId: string;
    profileImage?: string;
+   nickname?: string;
 }
 
 interface AuthState {
    user: User | null;
    accessToken: string | null;
+   refreshToken: string | null; // ✅ 추가됨
    isAuthenticated: boolean;
 }
 
 const initialState: AuthState = {
    user: null,
    accessToken: null,
+   refreshToken: null, // ✅ 초기값 null
    isAuthenticated: false,
 };
 
@@ -23,22 +25,26 @@ const authSlice = createSlice({
    name: 'auth',
    initialState,
    reducers: {
-      // 로그인 성공 시 호출 (토큰과 유저 정보 저장)
+      // 로그인 성공 시 AccessToken, RefreshToken, User 정보 모두 저장
       setCredentials: (
          state,
-         action: PayloadAction<{ user: User; accessToken: string }>
+         action: PayloadAction<{
+            user: User;
+            accessToken: string;
+            refreshToken: string;
+         }>
       ) => {
          state.user = action.payload.user;
          state.accessToken = action.payload.accessToken;
+         state.refreshToken = action.payload.refreshToken;
          state.isAuthenticated = true;
       },
-      // 로그아웃 시 호출 (상태 초기화)
       logout: (state) => {
          state.user = null;
          state.accessToken = null;
+         state.refreshToken = null;
          state.isAuthenticated = false;
       },
-      // 프로필 이미지 등 유저 정보만 업데이트할 때
       updateUser: (state, action: PayloadAction<Partial<User>>) => {
          if (state.user) {
             state.user = { ...state.user, ...action.payload };
