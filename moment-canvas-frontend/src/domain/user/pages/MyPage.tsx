@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { User, Calendar, Smile, Save, Loader2, Camera } from 'lucide-react';
+import { User, Calendar, Smile, Save, Loader2, Camera, AlertCircle } from 'lucide-react';
 import { useAppSelector, useAppDispatch } from '../../../global/store/hooks';
-import { updateUser } from '../../../global/store/slices/authSlice';
+import { logout, updateUser } from '../../../global/store/slices/authSlice';
 import { userApi, type UserDetail } from '../api/userApi';
 
 const IMAGE_BASE_URL = 'http://localhost:9090/images/profile-images';
@@ -136,6 +136,29 @@ const MyPage = () => {
       } finally {
          setIsLoading(false);
          if (fileInputRef.current) fileInputRef.current.value = '';
+      }
+   };
+
+   // 회원 탈퇴 핸들러
+   const handleWithdrawal = async () => {
+      // 확인 (Browser Confirm)
+      if (!window.confirm('정말로 탈퇴하시겠습니까?\n탈퇴 시 작성한 일기와 모든 정보가 삭제될 수 있습니다.')) {
+         return;
+      }
+
+      try {
+         // API 호출
+         await userApi.withdrawal();
+
+         alert('회원 탈퇴가 완료되었습니다.\n그동안 이용해주셔서 감사합니다.');
+
+         // 프론트엔드 로그아웃 처리 및 홈으로 이동
+         dispatch(logout());
+         navigate('/');
+
+      } catch (error) {
+         console.error('탈퇴 처리 실패:', error);
+         alert('탈퇴 처리 중 오류가 발생했습니다. 잠시 후 다시 시도해주세요.');
       }
    };
 
@@ -326,6 +349,17 @@ const MyPage = () => {
                   </form>
                </div>
             </div>
+
+            <div className="text-center">
+               <button
+                  onClick={handleWithdrawal}
+                  className="text-sm text-gray-400 hover:text-red-500 hover:underline transition-colors flex items-center justify-center gap-1 mx-auto"
+               >
+                  <AlertCircle className="w-4 h-4" />
+                  회원 탈퇴하기
+               </button>
+            </div>
+
          </div>
       </div>
    );

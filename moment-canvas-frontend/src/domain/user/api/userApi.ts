@@ -56,4 +56,10 @@ export const userApi = {
       );
       return response.data.data; // 변경된 파일명 반환
    },
+
+   // 회원 탈퇴 (PATCH /v1/user/withdrawal)
+   withdrawal: async () => {
+      // 응답 본문이 없으므로 제네릭 없이 호출하거나 void로 처리
+      await httpClient.patch('/user/withdrawal');
+   },
 };
