@@ -3,8 +3,11 @@ import App from "../../App";
 import Home from "../pages/Home";
 
 const routes = [ 
-   { path: "/index.html", element: <Home /> }, // spring boot 최초 실행 정보 추가
    { path: "/", element: <Home /> },
+   { path: "/index.html", element: <Home /> }, // Spring Boot 리다이렉트 대응
+   // 추후 추가 예시:
+   // { path: "/login", element: <Login /> },
+   // { path: "/write", element: <DiaryWrite /> },
 ];
 
 // router 객체
