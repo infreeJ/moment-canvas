@@ -10,7 +10,8 @@ interface AuthState {
    user: User | null;
    accessToken: string | null;
    refreshToken: string | null;
-   isAuthenticated: boolean;
+   isAuthenticated: boolean,
+   isLoginModalOpen: boolean;
 }
 
 const initialState: AuthState = {
@@ -18,6 +19,7 @@ const initialState: AuthState = {
    accessToken: null,
    refreshToken: null,
    isAuthenticated: false,
+   isLoginModalOpen: false,
 };
 
 const authSlice = createSlice({
@@ -49,8 +51,15 @@ const authSlice = createSlice({
             state.user = { ...state.user, ...action.payload };
          }
       },
+      // 모달 제어용 리듀서
+      openLoginModal: (state) => {
+         state.isLoginModalOpen = true;
+      },
+      closeLoginModal: (state) => {
+         state.isLoginModalOpen = false;
+      },
    },
 });
 
-export const { setCredentials, logout, updateUser } = authSlice.actions;
+export const { setCredentials, logout, updateUser, openLoginModal, closeLoginModal } = authSlice.actions;
 export default authSlice.reducer;

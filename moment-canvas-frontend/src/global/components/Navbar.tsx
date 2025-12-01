@@ -4,9 +4,10 @@ import { Menu, Search, Bell, Plus, User, LogOut } from 'lucide-react';
 import Modal from './Modal';
 import LoginForm from '../../domain/auth/pages/LoginForm';
 import { useAppSelector, useAppDispatch } from '../../global/store/hooks';
-import { logout } from '../../global/store/slices/authSlice';
+import { closeLoginModal, logout, openLoginModal } from '../../global/store/slices/authSlice';
 import { authApi } from '../../global/api/authApi';
 
+// 프로필 이미지 경로 상수
 const IMAGE_ROOT = 'http://localhost:9090/images/profile-images';
 
 const Navbar = () => {
@@ -14,18 +15,23 @@ const Navbar = () => {
    const location = useLocation();
    const dispatch = useAppDispatch();
 
-   // Redux 상태
-   const { isAuthenticated, user } = useAppSelector((state) => state.auth);
+   // Redux 상태 구독 (모달 상태 포함)
+   const { isAuthenticated, user, isLoginModalOpen } = useAppSelector((state) => state.auth);
 
-   // 모달 및 드롭다운 상태
-   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+   // 드롭다운 상태 (로컬 UI)
    const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
    const profileMenuRef = useRef<HTMLDivElement>(null);
 
-   const openLoginModal = () => setIsLoginModalOpen(true);
-   const closeLoginModal = () => setIsLoginModalOpen(false);
+   // 모달 제어 핸들러 (Redux Dispatch)
+   const handleOpenLoginModal = () => {
+      dispatch(openLoginModal());
+   };
 
-   // 메뉴 활성화 스타일 계산 함수
+   const handleCloseLoginModal = () => {
+      dispatch(closeLoginModal());
+   };
+
+   // 메뉴 활성화 스타일 계산
    const getMenuClass = (path: string) => {
       const baseClass = "text-sm font-medium transition-colors duration-200";
       const activeClass = "text-indigo-600 font-bold";
@@ -100,10 +106,17 @@ const Navbar = () => {
                         />
                      </div>
 
-                     {/* 일기 목록 버튼 */}
+                     {/* 일기 목록 버튼 (로그인 체크 로직 추가됨) */}
                      <div className="flex-shrink-0">
                         <button
-                           onClick={() => navigate('/diaries')}
+                           onClick={() => {
+                              // 로그인이 안 되어 있으면 모달 열기
+                              if (isAuthenticated) {
+                                 navigate('/diaries');
+                              } else {
+                                 handleOpenLoginModal();
+                              }
+                           }}
                            className={getMenuClass('/diaries')}
                         >
                            일기 목록
@@ -157,7 +170,7 @@ const Navbar = () => {
                                     <button
                                        onClick={() => {
                                           setIsProfileMenuOpen(false);
-                                          navigate('/mypage'); 
+                                          navigate('/mypage');
                                        }}
                                        className="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 flex items-center gap-2"
                                     >
@@ -182,7 +195,7 @@ const Navbar = () => {
                               <Search className="w-6 h-6" />
                            </button>
                            <button
-                              onClick={openLoginModal}
+                              onClick={handleOpenLoginModal} // Redux 액션 연결
                               className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-full hover:bg-gray-50 font-medium text-sm transition-colors"
                            >
                               <User className="w-5 h-5" />
@@ -196,12 +209,13 @@ const Navbar = () => {
             </div>
          </nav>
 
+         {/* 모달 상태 연결 (Redux) */}
          <Modal
             isOpen={isLoginModalOpen}
-            onClose={closeLoginModal}
+            onClose={handleCloseLoginModal}
             title="로그인"
          >
-            <LoginForm onClose={closeLoginModal} />
+            <LoginForm onClose={handleCloseLoginModal} />
          </Modal>
       </>
    );
