@@ -4,6 +4,7 @@ import { useAppDispatch } from '../../../global/store/hooks';
 import { setCredentials } from '../../../global/store/slices/authSlice';
 import { authApi } from '../../../global/api/authApi';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 interface LoginFormProps {
   onClose: () => void;
@@ -11,6 +12,7 @@ interface LoginFormProps {
 
 const LoginForm = ({ onClose }: LoginFormProps) => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const [loginId, setLoginId] = useState('');
   const [password, setPassword] = useState('');
@@ -42,7 +44,7 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
       }
 
       const userData = userResponse.data;
-      console.log('2. 유저 정보 조회 성공:', userData);
+      console.log('유저 정보 조회 성공:', userData);
 
       // Redux Store에 토큰과 유저 정보 저장
       dispatch(setCredentials({
@@ -154,7 +156,7 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
         className="w-full py-2.5 px-4 border border-gray-300 rounded-xl shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition-colors"
         onClick={() => {
           onClose();
-          // navigate('/signup');
+          navigate('/signup');
         }}
       >
         회원가입

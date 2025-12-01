@@ -1,10 +1,12 @@
 import { createHashRouter } from "react-router-dom";
 import App from "../../App";
 import Home from "../pages/Home";
+import Signup from "../../domain/auth/pages/SignupForm";
 
 const routes = [ 
    { path: "/", element: <Home /> },
    { path: "/index.html", element: <Home /> }, // Spring Boot 리다이렉트 대응
+   { path: "/signup", element: <Signup /> },
    // 추후 추가 예시:
    // { path: "/login", element: <Login /> },
    // { path: "/write", element: <DiaryWrite /> },
