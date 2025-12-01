@@ -45,6 +45,12 @@ export const diaryApi = {
   create: async (data: DiaryCreateRequest) => {
     const response = await httpClient.post<ApiResponse<DiaryResponse>>('/diary', data);
     return response.data; // { success: true, data: { diaryId: 1, ... } }
+  },
+
+  // 일기 상세 조회
+  getDiaryById: async (diaryId: string) => {
+    const response = await httpClient.get<ApiResponse<DiaryResponse>>(`/diary/${diaryId}`);
+    return response.data;
   }
 };
 

@@ -4,12 +4,14 @@ import Home from "../pages/Home";
 import Signup from "../../domain/auth/pages/SignupForm";
 import DiaryList from "../../domain/diary/pages/DiaryList";
 import DiaryWrite from "../../domain/diary/pages/DiaryWrite";
+import DiaryDetail from "../../domain/diary/pages/DiaryDetail";
 
 const routes = [ 
    { path: "/", element: <Home /> },
    { path: "/index.html", element: <Home /> }, // Spring Boot 리다이렉트 대응
    { path: "/signup", element: <Signup /> },
    { path: "/diaries", element: <DiaryList /> },
+   { path: "/diary/:id", element: <DiaryDetail /> },
    { path: "/write", element: <DiaryWrite /> },
 ];
 
