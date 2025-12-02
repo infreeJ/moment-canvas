@@ -6,6 +6,7 @@ import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.image.*;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @Primary
+@ConditionalOnProperty(name = "app.ai.provider", havingValue = "replicate")
 public class ReplicateImageModel implements ImageModel {
 
     private final RestClient restClient;
