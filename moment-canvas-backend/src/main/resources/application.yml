@@ -10,6 +10,8 @@ spring:
   ai:
     openai:
       api-key: ${OPENAI_API_KEY} # OpenAI API KEY
+    replicate:
+      api-token: ${REPLICATE_API_TOKEN} # Replicate API Key
 
 file:
   upload-dir: file:../../images/  # 로컬용

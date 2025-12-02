@@ -161,7 +161,7 @@ const ImageGenerationModal = ({ isOpen, onClose, diaryId, onImageSaved }: ImageG
                         </div>
                      </div>
                      <h3 className="mt-8 text-xl font-bold text-gray-900">AI가 그림을 그리고 있어요...</h3>
-                     <p className="mt-2 text-gray-500">일기 내용을 분석하고 멋진 장면을 상상하는 중입니다.<br />잠시만 기다려주세요! (약 10~20초 소요)</p>
+                     <p className="mt-2 text-gray-500">일기 내용을 분석하고 멋진 장면을 상상하는 중입니다.<br />잠시만 기다려주세요! (약 5~10초 소요)</p>
                   </div>
                )}
 
