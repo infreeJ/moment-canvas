@@ -30,8 +30,8 @@ public class AiServiceImpl implements AiService{
         // 이미지 프롬프트 생성 메서드 호출
         String prompt = generateImagePrompt(systemPersona, userRequest);
 
-        //  === Replicate 모델로 변경하며 더이상 사용하지 않음 ===
-
+//        //  === Replicate 모델로 변경하며 더이상 사용하지 않음 ===
+//
 //        // 이미지 모델 옵션 설정
 //        ImageOptions options = ImageOptionsBuilder.builder()
 //                .model("dall-e-2") // TODO: 배포 시 dall-e-3로 모델 변경
@@ -40,14 +40,14 @@ public class AiServiceImpl implements AiService{
 //                .height(1024)
 //                .N(1)
 //                .build();
-
+//
 //        ImagePrompt imagePrompt = new ImagePrompt(prompt, options); // 프롬프트 조합
 //        ImageResponse imageResponse = imageModel.call(imagePrompt); // OpneAI 호출
-
-        // =================================================
+//
+//        // =================================================
 
         ImagePrompt imagePrompt = new ImagePrompt(prompt); // 프롬프트 조합
-        ImageResponse imageResponse = imageModel.call(imagePrompt); // OpneAI 호출
+        ImageResponse imageResponse = imageModel.call(imagePrompt); // API 호출
 
         String imageUrl;
         try {
