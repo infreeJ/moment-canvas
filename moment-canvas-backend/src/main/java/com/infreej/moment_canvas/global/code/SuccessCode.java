@@ -36,6 +36,7 @@ public enum SuccessCode {
     DIARY_SUCCESS(HttpStatus.OK, "S3002", "success.diary.success"),
     DIARY_UPDATED(HttpStatus.OK, "S3003", "success.diary.updated"),
     DIARY_DELETED(HttpStatus.OK, "S3004", "success.diary.deleted"),
+    DIARY_DATE_SUCCESS(HttpStatus.OK, "S3005", "success.diary.date.success"),
 
 
     // ==================== 이미지 관련 성공 (4xxx) ====================

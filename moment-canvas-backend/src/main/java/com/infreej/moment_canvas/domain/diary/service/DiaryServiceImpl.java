@@ -25,6 +25,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -217,6 +218,12 @@ public class DiaryServiceImpl implements DiaryService{
         diary.updateDiaryImage(imageSaveRequest.getOrgImageName(), imageSaveRequest.getSavedImageName());
 
         return DiaryResponse.from(diary);
+    }
+
+    @Override
+    public List<LocalDate> findDiaryDateList(long userId) {
+
+        return diaryRepository.findAllTargetDateByUserId(userId);
     }
 
 

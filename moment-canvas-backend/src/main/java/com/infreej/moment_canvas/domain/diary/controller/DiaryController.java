@@ -19,6 +19,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 @Tag(name = "Diary", description = "일기 API")
@@ -88,9 +89,18 @@ public class DiaryController {
     @SetSuccess(SuccessCode.IMAGE_CREATED)
     @Operation(summary = "생성된 일기 이미지 저장", security = @SecurityRequirement(name = "JWT"), description = "일기 저장 API 입니다.")
     @PostMapping("/diary/{diaryId}/image-save")
-    public DiaryResponse diaryImageSave(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long diaryId, @RequestBody ImageDownloadRequest imageDownloadRequest) throws IOException {
+    public DiaryResponse saveDiaryImage(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long diaryId, @RequestBody ImageDownloadRequest imageDownloadRequest) throws IOException {
 
         return diaryService.diaryImageSave(customUserDetails.getUser().getUserId(), diaryId, imageDownloadRequest);
+    }
+
+
+    @SetSuccess(SuccessCode.DIARY_DATE_SUCCESS)
+    @Operation(summary = "사용자가 작성한 모든 일기의 날짜 목록 조회", security = @SecurityRequirement(name = "JWT"), description = "날짜 목록 조회 API 입니다.")
+    @GetMapping("/diary/dates")
+    public List<LocalDate> findDiaryDateList(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+
+        return diaryService.findDiaryDateList(customUserDetails.getUser().getUserId());
     }
 
 

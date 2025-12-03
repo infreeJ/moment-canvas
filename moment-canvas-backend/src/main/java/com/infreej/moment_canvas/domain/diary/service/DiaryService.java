@@ -8,6 +8,7 @@ import com.infreej.moment_canvas.domain.diary.dto.response.DiarySummaryResponse;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.util.List;
 
 public interface DiaryService {
@@ -26,5 +27,5 @@ public interface DiaryService {
 
     public DiaryResponse diaryImageSave(long userId, long diaryId, ImageDownloadRequest imageDownloadRequest) throws IOException;
 
-
+    public List<LocalDate> findDiaryDateList(long userId);
     }
