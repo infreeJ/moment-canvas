@@ -5,7 +5,7 @@ export interface DiarySummary {
   diaryId: number;
   title: string;
   mood: number;
-  createdAt: string;
+  targetDate: string;
   savedDiaryImageName?: string | null;
 }
 
@@ -14,6 +14,7 @@ export interface DiaryCreateRequest {
   title: string;
   content: string;
   mood: number; // 1~5 척도
+  targetDate: string;
 }
 
 // 일기 상세/생성 응답 (Response Body)
@@ -23,7 +24,7 @@ export interface DiaryResponse {
   content: string;
   mood: number;
   savedDiaryImageName?: string | null; // 이미지 생성 전에는 null
-  createdAt?: string; // 상세 조회 시 필요할 수 있음
+  targetDate: string; // 상세 조회 시 필요할 수 있음
 }
 
 // 이미지 생성 요청 DTO
@@ -47,6 +48,7 @@ export interface DiaryUpdateRequest {
   title: string;
   content: string;
   mood: number;
+  targetDate: string;
 }
 
 // 공통 응답 래퍼

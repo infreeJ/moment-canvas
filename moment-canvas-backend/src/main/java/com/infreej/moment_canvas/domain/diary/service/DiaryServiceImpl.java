@@ -114,7 +114,8 @@ public class DiaryServiceImpl implements DiaryService{
         diary.updateDiaryInfo(
                 diaryUpdateRequest.getTitle(),
                 diaryUpdateRequest.getContent(),
-                diaryUpdateRequest.getMood()
+                diaryUpdateRequest.getMood(),
+                diaryUpdateRequest.getTargetDate()
         );
 
         return DiaryResponse.from(diary);
@@ -194,7 +195,7 @@ public class DiaryServiceImpl implements DiaryService{
 
 
     /**
-     * 일기 이미지를 DB에 저장하는 메서드
+     * 일기 이미지를 DB에 저장(업데이트)하는 메서드
      * - imageSaveRequest의 imageUrl과 imageType만 채워진 상태
      * @param diaryId 일기 고유번호
      * @param imageDownloadRequest 일기 저장에 필요한 데이터

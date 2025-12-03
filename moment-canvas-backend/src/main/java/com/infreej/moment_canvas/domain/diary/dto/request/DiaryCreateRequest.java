@@ -7,6 +7,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
+
 
 /**
  * 일기 저장 요청 Request
@@ -20,6 +22,7 @@ public class DiaryCreateRequest {
     private String title;
     private String content;
     private int mood;
+    private LocalDate targetDate;
 
 
     // Entity 변환 메서드
@@ -29,6 +32,7 @@ public class DiaryCreateRequest {
                 .title(this.title)
                 .content(this.content)
                 .mood(this.mood)
+                .targetDate(this.targetDate)
                 .build();
     }
 }

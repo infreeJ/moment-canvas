@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // useParams 추가
-import { ArrowLeft, Save, Loader2, Sparkles } from 'lucide-react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { ArrowLeft, Save, Loader2, Sparkles, Calendar } from 'lucide-react'; // Calendar 아이콘 추가
 import { diaryApi } from '../api/diaryApi';
 
 const MOODS = [
@@ -13,16 +13,26 @@ const MOODS = [
 
 const DiaryWrite = () => {
    const navigate = useNavigate();
-   const { id } = useParams<{ id: string }>(); // URL에 id가 있으면 수정 모드
-   const isEditMode = Boolean(id); // 수정 모드 여부 플래그
+   const { id } = useParams<{ id: string }>();
+   const isEditMode = Boolean(id);
 
    const [isLoading, setIsLoading] = useState(false);
-   const [isFetching, setIsFetching] = useState(false); // 초기 데이터 로딩 상태
+   const [isFetching, setIsFetching] = useState(false);
+
+   // 오늘 날짜 구하기 (YYYY-MM-DD 형식)
+   const getToday = () => {
+      const now = new Date();
+      // 한국 시간으로 변환
+      const offset = now.getTimezoneOffset() * 60000;
+      const localDate = new Date(now.getTime() - offset);
+      return localDate.toISOString().split('T')[0];
+   };
 
    const [formData, setFormData] = useState({
       title: '',
       content: '',
       mood: 3,
+      targetDate: getToday(), // 오늘 날짜 기본값
    });
 
    // 수정 모드일 때 기존 데이터 불러오기
@@ -33,8 +43,14 @@ const DiaryWrite = () => {
             try {
                const response = await diaryApi.getDiaryById(id);
                if (response.success) {
-                  const { title, content, mood } = response.data;
-                  setFormData({ title, content, mood });
+                  const { title, content, mood, targetDate } = response.data;
+                  setFormData({
+                     title,
+                     content,
+                     mood,
+                     // 서버에서 받은 날짜가 있으면 사용, 없으면 오늘
+                     targetDate: targetDate || getToday()
+                  });
                } else {
                   alert('일기 정보를 불러올 수 없습니다.');
                   navigate(-1);
@@ -61,6 +77,10 @@ const DiaryWrite = () => {
    };
 
    const handleSubmit = async () => {
+      if (!formData.targetDate) {
+         alert('날짜를 선택해주세요.');
+         return;
+      }
       if (!formData.title.trim()) {
          alert('제목을 입력해주세요.');
          return;
@@ -74,17 +94,17 @@ const DiaryWrite = () => {
 
       try {
          if (isEditMode && id) {
-            // --- 수정 요청 (UPDATE) ---
             const response = await diaryApi.update({
                diaryId: Number(id),
                title: formData.title,
                content: formData.content,
                mood: formData.mood,
+               targetDate: formData.targetDate,
             });
 
             if (!response.success) throw new Error(response.message);
             console.log('일기 수정 성공');
-            navigate(`/diary/${id}`); // 수정 후 상세 페이지로 이동
+            navigate(`/diary/${id}`);
 
          } else {
             // --- 작성 요청 (CREATE) ---
@@ -92,11 +112,12 @@ const DiaryWrite = () => {
                title: formData.title,
                content: formData.content,
                mood: formData.mood,
+               targetDate: formData.targetDate
             });
 
             if (!response.success) throw new Error(response.message);
             console.log('일기 작성 성공');
-            navigate('/diaries'); // 작성 후 목록으로 이동
+            navigate('/diaries');
          }
 
       } catch (error) {
@@ -172,6 +193,28 @@ const DiaryWrite = () => {
 
                   <hr className="border-gray-100" />
 
+                  {/* 날짜 입력 */}
+                  <section>
+                     <label htmlFor="targetDate" className="block text-sm font-medium text-gray-700 mb-2">
+                        날짜
+                     </label>
+                     <div className="relative">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                           <Calendar className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                           type="date"
+                           id="targetDate"
+                           name="targetDate"
+                           value={formData.targetDate}
+                           onChange={handleChange}
+                           required
+                           max={getToday()}
+                           className="block w-full pl-10 pr-4 py-3 rounded-xl border-gray-200 bg-gray-50 focus:bg-white focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all text-gray-700 font-medium"
+                        />
+                     </div>
+                  </section>
+
                   {/* 제목 입력 */}
                   <section>
                      <label htmlFor="title" className="block text-sm font-medium text-gray-700 mb-2">
@@ -224,7 +267,6 @@ const DiaryWrite = () => {
                         )}
                      </button>
 
-                     {/* 수정 모드일 때는 AI 생성 문구를 굳이 보여주지 않아도 될 수 있음 */}
                      {!isEditMode && (
                         <p className="text-center text-xs text-gray-400 mt-4 flex items-center justify-center gap-1">
                            <Sparkles className="w-3 h-3 text-yellow-400" />

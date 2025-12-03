@@ -5,6 +5,8 @@ import com.infreej.moment_canvas.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
+
 @Entity
 @Table(name = "diaries")
 @Getter
@@ -37,11 +39,15 @@ public class Diary extends BaseTimeEntity {
     @Column(length = 50)
     private String savedDiaryImageName;
 
+    @Column(nullable = false)
+    private LocalDate targetDate;
+
     // 일기 엔티티 정보 변경 메서드
-    public void updateDiaryInfo(String title, String content, Integer mood) {
+    public void updateDiaryInfo(String title, String content, Integer mood, LocalDate targetDate) {
         this.title = title;
         this.content = content;
         this.mood = mood;
+        this.targetDate = targetDate;
     }
 
     // 일기 엔티티 이미지 저장/변경 메서드

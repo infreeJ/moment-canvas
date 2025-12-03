@@ -112,7 +112,7 @@ const DiaryList = () => {
                      <div className="p-6 flex flex-col flex-grow">
                         <div className="flex items-center gap-2 text-xs font-medium text-indigo-600 mb-3">
                            <Calendar className="w-4 h-4" />
-                           {formatDate(diary.createdAt)}
+                           {formatDate(diary.targetDate)}
                         </div>
                         <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-indigo-600 transition-colors">
                            {diary.title}

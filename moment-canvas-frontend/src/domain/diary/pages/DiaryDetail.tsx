@@ -25,6 +25,18 @@ const DiaryDetail = () => {
    const [imageError, setImageError] = useState(false);
    const [isGenModalOpen, setIsGenModalOpen] = useState(false); // 모달 상태
 
+   // 날짜 포맷팅 함수
+   const formatDate = (dateString: string) => {
+      if (!dateString) return '';
+      const date = new Date(dateString);
+      return new Intl.DateTimeFormat('ko-KR', {
+         year: 'numeric',
+         month: 'long',
+         day: 'numeric',
+         weekday: 'long',
+      }).format(date);
+   };
+
    useEffect(() => {
       const fetchDiary = async () => {
          if (!id) return;
@@ -158,12 +170,16 @@ const DiaryDetail = () => {
 
                {/* 2. 내용 영역 */}
                <div className="p-8 sm:p-10">
-                  {/* ... (기존 내용 유지) ... */}
                   <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
                      <div>
-                        <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full mb-3">
-                           Diary Note
-                        </span>
+                        <div className="flex items-center gap-2 mb-3">
+                           <span className="inline-block px-3 py-1 bg-indigo-50 text-indigo-700 text-xs font-bold rounded-full">
+                              Diary Note
+                           </span>
+                           <span className="text-sm text-gray-500 font-medium">
+                              {diary.targetDate ? formatDate(diary.targetDate) : ''}
+                           </span>
+                        </div>
                         <h1 className="text-3xl font-extrabold text-gray-900 leading-tight">
                            {diary.title}
                         </h1>
