@@ -9,13 +9,13 @@
 ---
 
 ## 프로젝트 소개
-**Moment Canvas**는 텍스트로만 남겨지는 일기의 단조로움을 해소하여 특별한 다이어리를 만드는 웹 서비스 구현.
-사용자가 작성한 일기와 그날의 기분, 그리고 사용자의 고유한 페르소나를 결합하여 **Spring AI**와 **DALL-E 3**가 세상에 하나뿐인 이미지를 생성합니다.
+**Moment Canvas**는 텍스트로만 남겨지는 일기의 단조로움을 해소하여 특별한 다이어리를 만드는 웹 서비스입니다.
 
-최종적으로 나만의 일기가 전시된 **디지털 갤러리**를 소유하는 경험을 제공하는 것을 목표로 합니다.
+사용자가 작성한 일기와 그날의 기분, 그리고 사용자의 고유한 페르소나를 결합하여 세상에 하나뿐인 이미지를 만들고 <br>
+나만의 일기가 전시된 **디지털 갤러리**를 완성해보세요!
 * **개발 기간:** 2024.11.21 ~ 진행 중
 * **참여 인원:** 1명
-* **배포 URL:** 배포 예정
+* **배포 URL:** 12월 중 배포 예정
 
 ### 프로젝트 목표
 * **AI 프로세스 통합:** Spring AI를 활용하여 프롬프트 엔지니어링 및 생성형 AI 모델을 서비스 로직에 녹여내는 경험 축적
@@ -38,13 +38,17 @@
 
 ## 기술 스택
 ### Backend
-* Java 17, Spring Boot 3.4.12, Spring Data JPA, MySQL 8.0, Redis, Spring AI (OpenAI DALL-E 3), Spring Security, JWT
+* Java 17, Spring Boot 3.4.12, Spring Data JPA, MySQL 8.0, Redis, Spring AI, Spring Security, JWT
 
 ### Frontend
 * React, TypeScript, Tailwind CSS, Axios, Redux
 
 ### Infrastructure
 * Doker, AWS EC2, GitHub Actions
+
+### AI Model
+* Replicate Flux-schnell
+* OpenAI Dall-E-3
 
 
 ## ERD 설계
