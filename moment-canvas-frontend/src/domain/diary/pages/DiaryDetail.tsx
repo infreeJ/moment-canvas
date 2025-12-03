@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit2, Trash2, Sparkles, Loader2, RotateCcw } from 'lucide-react'; // RotateCcw 아이콘 추가
+import { ArrowLeft, Edit2, Trash2, Sparkles, Loader2, RotateCcw } from 'lucide-react';
 import { diaryApi, type DiaryResponse } from '../api/diaryApi';
 import ImageGenerationModal from '../components/ImageGenerationModal';
 
@@ -114,7 +114,7 @@ const DiaryDetail = () => {
             {/* 본문 카드 */}
             <div className="bg-white rounded-3xl shadow-xl overflow-hidden border border-gray-100">
 
-               {/* 1. 이미지 영역 (캔버스) */}
+               {/* 이미지 영역 (캔버스) */}
                {/* group 클래스를 추가하여 호버 효과 감지 */}
                <div className="relative w-full aspect-video bg-gray-100 flex items-center justify-center overflow-hidden group">
 
@@ -127,8 +127,7 @@ const DiaryDetail = () => {
                            onError={() => setImageError(true)}
                         />
 
-                        {/* ✅ [추가됨] 이미지 수정(재생성) 버튼 */}
-                        {/* 평소엔 숨겨져 있다가(opacity-0), 이미지 영역에 마우스를 올리면 나타남(group-hover:opacity-100) */}
+                        {/* 이미지 수정(재생성) 버튼 */}
                         <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
                            <button
                               onClick={() => setIsGenModalOpen(true)}
@@ -168,7 +167,7 @@ const DiaryDetail = () => {
                   )}
                </div>
 
-               {/* 2. 내용 영역 */}
+               {/* 내용 영역 */}
                <div className="p-8 sm:p-10">
                   <div className="flex items-start justify-between mb-8 pb-6 border-b border-gray-100">
                      <div>
@@ -208,7 +207,7 @@ const DiaryDetail = () => {
                onClose={() => setIsGenModalOpen(false)}
                diaryId={diary.diaryId}
                onImageSaved={() => {
-                  // 저장 완료 시 새로고침 -> 백엔드가 이미지를 덮어썼으므로 새 이미지가 보임
+                  // 저장 완료 시 새로고침
                   window.location.reload();
                }}
             />

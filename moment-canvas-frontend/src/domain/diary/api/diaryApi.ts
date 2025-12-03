@@ -101,6 +101,14 @@ export const diaryApi = {
     return response.data; // 저장된 후 갱신된 DiaryResponse 반환
   },
 
+  
+  // 작성된 일기 날짜 목록 조회
+  getWrittenDates: async () => {
+    // 백엔드가 List<LocalDate>를 반환하면 JSON 배열 ["2023-10-01", ...] 형태로 옴
+    const response = await httpClient.get<ApiResponse<string[]>>('/diary/dates');
+    return response.data.data; 
+  },
+
 
 };
 
