@@ -60,10 +60,12 @@ interface ApiResponse<T> {
 
 export const diaryApi = {
   // 내 일기 목록 조회
-  getMyDiaries: async () => {
-    const response = await httpClient.get<ApiResponse<DiarySummary[]>>('/diary/list');
-    return response.data;
-  },
+  getMyDiaries: async (yearMonth?: string) => {
+  // yearMonth가 있으면 쿼리 파라미터로 전송
+  const url = yearMonth ? `/diary/list?yearMonth=${yearMonth}` : '/diary/list';
+  const response = await httpClient.get<ApiResponse<DiarySummary[]>>(url);
+  return response.data;
+},
 
 
   // 일기 작성
