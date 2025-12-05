@@ -20,12 +20,14 @@ import com.infreej.moment_canvas.global.code.ErrorCode;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -88,9 +90,16 @@ public class DiaryServiceImpl implements DiaryService{
      */
     @Override
     @Transactional(readOnly = true)
-    public List<DiarySummaryResponse> findDiaryListByUserId(long userId) {
+    public List<DiarySummaryResponse> findDiaryListByUserId(long userId, String yearMonth) {
 
-        List<DiarySummary> diaryList = diaryRepository.findAllByUser_UserIdOrderByCreatedAtDesc(userId);
+        // YearMonth 객체 파싱
+        YearMonth targetYearMonth = YearMonth.parse(yearMonth);
+
+        // 시작일과 종료일 계산
+        LocalDate startDate = targetYearMonth.atDay(1);
+        LocalDate endDate = targetYearMonth.atEndOfMonth();
+
+        List<DiarySummary> diaryList = diaryRepository.findAllByUser_UserIdAndTargetDateBetweenOrderByCreatedAtDesc(userId, startDate, endDate);
 
         return diaryList.stream()
                 .map(DiarySummaryResponse::from)

@@ -50,11 +50,11 @@ public class DiaryController {
 
 
     @SetSuccess(SuccessCode.DIARY_SUCCESS)
-    @Operation(summary = "특정 유저의 일기 목록 조회", security = @SecurityRequirement(name = "JWT"), description = "일기 목록 조회 API 입니다.")
+    @Operation(summary = "특정 유저의 월별 일기 목록 조회", security = @SecurityRequirement(name = "JWT"), description = "일기 목록 조회 API 입니다.")
     @GetMapping("/diary/list")
-    public List<DiarySummaryResponse> findDiaryListByUserId(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
+    public List<DiarySummaryResponse> findDiaryListByUserId(@AuthenticationPrincipal CustomUserDetails customUserDetails, String yearMonth) {
 
-        return diaryService.findDiaryListByUserId(customUserDetails.getUser().getUserId());
+        return diaryService.findDiaryListByUserId(customUserDetails.getUser().getUserId(), yearMonth);
     }
 
 

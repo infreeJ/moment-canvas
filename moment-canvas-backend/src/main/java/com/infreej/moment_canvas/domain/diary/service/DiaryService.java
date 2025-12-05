@@ -17,7 +17,7 @@ public interface DiaryService {
 
     public DiaryResponse findDiaryById(Long userId, long diaryId);
 
-    public List<DiarySummaryResponse> findDiaryListByUserId(long userId);
+    public List<DiarySummaryResponse> findDiaryListByUserId(long userId, String yearMonth);
 
     public DiaryResponse update(long userId, DiaryUpdateRequest diaryUpdateRequest);
 

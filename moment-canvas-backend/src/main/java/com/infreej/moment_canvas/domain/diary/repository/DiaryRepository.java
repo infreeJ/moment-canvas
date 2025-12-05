@@ -12,7 +12,8 @@ import java.util.Optional;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
-    List<DiarySummary> findAllByUser_UserIdOrderByCreatedAtDesc(long userId);
+    // 날짜에 해당하는 모든 일기를 userId를 이용해 createdAt 내림차순 정렬로 조회
+    List<DiarySummary> findAllByUser_UserIdAndTargetDateBetweenOrderByCreatedAtDesc(long userId, LocalDate startDate, LocalDate endDate);
 
     // diaryId와 userId가 동시에 일치하는 일기만 조회
     Optional<Diary> findByDiaryIdAndUser_UserId(Long diaryId, Long userId);
