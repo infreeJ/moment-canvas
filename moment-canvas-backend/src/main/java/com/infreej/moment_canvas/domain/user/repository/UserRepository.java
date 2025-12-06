@@ -14,6 +14,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     // loginId로 유저 정보 조회
     Optional<User> findByLoginId(String loginId);
 
+    // nickname 으로 유저 정보 조회
+    Optional<User> findByNickname(String nickname);
+
     // loginId가 있으면 true를 반환한다 (중복 확인 용도)
     boolean existsByLoginId(String loginId);
+
+    // nickname가 있으면 true를 반환한다 (중복 확인 용도)
+    boolean existsByNickname(String nickname);
 }

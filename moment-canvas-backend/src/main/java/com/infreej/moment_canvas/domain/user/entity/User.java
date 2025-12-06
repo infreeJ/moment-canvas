@@ -6,7 +6,6 @@ import com.infreej.moment_canvas.global.entity.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import javax.validation.constraints.Pattern;
 import java.time.LocalDate;
 
 @Entity
@@ -27,7 +26,7 @@ public class User extends BaseTimeEntity {
     @Column(length = 200)  // 일반회원은 not null
     private String pwd; // 비밀번호
 
-    @Column(nullable = false, length = 20, unique = true)
+    @Column(nullable = false, length = 24, unique = true)
     private String nickname;
 
     @Column

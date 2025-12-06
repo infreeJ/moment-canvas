@@ -44,6 +44,6 @@ public class AuthController {
     @SetSuccess(SuccessCode.AUTH_LOGOUT_SUCCESS)
     @PostMapping("/logout")
     public void logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        authService.logout(userDetails.getUsername());
+        authService.logout(userDetails.getUser().getUserId());
     }
 }

@@ -9,5 +9,5 @@ public interface AuthService {
 
     public TokenResponse reissue(String refreshToken);
 
-    public void logout(String username);
+    public void logout(Long userId);
 }

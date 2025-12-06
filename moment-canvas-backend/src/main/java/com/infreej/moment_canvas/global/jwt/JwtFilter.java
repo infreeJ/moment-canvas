@@ -54,13 +54,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
             // JWT에서 사용자 정보 추출
             Long userId = jwtUtil.getUserId(token);
-            String username = jwtUtil.getUsername(token);
+            String nickname = jwtUtil.getNickname(token);
             Role role = Role.valueOf(jwtUtil.getRole(token));
 
             // 인증 객체 생성
             User user = User.builder()
                     .userId(userId)
-                    .loginId(username)
+                    .nickname(nickname)
                     .pwd("N/A") // 비밀번호는 JWT 기반 인증이므로 사용하지 않음
                     .role(role)
                     .build();

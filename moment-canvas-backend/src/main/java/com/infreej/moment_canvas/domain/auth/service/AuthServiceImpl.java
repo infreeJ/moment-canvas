@@ -4,6 +4,7 @@ import com.infreej.moment_canvas.domain.auth.dto.request.LoginRequest;
 import com.infreej.moment_canvas.domain.auth.dto.response.TokenResponse;
 import com.infreej.moment_canvas.domain.auth.entity.RefreshToken;
 import com.infreej.moment_canvas.domain.auth.repository.RefreshTokenRepository;
+import com.infreej.moment_canvas.domain.user.entity.Role;
 import com.infreej.moment_canvas.domain.user.entity.Status;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
@@ -19,8 +20,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,16 +62,16 @@ public class AuthServiceImpl implements AuthService {
         // 인증 성공 후 유저 정보 꺼내기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUser().getUserId();
-        String username = userDetails.getUsername();
-        String role = userDetails.getUser().getRole().toString(); // "ADMIN" or "USER" or VIP
+        String nickname = userDetails.getNickname();
+        Role role = userDetails.getUser().getRole(); // "ADMIN" or "USER" or VIP
 
         // JWT 생성
-        String accessToken = jwtUtil.createAccessToken(userId, username, role);
-        String refreshToken = jwtUtil.createRefreshToken(userId, username, role);
+        String accessToken = jwtUtil.createAccessToken(userId, nickname, role);
+        String refreshToken = jwtUtil.createRefreshToken(userId, nickname, role);
 
         // Redis에 저장
         RefreshToken redisToken = RefreshToken.builder()
-                .loginId(username)
+                .userId(userId)
                 .refreshToken(refreshToken)
                 .build();
         refreshTokenRepository.save(redisToken);
@@ -100,11 +99,10 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // 토큰에서 유저 ID 추출
-        String username = jwtUtil.getUsername(refreshToken);
-        String role = jwtUtil.getRole(refreshToken);
+        Long userId = jwtUtil.getUserId(refreshToken);
 
         // Redis 저장 값과 비교하여 Redis에서 해당 유저의 리프레시 토큰 가져오기
-        RefreshToken storedToken = refreshTokenRepository.findById(username)
+        RefreshToken storedToken = refreshTokenRepository.findById(String.valueOf(userId))
                 .orElseThrow(() -> new BusinessException(ErrorCode.AUTH_INVALID_TOKEN));
 
         // Redis에 있는 토큰과 요청온 토큰이 일치하는지 검사 (탈취 감지)
@@ -113,7 +111,7 @@ public class AuthServiceImpl implements AuthService {
         }
 
         // DB에서 유저 상태 확인
-        User user = userRepository.findByLoginId(username)
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
         // Status 체크
@@ -121,15 +119,17 @@ public class AuthServiceImpl implements AuthService {
             throw new BusinessException(ErrorCode.USER_ACCOUNT_DISABLED);
         }
 
-        Long userId = user.getUserId();
+//        Long userId = user.getUserId();
+        String nickname = user.getNickname();
+        Role role = user.getRole();
 
         // 모든 검증 통과 -> 새로운 Access Token, Refresh Token 발급
-        String newAccessToken = jwtUtil.createAccessToken(userId, username, role);
-        String newRefreshToken = jwtUtil.createRefreshToken(userId, username, role);
+        String newAccessToken = jwtUtil.createAccessToken(userId, nickname, role);
+        String newRefreshToken = jwtUtil.createRefreshToken(userId, nickname, role);
 
         // Redis 정보 업데이트
         RefreshToken updateToken = RefreshToken.builder()
-                .loginId(username)
+                .userId(userId)
                 .refreshToken(newRefreshToken)
                 .build();
         refreshTokenRepository.save(updateToken);
@@ -143,12 +143,12 @@ public class AuthServiceImpl implements AuthService {
     
     /**
      * 로그아웃 메서드
-     * @param username loginId
+     * @param userId userId
      */
     @Override
     @Transactional
-    public void logout(String username) {
+    public void logout(Long userId) {
         // Redis에서 리프레시 토큰 삭제 -> 더 이상 재발급 불가능
-        refreshTokenRepository.deleteById(username);
+        refreshTokenRepository.deleteById(String.valueOf(userId));
     }
 }
