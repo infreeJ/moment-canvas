@@ -2,6 +2,7 @@ package com.infreej.moment_canvas.domain.auth.controller;
 
 import com.infreej.moment_canvas.domain.auth.dto.request.LoginRequest;
 import com.infreej.moment_canvas.domain.auth.dto.request.ReissueRequest;
+import com.infreej.moment_canvas.domain.auth.dto.request.TokenExchangeRequest;
 import com.infreej.moment_canvas.domain.auth.dto.response.TokenResponse;
 import com.infreej.moment_canvas.domain.auth.service.AuthService;
 import com.infreej.moment_canvas.global.annotation.SetSuccess;
@@ -48,5 +49,12 @@ public class AuthController {
     @PostMapping("/logout")
     public void logout(@AuthenticationPrincipal CustomUserDetails userDetails) {
         authService.logout(userDetails.getUser().getUserId());
+    }
+
+    @Operation(summary = "임시코드로 토큰 발급", description = "소셜로그인에서 발급받은 임시코드로 accessToken, refreshToken을 전달합니다.")
+    @SetSuccess(SuccessCode.AUTH_TOKEN_EXCHANGE)
+    @PostMapping("/token-exchange")
+    public TokenResponse tokenExchange(@RequestBody TokenExchangeRequest tokenExchangeRequest) {
+        return authService.tokenExchange(tokenExchangeRequest);
     }
 }

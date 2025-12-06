@@ -37,7 +37,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 어떤 소셜인지 확인
         String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
 
-        // 3. 데이터 규격화 (현재는 카카오만)
+        // 데이터 규격화 (현재는 카카오만)
         OAuth2UserInfo oAuth2UserInfo = null;
         if (registrationId.equals("KAKAO")) {
             oAuth2UserInfo = new KakaoOAuth2UserInfo(oAuth2User.getAttributes());
@@ -46,15 +46,14 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
             throw new OAuth2AuthenticationException("지원하지 않는 소셜 로그인");
         }
 
-        // DB에서 조회 (provider + providerId로 찾음)
-        // 예: KAKAO_123456789
+        // DB에서 조회 (provider + providerId)
         Provider provider = Provider.valueOf(oAuth2UserInfo.getProvider());
         String providerId = oAuth2UserInfo.getProviderId();
 
         // 람다식 내부에서 쓰기 위해 final 성격의 변수 생성
         OAuth2UserInfo userInfo = oAuth2UserInfo;
 
-        // provider와 providerId로 식별해야 함
+        // provider와 providerId로 식별
         User user = userRepository.findByProviderAndProviderId(provider, providerId)
                 .orElseGet(() -> {
                     return User.builder()

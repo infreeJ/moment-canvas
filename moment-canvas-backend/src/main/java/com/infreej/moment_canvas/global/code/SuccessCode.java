@@ -19,6 +19,7 @@ public enum SuccessCode {
     AUTH_LOGIN_SUCCESS(HttpStatus.OK, "S1001", "success.auth.login"),
     AUTH_LOGOUT_SUCCESS(HttpStatus.OK, "S1002", "success.auth.logout"),
     AUTH_TOKEN_REFRESHED(HttpStatus.OK, "S1003", "success.auth.token.refreshed"),
+    AUTH_TOKEN_EXCHANGE(HttpStatus.OK, "S1004", "success.auth.token.code.exchange"),
 
 
     // ==================== 회원 관련 성공 (2xxx) ====================

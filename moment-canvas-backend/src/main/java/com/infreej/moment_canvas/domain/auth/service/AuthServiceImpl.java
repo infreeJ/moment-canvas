@@ -1,8 +1,11 @@
 package com.infreej.moment_canvas.domain.auth.service;
 
 import com.infreej.moment_canvas.domain.auth.dto.request.LoginRequest;
+import com.infreej.moment_canvas.domain.auth.dto.request.TokenExchangeRequest;
 import com.infreej.moment_canvas.domain.auth.dto.response.TokenResponse;
+import com.infreej.moment_canvas.domain.auth.entity.OAuth2Code;
 import com.infreej.moment_canvas.domain.auth.entity.RefreshToken;
+import com.infreej.moment_canvas.domain.auth.repository.OAuth2CodeRepository;
 import com.infreej.moment_canvas.domain.auth.repository.RefreshTokenRepository;
 import com.infreej.moment_canvas.domain.user.entity.Role;
 import com.infreej.moment_canvas.domain.user.entity.Status;
@@ -30,6 +33,7 @@ public class AuthServiceImpl implements AuthService {
     private final JwtUtil jwtUtil;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
+    private final OAuth2CodeRepository oAuth2CodeRepository;
 
 
     /**
@@ -144,5 +148,27 @@ public class AuthServiceImpl implements AuthService {
     public void logout(Long userId) {
         // Redis에서 리프레시 토큰 삭제 -> 더 이상 재발급 불가능
         refreshTokenRepository.deleteById(String.valueOf(userId));
+    }
+
+    /**
+     * 소셜로그인에서 발급받은 임시코드로 토큰을 교환하는 메서드
+     * @param tokenExchangeRequest 임시코드
+     * @return accessToken, refreshToken
+     */
+    @Override
+    public TokenResponse tokenExchange(TokenExchangeRequest tokenExchangeRequest) {
+
+        // 임시 코드로 Redis 조회
+        OAuth2Code oAuth2Code = oAuth2CodeRepository.findById(tokenExchangeRequest.getCode())
+                .orElseThrow(() -> new BusinessException(ErrorCode.AUTH_TOKEN_CODE_INVALID));
+
+        // 사용한 임시 코드 삭제
+        oAuth2CodeRepository.delete(oAuth2Code);
+
+        // 토큰 반환
+        return TokenResponse.builder()
+                .accessToken(oAuth2Code.getAccessToken())
+                .refreshToken(oAuth2Code.getRefreshToken())
+                .build();
     }
 }
