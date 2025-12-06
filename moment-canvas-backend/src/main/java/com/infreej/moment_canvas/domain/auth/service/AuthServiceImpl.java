@@ -41,12 +41,6 @@ public class AuthServiceImpl implements AuthService {
     @Transactional
     public TokenResponse login(LoginRequest loginRequest) {
 
-        // 아이디 중복 체크
-        if(!userRepository.existsByLoginId(loginRequest.getLoginId())) {
-            log.info("존재하지 않는 아이디입니다.");
-            throw new BusinessException(ErrorCode.USER_NOT_FOUND);
-        }
-
         // ID/PW를 기반으로 인증 토큰 생성
         UsernamePasswordAuthenticationToken authenticationToken =
                 new UsernamePasswordAuthenticationToken(loginRequest.getLoginId(), loginRequest.getPwd());
