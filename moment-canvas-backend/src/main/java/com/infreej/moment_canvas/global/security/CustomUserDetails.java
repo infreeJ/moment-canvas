@@ -15,7 +15,6 @@ import java.util.Collections;
 import java.util.Map;
 
 @Getter
-@RequiredArgsConstructor
 @Slf4j
 public class CustomUserDetails implements UserDetails, OAuth2User {
 
