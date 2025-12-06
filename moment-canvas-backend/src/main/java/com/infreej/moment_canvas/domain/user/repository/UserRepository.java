@@ -1,6 +1,7 @@
 package com.infreej.moment_canvas.domain.user.repository;
 
 import com.infreej.moment_canvas.domain.user.dto.projection.UserCharacteristic;
+import com.infreej.moment_canvas.domain.user.entity.Provider;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -22,4 +23,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     // nickname가 있으면 true를 반환한다 (중복 확인 용도)
     boolean existsByNickname(String nickname);
+
+    // provider와 providerId가 일치하는 유저 정보를 조회한다.
+    Optional<User> findByProviderAndProviderId(Provider provider, String providerId);
 }

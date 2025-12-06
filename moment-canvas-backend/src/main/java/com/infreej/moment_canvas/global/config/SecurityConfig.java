@@ -1,6 +1,8 @@
 package com.infreej.moment_canvas.global.config;
 
 import com.infreej.moment_canvas.global.jwt.JwtFilter;
+import com.infreej.moment_canvas.global.security.oauth.CustomOAuth2UserService;
+import com.infreej.moment_canvas.global.security.oauth.OAuth2LoginSuccessHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -30,6 +32,10 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
 
+    // 새로 만든 핸들러와 서비스 주입
+    private final CustomOAuth2UserService customOAuth2UserService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
+
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
@@ -58,6 +64,16 @@ public class SecurityConfig {
                         .requestMatchers("/images/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/user", "/v1/reissue").permitAll()
                         .anyRequest().authenticated()
+                )
+
+                // OAuth2 로그인 설정
+                .oauth2Login(oauth2 -> oauth2
+                        // 소셜 로그인 성공 시 유저 정보를 가져올 서비스 설정
+                        .userInfoEndpoint(userInfo -> userInfo
+                                .userService(customOAuth2UserService)
+                        )
+                        // 로그인 성공 후 처리를 담당할 핸들러 설정
+                        .successHandler(oAuth2LoginSuccessHandler)
                 )
 
                 // JWT 필터 추가

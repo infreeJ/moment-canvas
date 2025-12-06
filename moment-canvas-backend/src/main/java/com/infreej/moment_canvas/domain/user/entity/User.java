@@ -20,7 +20,7 @@ public class User extends BaseTimeEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long userId; // 고유번호
 
-    @Column(length = 30, unique = true) // 일반회원은 not null
+    @Column(nullable = true, length = 30, unique = true) // 일반회원은 not null
     private String loginId; // 아이디
 
     @Column(length = 200)  // 일반회원은 not null
@@ -56,6 +56,7 @@ public class User extends BaseTimeEntity {
     private Role role = Role.USER; // 권한: (USER, VIP, ADMIN)
 
     @Column(length = 10)
+    @Enumerated(EnumType.STRING)
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
     private Provider provider = Provider.NONE; // 가입 종류 (GOOGLE, KAKAO, NONE)
 
