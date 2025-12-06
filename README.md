@@ -38,7 +38,7 @@
 
 ## 기술 스택
 ### Backend
-* Java 17, Spring Boot 3.4.12, Spring Data JPA, MySQL 8.0, Redis, Spring AI, Spring Security, JWT
+* Java 17, Spring Boot 3.4.12, Spring Data JPA, MySQL, Redis, Spring AI, Spring Security, JWT
 
 ### Frontend
 * React, TypeScript, Tailwind CSS, Axios, Redux
@@ -47,10 +47,10 @@
 * Doker, AWS EC2, GitHub Actions
 
 ### AI Model
-* Replicate Flux-schnell
-* OpenAI Dall-E-3
+* Replicate Flux-schnell, OpenAI Dall-E-3
 
 
 ## ERD 설계
-<img width="1333" height="749" alt="image" src="https://github.com/user-attachments/assets/0269f54a-05f3-4044-88a0-ae35d7dc06fb" />
+<img width="1322" height="806" alt="image" src="https://github.com/user-attachments/assets/0c9dab2c-8d6e-49b2-9d7f-635c42898999" />
+
 
