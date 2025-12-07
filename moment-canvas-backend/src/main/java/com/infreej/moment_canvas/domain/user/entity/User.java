@@ -55,7 +55,7 @@ public class User extends BaseTimeEntity {
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
     private Role role = Role.USER; // 권한: (USER, VIP, ADMIN)
 
-    @Column(length = 10)
+    @Column(nullable = false, length = 10)
     @Enumerated(EnumType.STRING)
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
     private Provider provider = Provider.NONE; // 가입 종류 (GOOGLE, KAKAO, NONE)

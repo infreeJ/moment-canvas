@@ -29,6 +29,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(HttpStatus.NOT_FOUND, "E2001", "error.user.not.found"),
     USER_DUPLICATE_LOGINID(HttpStatus.CONFLICT, "E2002", "error.user.duplicate.loginId"),
     USER_ACCOUNT_DISABLED(HttpStatus.FORBIDDEN, "E2003", "error.user.disabled"),
+    USER_DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "E2002", "error.user.duplicate.nickname"),
 
 
     // ==================== 일기 관련 에러 (3xxx) ====================

@@ -44,6 +44,12 @@ public class UserServiceImpl implements UserService {
             throw new BusinessException(ErrorCode.USER_DUPLICATE_LOGINID);
         }
 
+        // 닉네임 중복 체크
+        if(userRepository.existsByNickname(signupRequest.getNickname())) {
+            log.info("이미 사용 중인 닉네임입니다.");
+            throw new BusinessException(ErrorCode.USER_DUPLICATE_LOGINID);
+        }
+
         // 비밀번호 암호화
         String encodedPassword = passwordEncoder.encode(signupRequest.getPwd());
         signupRequest.setPwd(encodedPassword);

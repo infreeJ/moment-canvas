@@ -28,6 +28,9 @@ public class SignupRequest {
             message = "비밀번호는 영문 소문자, 대문자, 숫자, 특수문자를 모두 포함해야 하며 8~50자여야 합니다."
     )
     private String pwd; // 비밀번호
+    @Pattern(regexp = "^[a-zA-Z0-9_가-힣]{4,16}$",
+            message = "닉네임은 영문 소문자, 대문자, 숫자, 한글, 언더바를 사용할 수 있으며 4~16자여야 합니다.")
+    private String nickname; // 닉네임
     private LocalDate birthday; // 생년월일
     private Gender gender; // 성별
     private String persona; // 특징
@@ -38,6 +41,7 @@ public class SignupRequest {
         return User.builder()
                 .loginId(this.loginId)
                 .pwd(this.pwd)
+                .nickname(this.nickname)
                 .birthday(this.birthday)
                 .gender(this.gender)
                 .persona(this.persona)
