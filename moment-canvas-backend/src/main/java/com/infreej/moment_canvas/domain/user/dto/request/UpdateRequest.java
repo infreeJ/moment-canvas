@@ -14,6 +14,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class UpdateRequest {
 
+    private String nickname; // 닉네임
     private LocalDate birthday; // 생년월일
     private Gender gender; // 성별
     private String persona; // 특징

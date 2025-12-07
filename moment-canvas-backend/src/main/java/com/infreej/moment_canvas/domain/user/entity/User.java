@@ -70,6 +70,7 @@ public class User extends BaseTimeEntity {
      * @param updateRequest 유저 수정 요청 정보
      */
     public void updateUserInfo(UpdateRequest updateRequest) {
+        this.nickname = updateRequest.getNickname();
         this.birthday = updateRequest.getBirthday();
         this.gender = updateRequest.getGender();
         this.persona = updateRequest.getPersona();
