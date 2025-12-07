@@ -32,7 +32,7 @@ public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
 
-    // 새로 만든 핸들러와 서비스 주입
+    // OAuth2 핸들러와 서비스 주입
     private final CustomOAuth2UserService customOAuth2UserService;
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
@@ -61,7 +61,7 @@ public class SecurityConfig {
                         .requestMatchers(whiteList).permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/vip/**").hasAnyRole("ADMIN", "VIP")
-                        .requestMatchers("/images/**").permitAll()
+                        .requestMatchers("/images/**", "/oauth2/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/user", "/v1/reissue").permitAll()
                         .anyRequest().authenticated()
                 )

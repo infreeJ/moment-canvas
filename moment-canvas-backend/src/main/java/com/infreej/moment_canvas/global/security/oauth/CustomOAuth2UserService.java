@@ -37,10 +37,12 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
         // 어떤 소셜인지 확인
         String registrationId = userRequest.getClientRegistration().getRegistrationId().toUpperCase();
 
-        // 데이터 규격화 (현재는 카카오만)
+        // 데이터 규격화
         OAuth2UserInfo oAuth2UserInfo = null;
-        if (registrationId.equals("KAKAO")) {
+        if (registrationId.equals("KAKAO")) { // 카카오
             oAuth2UserInfo = new KakaoOAuth2UserInfo(oAuth2User.getAttributes());
+        } else if(registrationId.equals("GOOGLE")) { // 구글
+            oAuth2UserInfo = new GoogleOAuth2UserInfo(oAuth2User.getAttributes());
         } else {
             log.error("지원하지 않는 소셜 로그인입니다.");
             throw new OAuth2AuthenticationException("지원하지 않는 소셜 로그인");
