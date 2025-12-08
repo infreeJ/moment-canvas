@@ -20,6 +20,7 @@ interface ApiResponse<T> {
 
 // 유저 정보 수정 요청 DTO
 export interface UserUpdateRequest {
+   nickname?: string;
    birthday?: string;
    gender?: 'MALE' | 'FEMALE';
    persona?: string;

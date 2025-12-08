@@ -39,12 +39,12 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         // 인증된 유저 정보 가져오기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUser().getUserId();
-        String nickname = userDetails.getNickname();
+//        String nickname = userDetails.getNickname();
         Role role = userDetails.getUser().getRole();
 
         // JWT 토큰 생성
-        String accessToken = jwtUtil.createAccessToken(userId, nickname, role);
-        String refreshToken = jwtUtil.createRefreshToken(userId, nickname, role);
+        String accessToken = jwtUtil.createAccessToken(userId, role);
+        String refreshToken = jwtUtil.createRefreshToken(userId, role);
 
         // Redis에 Refresh Token 저장
         RefreshToken redisToken = RefreshToken.builder()

@@ -73,7 +73,7 @@ const Navbar = () => {
             <div className="max-w-full mx-auto px-4 sm:px-6 lg:px-8">
                <div className="flex justify-between items-center h-16">
 
-                  {/* 좌측: 로고 */}
+                  {/* 로고 */}
                   <div className="flex items-center gap-4">
                      <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
                         <Menu className="w-6 h-6 text-gray-600" />
@@ -92,7 +92,7 @@ const Navbar = () => {
                      </div>
                   </div>
 
-                  {/* 중앙: 검색바 및 메뉴 */}
+                  {/* 검색바 및 메뉴 */}
                   <div className="hidden md:flex flex-1 max-w-xl mx-8 items-center">
                      {/* 검색바 */}
                      <div className="relative w-full mr-6">
@@ -106,7 +106,7 @@ const Navbar = () => {
                         />
                      </div>
 
-                     {/* 일기 목록 버튼 (로그인 체크 로직 추가됨) */}
+                     {/* 일기 목록 버튼 */}
                      <div className="flex-shrink-0">
                         <button
                            onClick={() => {
@@ -124,7 +124,7 @@ const Navbar = () => {
                      </div>
                   </div>
 
-                  {/* 우측: 사용자 메뉴 영역 */}
+                  {/* 사용자 메뉴 영역 */}
                   <div className="flex items-center gap-2 sm:gap-4">
                      {isAuthenticated ? (
                         <>
@@ -163,7 +163,7 @@ const Navbar = () => {
                                     <div className="px-4 py-3 border-b border-gray-100">
                                        <p className="text-sm text-gray-500">환영합니다!</p>
                                        <p className="text-sm font-bold text-gray-900 truncate">
-                                          {user?.loginId}
+                                          {user?.nickname}
                                        </p>
                                     </div>
 
@@ -209,7 +209,7 @@ const Navbar = () => {
             </div>
          </nav>
 
-         {/* 모달 상태 연결 (Redux) */}
+         {/* 모달 상태 연결 */}
          <Modal
             isOpen={isLoginModalOpen}
             onClose={handleCloseLoginModal}

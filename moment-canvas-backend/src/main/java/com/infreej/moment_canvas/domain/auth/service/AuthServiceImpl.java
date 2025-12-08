@@ -60,12 +60,12 @@ public class AuthServiceImpl implements AuthService {
         // 인증 성공 후 유저 정보 꺼내기
         CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
         Long userId = userDetails.getUser().getUserId();
-        String nickname = userDetails.getNickname();
+//        String nickname = userDetails.getNickname();
         Role role = userDetails.getUser().getRole(); // "ADMIN" or "USER" or VIP
 
         // JWT 생성
-        String accessToken = jwtUtil.createAccessToken(userId, nickname, role);
-        String refreshToken = jwtUtil.createRefreshToken(userId, nickname, role);
+        String accessToken = jwtUtil.createAccessToken(userId, role);
+        String refreshToken = jwtUtil.createRefreshToken(userId, role);
 
         // Redis에 저장
         RefreshToken redisToken = RefreshToken.builder()
@@ -118,12 +118,12 @@ public class AuthServiceImpl implements AuthService {
         }
 
 //        Long userId = user.getUserId();
-        String nickname = user.getNickname();
+//        String nickname = user.getNickname();
         Role role = user.getRole();
 
         // 모든 검증 통과 -> 새로운 Access Token, Refresh Token 발급
-        String newAccessToken = jwtUtil.createAccessToken(userId, nickname, role);
-        String newRefreshToken = jwtUtil.createRefreshToken(userId, nickname, role);
+        String newAccessToken = jwtUtil.createAccessToken(userId, role);
+        String newRefreshToken = jwtUtil.createRefreshToken(userId, role);
 
         // Redis 정보 업데이트
         RefreshToken updateToken = RefreshToken.builder()

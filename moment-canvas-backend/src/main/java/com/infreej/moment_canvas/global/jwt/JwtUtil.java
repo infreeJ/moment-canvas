@@ -32,10 +32,10 @@ public class JwtUtil {
         return getPayload(token).get("userId", Long.class);
     }
 
-    // JWT에서 nickname 추출
-    public String getNickname(String token) {
-        return getPayload(token).get("nickname", String.class);
-    }
+//    // JWT에서 nickname 추출
+//    public String getNickname(String token) {
+//        return getPayload(token).get("nickname", String.class);
+//    }
 
     // JWT에서 role(권한) 추출
     public String getRole(String token) {
@@ -56,20 +56,20 @@ public class JwtUtil {
                 .getPayload();
     }
 
-    public String createAccessToken(Long userId, String nickname, Role role) {
-        return createJwt(userId, nickname, role, this.accessExpMs);
+    public String createAccessToken(Long userId, Role role) {
+        return createJwt(userId, role, this.accessExpMs);
     }
 
-    public String createRefreshToken(Long userId, String nickname, Role role) {
-        return createJwt(userId, nickname, role, this.refreshExpMs);
+    public String createRefreshToken(Long userId, Role role) {
+        return createJwt(userId, role, this.refreshExpMs);
     }
 
     // JWT 생성 메서드
-    // username, role(권한), 만료 시간(expiredMs)을 포함한 JWT 발급
-    private String createJwt(Long userId, String nickname, Role role, Long expiredMs) {
+    // userId, role(권한), 만료 시간(expiredMs)을 포함한 JWT 발급
+    private String createJwt(Long userId, Role role, Long expiredMs) {
         return Jwts.builder()
                 .claim("userId", userId)
-                .claim("nickname", nickname)
+//                .claim("nickname", nickname) // 미사용
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis())) // 발급 시간
                 .expiration(new Date(System.currentTimeMillis() + expiredMs)) // 만료 시간
