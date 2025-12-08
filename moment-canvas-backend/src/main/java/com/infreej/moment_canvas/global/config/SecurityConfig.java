@@ -3,6 +3,7 @@ package com.infreej.moment_canvas.global.config;
 import com.infreej.moment_canvas.global.jwt.JwtFilter;
 import com.infreej.moment_canvas.global.security.oauth.CustomOAuth2UserService;
 import com.infreej.moment_canvas.global.security.oauth.OAuth2LoginSuccessHandler;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,13 +17,19 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Configuration //설정 클래스임을 명시
 @EnableWebSecurity // Security의 웹 보완 기능을 활성화해서 모든 요청을 가로채고, 보안 규칙 적용
@@ -37,7 +44,7 @@ public class SecurityConfig {
     private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
 
         // 화이트리스트
         String[] whiteList = {
@@ -68,6 +75,10 @@ public class SecurityConfig {
 
                 // OAuth2 로그인 설정
                 .oauth2Login(oauth2 -> oauth2
+                        // 커스텀 요청 리졸버 적용
+                        .authorizationEndpoint(endpoint -> endpoint
+                                .authorizationRequestResolver(customAuthorizationRequestResolver(clientRegistrationRepository))
+                        )
                         // 소셜 로그인 성공 시 유저 정보를 가져올 서비스 설정
                         .userInfoEndpoint(userInfo -> userInfo
                                 .userService(customOAuth2UserService)
@@ -81,6 +92,59 @@ public class SecurityConfig {
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
+    }
+
+
+    // 소셜 로그인 요청을 가로채서 커스텀 파라미터를 추가하는 Resolver 반환
+    private OAuth2AuthorizationRequestResolver customAuthorizationRequestResolver(ClientRegistrationRepository clientRegistrationRepository) {
+        DefaultOAuth2AuthorizationRequestResolver resolver = new DefaultOAuth2AuthorizationRequestResolver(
+                clientRegistrationRepository, "/oauth2/authorization");
+
+        return new OAuth2AuthorizationRequestResolver() {
+            @Override
+            public OAuth2AuthorizationRequest resolve(HttpServletRequest request) {
+                OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request);
+                if (authorizationRequest == null) {
+                    return null;
+                }
+                return customAuthorizationRequest(authorizationRequest);
+            }
+
+            @Override
+            public OAuth2AuthorizationRequest resolve(HttpServletRequest request, String clientRegistrationId) {
+                OAuth2AuthorizationRequest authorizationRequest = resolver.resolve(request, clientRegistrationId);
+                if (authorizationRequest == null) {
+                    return null;
+                }
+                return customAuthorizationRequest(authorizationRequest);
+            }
+        };
+    }
+
+    // 강제 로그인(prompt)을 위한 파라미터 주입 로직
+    private OAuth2AuthorizationRequest customAuthorizationRequest(OAuth2AuthorizationRequest authorizationRequest) {
+        if (authorizationRequest == null) {
+            return null;
+        }
+
+        Map<String, Object> additionalParameters = new LinkedHashMap<>(authorizationRequest.getAdditionalParameters());
+
+        // registration_id(카카오, 구글 등) 확인
+        String registrationId = (String) authorizationRequest.getAttributes().get("registration_id");
+
+        // 카카오일 경우 prompt=login 주입
+        if ("kakao".equals(registrationId)) {
+            additionalParameters.put("prompt", "login");
+        }
+
+        // 구글일 경우 prompt=select_account 주입
+        if ("google".equals(registrationId)) {
+            additionalParameters.put("prompt", "select_account");
+        }
+
+        return OAuth2AuthorizationRequest.from(authorizationRequest)
+                .additionalParameters(additionalParameters)
+                .build();
     }
 
 
