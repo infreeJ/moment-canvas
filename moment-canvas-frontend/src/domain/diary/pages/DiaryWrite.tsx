@@ -42,7 +42,7 @@ const DiaryWrite = () => {
       targetDate: getToday(),
    });
 
-   // 1. 작성된 날짜 목록 가져오기
+   // 작성된 날짜 목록 가져오기
    useEffect(() => {
       const fetchDates = async () => {
          try {
@@ -60,7 +60,7 @@ const DiaryWrite = () => {
       fetchDates();
    }, [isEditMode]);
 
-   // 2. 기존 일기 데이터 불러오기 (수정 모드)
+   // 기존 일기 데이터 불러오기 (수정 모드)
    useEffect(() => {
       if (isEditMode && id) {
          const fetchOriginalDiary = async () => {
@@ -159,7 +159,8 @@ const DiaryWrite = () => {
                targetDate: formData.targetDate
             });
             if (!response.success) throw new Error(response.message);
-            navigate('/diaries');
+            const newDiaryId = response.data.diaryId;
+            navigate(`/diary/${newDiaryId}`);
          }
       } catch (error) {
          console.error('저장 실패:', error);
