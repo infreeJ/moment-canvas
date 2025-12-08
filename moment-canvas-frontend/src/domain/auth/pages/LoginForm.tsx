@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { User, Lock, ArrowRight, Loader2 } from 'lucide-react';
-import { useAppDispatch } from '../../../global/store/hooks';
+import { useAppDispatch, useAppSelector } from '../../../global/store/hooks';
 import { setCredentials } from '../../../global/store/slices/authSlice';
 import { authApi } from '../../../global/api/authApi';
 import axios from 'axios';
@@ -19,6 +19,15 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
+
+  const { isAuthenticated } = useAppSelector((state) => state.auth);
+
+  // 로그인이 성공하면(isAuthenticated가 true가 되면) 모달 닫기
+  useEffect(() => {
+    if (isAuthenticated) {
+      onClose();
+    }
+  }, [isAuthenticated, onClose]);
 
   // 소셜 로그인 핸들러
   const handleSocialLogin = (provider: 'kakao' | 'google') => {
