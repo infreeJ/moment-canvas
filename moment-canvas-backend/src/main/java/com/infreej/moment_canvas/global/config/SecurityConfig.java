@@ -61,7 +61,7 @@ public class SecurityConfig {
                         .requestMatchers(whiteList).permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/vip/**").hasAnyRole("ADMIN", "VIP")
-                        .requestMatchers("/images/**", "/oauth2/**").permitAll()
+                        .requestMatchers("/images/**", "/oauth2/**", "/v1/token-exchange").permitAll()
                         .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/user", "/v1/reissue").permitAll()
                         .anyRequest().authenticated()
                 )

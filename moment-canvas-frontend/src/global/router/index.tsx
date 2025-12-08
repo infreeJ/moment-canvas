@@ -1,4 +1,4 @@
-import { createHashRouter } from "react-router-dom";
+import { createHashRouter, createBrowserRouter } from "react-router-dom";
 import App from "../../App";
 import Home from "../pages/Home";
 import Signup from "../../domain/auth/pages/SignupForm";
@@ -7,8 +7,9 @@ import DiaryWrite from "../../domain/diary/pages/DiaryWrite";
 import DiaryDetail from "../../domain/diary/pages/DiaryDetail";
 import MyPage from "../../domain/user/pages/MyPage";
 import ProtectedRoute from "./ProtectedRoute";
+import OAuthCallback from "../../domain/auth/pages/OAuthCallback";
 
-const router = createHashRouter([
+const router = createBrowserRouter([
    {
       path: "/",
       element: <App />,
@@ -17,6 +18,7 @@ const router = createHashRouter([
          { index: true, element: <Home /> }, // path: "/" 와 동일
          { path: "/index.html", element: <Home /> },
          { path: "/signup", element: <Signup /> },
+         { path: "/oauth/callback", element: <OAuthCallback /> },
 
          // --- 🔒 로그인한 유저만 접근 가능 (Protected Routes) ---
          {

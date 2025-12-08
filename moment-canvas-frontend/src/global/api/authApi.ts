@@ -30,6 +30,11 @@ interface TokenData {
    refreshToken: string;
 }
 
+// 토큰 교환 요청 DTO
+export interface TokenExchangeRequest {
+   code: string;
+}
+
 // 유저 데이터 (내 정보 조회 응답의 data)
 // User 타입은 authSlice에서 가져온 것을 그대로 사용하거나, 필요시 확장
 
@@ -54,4 +59,12 @@ export const authApi = {
       const response = await httpClient.post<ApiResponse<User>>('/user', data);
       return response.data;
    },
+
+   // 소셜 로그인 토큰 교환
+   tokenExchange: async (code: string) => {
+      // POST /token-exchange { code: "..." }
+      const response = await httpClient.post<ApiResponse<TokenData>>('/token-exchange', { code });
+      return response.data; // { success: true, data: { accessToken, refreshToken } }
+   },
+   
 };

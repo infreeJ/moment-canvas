@@ -20,6 +20,14 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
 
+  // 소셜 로그인 핸들러
+  const handleSocialLogin = (provider: 'kakao' | 'google') => {
+    // 백엔드 OAuth2 진입점 (Spring Security Default)
+    // base URL이 http://localhost:9090 이라고 가정
+    const BACKEND_URL = 'http://localhost:9090';
+    window.location.href = `${BACKEND_URL}/oauth2/authorization/${provider}`;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
@@ -59,11 +67,11 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
       // Axios 에러 처리
       if (axios.isAxiosError(error) && error.response?.data?.message) {
         setErrorMsg(error.response.data.message);
-      } 
+      }
       // 비즈니스 로직 에러 (success: false 인 경우 throw한 에러)
       else if (error instanceof Error) {
         setErrorMsg(error.message);
-      } 
+      }
       else {
         setErrorMsg('로그인 중 문제가 발생했습니다. 다시 시도해주세요.');
       }
@@ -137,6 +145,44 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
           )}
         </button>
       </form>
+
+
+      {/* --- 소셜 로그인 섹션 추가 --- */}
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-gray-200"></div>
+        </div>
+        <div className="relative flex justify-center text-sm">
+          <span className="px-2 bg-white text-gray-500">또는 소셜 계정으로 로그인</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-1 gap-3">
+        {/* 카카오 로그인 버튼 */}
+        <button
+          type="button"
+          onClick={() => handleSocialLogin('kakao')}
+          disabled={isLoading}
+          className="w-full flex items-center justify-center px-4 py-2.5 border border-transparent rounded-xl shadow-sm text-sm font-bold text-[#391B1B] bg-[#FEE500] hover:bg-[#FDD835] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#FEE500] transition-all hover:scale-[1.02]"
+        >
+          {/* 카카오 심볼 대체 (SVG 아이콘이 있다면 교체하세요) */}
+          <span className="mr-2">💬</span>
+          카카오로 시작하기
+        </button>
+
+        {/* 구글 로그인 버튼 */}
+        <button
+          type="button"
+          onClick={() => handleSocialLogin('google')}
+          disabled={isLoading}
+          className="w-full flex items-center justify-center px-4 py-2.5 border border-gray-300 rounded-xl shadow-sm text-sm font-bold text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-200 transition-all hover:scale-[1.02]"
+        >
+          {/* 구글 심볼 대체 */}
+          <span className="mr-2">G</span>
+          Google로 시작하기
+        </button>
+      </div>
+      
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
