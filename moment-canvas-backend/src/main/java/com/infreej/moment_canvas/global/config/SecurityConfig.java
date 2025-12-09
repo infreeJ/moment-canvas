@@ -48,7 +48,7 @@ public class SecurityConfig {
 
         // 화이트리스트
         String[] whiteList = {
-                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/error", "/favicon.ico"
+                "/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**", "/error", "/favicon.ico", "/s3-test"
         };
 
         http
