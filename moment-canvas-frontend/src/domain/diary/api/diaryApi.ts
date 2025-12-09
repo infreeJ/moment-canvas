@@ -61,11 +61,11 @@ interface ApiResponse<T> {
 export const diaryApi = {
   // 내 일기 목록 조회
   getMyDiaries: async (yearMonth?: string) => {
-  // yearMonth가 있으면 쿼리 파라미터로 전송
-  const url = yearMonth ? `/diary/list?yearMonth=${yearMonth}` : '/diary/list';
-  const response = await httpClient.get<ApiResponse<DiarySummary[]>>(url);
-  return response.data;
-},
+    // yearMonth가 있으면 쿼리 파라미터로 전송
+    const url = yearMonth ? `/diary/list?yearMonth=${yearMonth}` : '/diary/list';
+    const response = await httpClient.get<ApiResponse<DiarySummary[]>>(url);
+    return response.data;
+  },
 
 
   // 일기 작성
@@ -80,6 +80,12 @@ export const diaryApi = {
     return response.data;
   },
 
+  // [추가] 일기 삭제
+  delete: async (diaryId: number) => {
+    // 응답 본문(body)이 없으므로 제네릭 없이 호출하거나 void로 처리
+    await httpClient.delete(`/diary/${diaryId}`);
+  },
+
   // 일기 상세 조회
   getDiaryById: async (diaryId: string) => {
     const response = await httpClient.get<ApiResponse<DiaryResponse>>(`/diary/${diaryId}`);
@@ -92,23 +98,23 @@ export const diaryApi = {
     // axios의 data(=ApiResponse) 안의 data(=이미지URL)를 반환
     return response.data.data;
   },
-  
+
 
   // 일기 이미지 저장 요청
   saveImage: async (diaryId: number, data: ImageDownloadRequest) => {
     const response = await httpClient.post<ApiResponse<DiaryResponse>>(
-      `/diary/${diaryId}/image-save`, 
+      `/diary/${diaryId}/image-save`,
       data
     );
     return response.data; // 저장된 후 갱신된 DiaryResponse 반환
   },
 
-  
+
   // 작성된 일기 날짜 목록 조회
   getWrittenDates: async () => {
     // 백엔드가 List<LocalDate>를 반환하면 JSON 배열 ["2023-10-01", ...] 형태로 옴
     const response = await httpClient.get<ApiResponse<string[]>>('/diary/dates');
-    return response.data.data; 
+    return response.data.data;
   },
 
 

@@ -59,6 +59,27 @@ const DiaryDetail = () => {
       fetchDiary();
    }, [id]);
 
+
+   // 삭제 핸들러
+   const handleDelete = async () => {
+      if (!diary) return;
+
+      if (!window.confirm('정말로 이 일기를 삭제하시겠습니까?\n삭제된 일기는 복구할 수 없습니다.')) {
+         return;
+      }
+
+      try {
+         await diaryApi.delete(diary.diaryId);
+         alert('일기가 삭제되었습니다.');
+         // 삭제 후 목록으로 이동 (replace: true로 뒤로가기 방지)
+         navigate('/diaries', { replace: true });
+      } catch (err) {
+         console.error('일기 삭제 실패:', err);
+         alert('일기 삭제 중 오류가 발생했습니다.');
+      }
+   };
+
+
    const getMoodEmoji = (moodValue: number) => {
       const mood = MOODS.find((m) => m.value === moodValue);
       return mood ? mood.emoji : '😐';
@@ -105,7 +126,12 @@ const DiaryDetail = () => {
                   >
                      <Edit2 className="w-5 h-5" />
                   </button>
-                  <button className="p-2 text-gray-400 hover:text-red-600 transition-colors" title="삭제 (준비중)">
+                  {/* 삭제 버튼 */}
+                  <button
+                     onClick={handleDelete}
+                     className="p-2 text-gray-400 hover:text-red-600 transition-colors"
+                     title="일기 삭제"
+                  >
                      <Trash2 className="w-5 h-5" />
                   </button>
                </div>
