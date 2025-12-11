@@ -2,38 +2,52 @@ version: '3'
 services:
   backend:
     container_name: moment-canvas-backend
-    # 깃허브 액션이 만들어서 올릴 이미지 이름
     image: ${DOCKER_USERNAME}/moment-canvas-server:latest
     ports:
-      - "9090:9090" # 스프링부트 포트
+      - "9090:9090"
     environment:
       - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/moment_canvas?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
-      - SPRING_DATASOURCE_USERNAME=root
-      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
-      - CLOUD_AWS_CREDENTIALS_ACCESS_KEY=${AWS_ACCESS_KEY}
-      - CLOUD_AWS_CREDENTIALS_SECRET_KEY=${AWS_SECRET_KEY}
-      - SPRING_JWT_SECRET=${JWT_SECRET}
-      - SPRING_JWT_ACCESS_TOKEN_EXPIRATION=3600000
-      - SPRING_JWT_REFRESH_TOKEN_EXPIRATION=1209600000
+      # DB
+      - DB_PASSWORD=${DB_PASSWORD}
+      # Redis (비번 없으면 빈 값으로 설정됨)
+      # - REDIS_PASSWORD=${REDIS_PASSWORD}
+      # AWS
+      - AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - AWS_SECRET_KEY=${AWS_SECRET_KEY}
+      # JWT
+      - JWT_SECRET=${JWT_SECRET}
+      # AI Keys
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
+      # OAuth2 (새로 추가된 부분!)
+      - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
+      - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
+      # Redirect URI (운영 서버 도메인 주소: 예 https://api.mysite.com)
+      - OAUTH_REDIRECT_URI=${OAUTH_REDIRECT_URI}
+      # File Upload
+      - FILE_UPLOAD_DIR=/app/images/
+      
     depends_on:
       - mysql
       - redis
     networks:
       - app-network
+    # (선택사항) 업로드 파일 유지를 위한 볼륨 매핑
+    volumes:
+      - ./uploads:/app/images 
 
   mysql:
     container_name: moment-canvas-mysql
     image: mysql:8.0
     ports:
-      - "3307:3306" # 외부에서 접속 확인용
+      - "3307:3306"
     environment:
       MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
       MYSQL_DATABASE: moment_canvas
     volumes:
-      - ./mysql-data:/var/lib/mysql # DB 데이터가 안 날아가게 저장
+      - ./mysql-data:/var/lib/mysql
     networks:
       - app-network
     command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
@@ -45,6 +59,8 @@ services:
       - "6379:6379"
     networks:
       - app-network
+    # Redis 비밀번호를 쓰려면 아래 command 주석 해제 (단, REDIS_PASSWORD 변수와 일치해야 함)
+    # command: redis-server --requirepass ${REDIS_PASSWORD}
 
 networks:
   app-network:

@@ -1,30 +1,85 @@
-app:
-  ai:
-    provider: replicate  # openai로 바꾸면 replicate 빈이 사라지고 OpenAI가 동작한다.
-
 spring:
-  config:
-    import: optional:classpath:application-secret.yml # .gitignore
   application:
     name: moment-canvas
+
+  # [DB 설정]
+  datasource:
+    url: jdbc:mysql://mysql:3306/moment_canvas?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+    username: root
+    password: ${DB_PASSWORD} # Env에서 주입
+
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: true # 운영 배포시에는 false로 끄는 것을 권장하지만, 일단 유지
+
+  # [Redis 설정]
+  data:
+    redis:
+      host: redis
+      port: 6379
+      # password: ${REDIS_PASSWORD} # Env에서 주입 (없으면 비워둠)
+
+  # [JWT 설정]
+  jwt:
+    secret: ${JWT_SECRET} # Env에서 주입
+    access-token-expiration: 3600000       # 1시간
+    refresh-token-expiration: 1209600000   # 2주
+
+  # [AI 설정]
   ai:
+    provider: replicate
     openai:
-      api-key: ${OPENAI_API_KEY} # OpenAI API KEY
+      api-key: ${OPENAI_API_KEY} # Env에서 주입
       image:
         options:
-          model: dall-e-3      # 모델 변경
-          style: vivid         # 스타일
-          width: 1792          # 가로
-          height: 1024         # 세로
+          model: dall-e-3
+          style: vivid
+          width: 1792
+          height: 1024
           n: 1
     replicate:
-      api-token: ${REPLICATE_API_TOKEN} # Replicate API Key
+      api-token: ${REPLICATE_API_TOKEN} # Env에서 주입
 
-# AWS S3 설정
+  # [OAuth2 설정]
+  security:
+    oauth2:
+      client:
+        registration:
+          kakao:
+            client-id: ${KAKAO_CLIENT_ID}         # Env
+            client-secret: ${KAKAO_CLIENT_SECRET} # Env
+            client-authentication-method: client_secret_post
+            authorization-grant-type: authorization_code
+            redirect-uri: ${OAUTH_REDIRECT_URI}/login/oauth2/code/kakao # 도메인에 따라 변경됨
+            scope:
+              - profile_nickname
+              - account_email
+            client-name: Kakao
+
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}         # Env
+            client-secret: ${GOOGLE_CLIENT_SECRET} # Env
+            redirect-uri: ${OAUTH_REDIRECT_URI}/login/oauth2/code/google
+            scope:
+              - profile
+              - email
+
+        provider:
+          kakao:
+            authorization-uri: https://kauth.kakao.com/oauth/authorize
+            token-uri: https://kauth.kakao.com/oauth/token
+            user-info-uri: https://kapi.kakao.com/v2/user/me
+            user-name-attribute: id
+
+          google:
+            # 구글은 스프링이 기본 제공하지만 명시적으로 적어도 무방함
+            authorization-uri: https://accounts.google.com/o/oauth2/v2/auth
+            token-uri: https://oauth2.googleapis.com/token
+            user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
+            user-name-attribute: sub
+
+# [AWS S3 설정]
 cloud:
   aws:
     s3:
@@ -33,10 +88,16 @@ cloud:
       static: ap-northeast-2
     stack:
       auto: false
+    credentials:
+      access-key: ${AWS_ACCESS_KEY} # Env
+      secret-key: ${AWS_SECRET_KEY} # Env
 
 
+# [파일 업로드 경로]
 file:
-  upload-dir: file:../../images/  # 로컬용
+  # 로컬과 서버의 경로가 다르므로 변수 처리하거나,
+  # 도커 내부 경로(/app/images)로 고정하고 볼륨을 연결하는 게 좋습니다.
+  upload-dir: ${FILE_UPLOAD_DIR:/app/images/}
 
 server:
   port: 9090
