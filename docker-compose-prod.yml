@@ -1,0 +1,48 @@
+version: '3'
+services:
+  backend:
+    container_name: moment-canvas-backend
+    # 깃허브 액션이 만들어서 올릴 이미지 이름 (Secrets가 알아서 채워주니 그대로 두세요!)
+    image: ${{ secrets.DOCKER_USERNAME }}/moment-canvas-server:latest
+    ports:
+      - "9090:9090" # 스프링부트 포트
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/moment_canvas?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=${DB_PASSWORD}
+      - CLOUD_AWS_CREDENTIALS_ACCESS_KEY=${AWS_ACCESS_KEY}
+      - CLOUD_AWS_CREDENTIALS_SECRET_KEY=${AWS_SECRET_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
+    depends_on:
+      - mysql
+      - redis
+    networks:
+      - app-network
+
+  mysql:
+    container_name: moment-canvas-mysql
+    image: mysql:8.0
+    ports:
+      - "3307:3306" # 외부에서 접속 확인용 (보안상 나중엔 막는 게 좋아요)
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD}
+      MYSQL_DATABASE: moment_canvas
+    volumes:
+      - ./mysql-data:/var/lib/mysql # DB 데이터가 안 날아가게 저장
+    networks:
+      - app-network
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+
+  redis:
+    container_name: moment-canvas-redis
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
