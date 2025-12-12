@@ -6,7 +6,7 @@ import LoginForm from '../../domain/auth/pages/LoginForm';
 import { useAppSelector, useAppDispatch } from '../../global/store/hooks';
 import { closeLoginModal, logout, openLoginModal } from '../../global/store/slices/authSlice';
 import { authApi } from '../../global/api/authApi';
-import {IMAGE_BASE_URL } from '../../../global/constans/image'
+import {IMAGE_BASE_URL } from '../constans/image'
 
 // 프로필 이미지 경로 상수
 // const IMAGE_ROOT = 'http://localhost:9090/images/profile-images';
