@@ -37,7 +37,7 @@ public class S3ImageServiceImpl implements ImageService{
         String orgFileName = extractOriginalFileName(originalUrl);
 
         // S3에 저장할 경로 생성 (예: diary-images/uuid.jpg)
-        String folderName = imageDownloadRequest.getImageType() + "-images";
+        String folderName = imageDownloadRequest.getImageType().name().toLowerCase() + "-images";
         String savedFileName = UUID.randomUUID() + ".jpg";
         String s3Key = folderName + "/" + savedFileName; // 폴더/파일명 구조
 
@@ -64,7 +64,7 @@ public class S3ImageServiceImpl implements ImageService{
         String extension = extractExtension(orgFileName);
 
         // S3 Key 생성
-        String folderName = imageType + "-images"; // profile-images
+        String folderName = imageType.name().toLowerCase() + "-images"; // profile-images
         String savedFileName = UUID.randomUUID() + extension;
         String s3Key = folderName + "/" + savedFileName;
 
