@@ -9,6 +9,7 @@ const Signup = () => {
 
    const [formData, setFormData] = useState({
       loginId: '',
+      nickname: '',
       password: '',
       passwordConfirm: '',
    });
@@ -26,6 +27,12 @@ const Signup = () => {
       const idRegex = /^(?=.*[a-zA-Z])[a-zA-Z0-9]{4,16}$/;
       if (!idRegex.test(formData.loginId)) {
          setErrorMsg('아이디는 영문을 포함한 4~16자여야 합니다.');
+         return false;
+      }
+
+      const nicknameRegex = /^[a-zA-Z0-9_가-힣]{4,16}$/;
+      if (!nicknameRegex.test(formData.loginId)) {
+         setErrorMsg('닉네임은 대소문자, 숫자, 한글, 언더바를 사용할 수 있으며 4~16자여야 합니다.');
          return false;
       }
 
@@ -55,6 +62,7 @@ const Signup = () => {
       try {
          const response = await authApi.signup({
             loginId: formData.loginId,
+            nickname: formData.nickname,
             pwd: formData.password,
          });
 
@@ -121,6 +129,27 @@ const Signup = () => {
                            type="text"
                            required
                            value={formData.loginId}
+                           onChange={handleChange}
+                           className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
+                           placeholder="영문 포함 4~16자"
+                        />
+                     </div>
+                  </div>
+
+                  <div>
+                     <label htmlFor="nickname" className="block text-sm font-medium text-gray-700">
+                        닉네임 <span className="text-red-500">*</span>
+                     </label>
+                     <div className="mt-1 relative rounded-md shadow-sm">
+                        <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                           <User className="h-5 w-5 text-gray-400" />
+                        </div>
+                        <input
+                           id="nickname"
+                           name="nickname"
+                           type="text"
+                           required
+                           value={formData.nickname}
                            onChange={handleChange}
                            className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm bg-gray-50 focus:bg-white transition-colors"
                            placeholder="영문 포함 4~16자"
