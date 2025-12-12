@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Calendar } from 'lucide-react'; // 아이콘 추가
 
 // 타입 정의
 interface DiarySummary {
@@ -7,24 +8,24 @@ interface DiarySummary {
    title: string;
    content: string;
    createdAt: string;
-   imageUrl?: string | null; // 이미지가 없을 수도 있으니까요
+   imageUrl?: string | null;
 }
 
-// 더미 데이터 (백엔드 연동 전 UI 확인용)
+// 더미 데이터 (안정적인 이미지 링크로 적용)
 const MOCK_DIARIES: DiarySummary[] = [
    {
       diaryId: 1,
       title: "한강에서의 피크닉",
       content: "날씨가 정말 좋아서 한강으로 나갔다. 바람도 선선하고...",
       createdAt: "2023-10-24",
-      imageUrl: "https://images.unsplash.com/photo-1596464716127-f9a8a5958c06?w=800&auto=format&fit=crop&q=60"
+      imageUrl: "https://images.unsplash.com/photo-1578359968130-76b59bb5af13?q=80&w=1074&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
    },
    {
       diaryId: 2,
       title: "오랜만의 코딩 밤샘",
       content: "버그가 안 잡혀서 힘들었지만 결국 해결했다! 뿌듯하다.",
       createdAt: "2023-10-25",
-      imageUrl: null,
+      imageUrl: "https://images.unsplash.com/photo-1542831371-29b0f74f9713?w=800&auto=format&fit=crop&q=60",
    },
    {
       diaryId: 3,
@@ -37,9 +38,7 @@ const MOCK_DIARIES: DiarySummary[] = [
 
 const Home = () => {
    const navigate = useNavigate();
-   // 나중에 API로 받아올 상태값들
    const [diaries, setDiaries] = useState<DiarySummary[]>(MOCK_DIARIES);
-   const [isLoading, setIsLoading] = useState(false);
 
    // 날짜 포맷팅 헬퍼 함수
    const formatDate = (dateString: string) => {
@@ -52,7 +51,6 @@ const Home = () => {
 
    return (
       <div className="min-h-screen bg-gray-50 text-gray-800">
-         
 
          {/* --- Main Content --- */}
          <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -87,11 +85,12 @@ const Home = () => {
                   {diaries.map((diary) => (
                      <article
                         key={diary.diaryId}
-                        onClick={() => navigate(`/diary/${diary.diaryId}`)}
-                        className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer overflow-hidden border border-gray-100 flex flex-col h-full transform hover:-translate-y-1"
+                        onClick={() => { alert("서비스 준비 중입니다.") }}
+                        // DiaryList와 동일한 클래스 적용
+                        className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full transform hover:-translate-y-1"
                      >
-                        {/* Image Section */}
-                        <div className="aspect-[4/3] w-full overflow-hidden bg-gray-100 relative">
+                        {/* Image Section (aspect-video) */}
+                        <div className="relative aspect-video bg-gray-100 overflow-hidden">
                            {diary.imageUrl ? (
                               <img
                                  src={diary.imageUrl}
@@ -99,28 +98,37 @@ const Home = () => {
                                  className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                               />
                            ) : (
-                              // 이미지가 없을 때 보여줄 Placeholder
-                              <div className="w-full h-full flex items-center justify-center bg-indigo-50 text-indigo-200">
-                                 <span className="text-4xl">📝</span>
+                              // 이미지가 없을 때 Placeholder
+                              <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-50">
+                                 <span className="text-4xl opacity-50">📝</span>
+                                 <span className="text-xs mt-2">이미지 없음</span>
                               </div>
                            )}
-                           {/* 날짜 배지 */}
-                           <div className="absolute top-3 left-3 bg-black/50 backdrop-blur-sm text-white text-xs px-3 py-1 rounded-full">
-                              {formatDate(diary.createdAt)}
-                           </div>
+                           {/* 호버 시 그라데이션 효과 */}
+                           <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                         </div>
 
-                        {/* Content Section */}
-                        <div className="p-5 flex flex-col flex-grow">
-                           <h3 className="text-xl font-bold text-gray-900 mb-2 line-clamp-1 group-hover:text-indigo-600 transition-colors">
+                        {/* Content Section (p-6, content 제거, 날짜/제목/자세히보기 구조 통일) */}
+                        <div className="p-6 flex flex-col flex-grow">
+
+                           {/* 날짜 */}
+                           <div className="flex items-center gap-2 text-xs font-medium text-indigo-600 mb-3">
+                              <Calendar className="w-4 h-4" />
+                              {formatDate(diary.createdAt)}
+                           </div>
+
+                           {/* 제목 */}
+                           <h3 className="text-xl font-bold text-gray-900 mb-3 line-clamp-1 group-hover:text-indigo-600 transition-colors">
                               {diary.title}
                            </h3>
-                           <p className="text-gray-500 text-sm line-clamp-3 mb-4 flex-grow">
-                              {diary.content}
-                           </p>
-                           <div className="flex items-center text-indigo-500 text-sm font-medium mt-auto">
-                              자세히 보기 &rarr;
+
+                           {/* 하단 자세히 보기 (구분선 포함) */}
+                           <div className="mt-4 pt-4 border-t border-gray-50 flex justify-end">
+                              <span className="text-sm font-medium text-gray-400 group-hover:text-indigo-500 transition-colors">
+                                 자세히 보기 &rarr;
+                              </span>
                            </div>
+
                         </div>
                      </article>
                   ))}

@@ -76,9 +76,6 @@ const Navbar = () => {
 
                   {/* 로고 */}
                   <div className="flex items-center gap-4">
-                     <button className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                        <Menu className="w-6 h-6 text-gray-600" />
-                     </button>
 
                      <div
                         className="flex items-center gap-2 cursor-pointer"
@@ -100,7 +97,7 @@ const Navbar = () => {
                         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                            <Search className="h-5 w-5 text-gray-400" />
                         </div>
-                        <input
+                        <input onClick={() => {alert("서비스 준비 중입니다.")}}
                            type="text"
                            className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-full leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:bg-white focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm transition-all duration-200"
                            placeholder="일기 검색..."
@@ -137,7 +134,7 @@ const Navbar = () => {
                               <span className="text-sm font-medium">만들기</span>
                            </button>
 
-                           <button className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors relative">
+                           <button onClick={() => {alert("서비스 준비 중입니다.")}} className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors relative">
                               <Bell className="w-6 h-6" />
                               <span className="absolute top-1.5 right-2 w-2 h-2 bg-red-500 rounded-full border border-white"></span>
                            </button>
