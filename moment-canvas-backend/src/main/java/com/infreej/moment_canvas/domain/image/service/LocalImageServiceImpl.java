@@ -103,7 +103,7 @@ public class LocalImageServiceImpl implements ImageService {
         String purePath = uploadDir.replace("file:", "");
 
         // 폴더명과 일치시키도록 타입명에 문자열 추가
-        String subPath = imageType + "-images/";
+        String subPath = String.valueOf(imageType).toLowerCase() + "-images/";
 
         // 이미지 종류에 따라 하위 폴더 경로를 결정 (diary-images, profile-images)
         Path destinationDirectory = Paths.get(purePath, subPath);

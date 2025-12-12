@@ -18,6 +18,17 @@ public class ImageConfig implements WebMvcConfigurer {
         // 클라이언트가 이미지를 요청할 패턴
         String urlPath = "/images/**";
 
-        registry.addResourceHandler(urlPath).addResourceLocations(uploadDir);
+//        registry.addResourceHandler(urlPath).addResourceLocations(uploadDir);
+        // uploadDir가 "file:"로 시작하지 않으면 붙여주고, 끝에 "/"가 없으면 붙여주는 방어 로직
+        String resourceLocation = uploadDir;
+        if (!resourceLocation.startsWith("file:")) {
+            resourceLocation = "file:" + resourceLocation;
+        }
+        if (!resourceLocation.endsWith("/")) {
+            resourceLocation = resourceLocation + "/";
+        }
+
+        registry.addResourceHandler(urlPath)
+                .addResourceLocations(resourceLocation);
     }
 }

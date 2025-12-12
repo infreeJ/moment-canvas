@@ -83,9 +83,7 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
 
-# [파일 업로드 경로]
-file:
-  upload-dir: ${FILE_UPLOAD_DIR:/app/images/}
+
 
 server:
   port: 9090
@@ -96,6 +94,10 @@ spring:
   config:
     activate:
       on-profile: prod
+
+# [파일 업로드 경로]
+file:
+  upload-dir: ${FILE_UPLOAD_DIR:/app/images/}
 
 # [AWS S3 설정]
 cloud:
@@ -127,6 +129,6 @@ spring:
     redis:
       host: localhost
 
-  # 로컬 파일 저장 경로
-  file:
-    upload-dir: file:../../images/
+# 로컬 파일 저장 경로
+file:
+  upload-dir: file:../../images/
