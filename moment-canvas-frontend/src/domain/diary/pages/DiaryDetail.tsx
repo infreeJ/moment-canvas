@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Edit2, Trash2, Sparkles, Loader2, RotateCcw } from 'lucide-react';
 import { diaryApi, type DiaryResponse } from '../api/diaryApi';
 import ImageGenerationModal from '../components/ImageGenerationModal';
+import {IMAGE_BASE_URL } from '../../../global/constans/image'
 
 const MOODS = [
    { value: 1, emoji: '😡', label: '최악' },
@@ -12,7 +13,7 @@ const MOODS = [
    { value: 5, emoji: '🥰', label: '최고' },
 ];
 
-const IMAGE_ROOT = 'http://localhost:9090/images/diary-images';
+// const IMAGE_ROOT = 'http://localhost:9090/images/diary-images';
 
 const DiaryDetail = () => {
    const { id } = useParams<{ id: string }>();
@@ -147,7 +148,7 @@ const DiaryDetail = () => {
                   {diary.savedDiaryImageName && !imageError ? (
                      <>
                         <img
-                           src={`${IMAGE_ROOT}/${diary.savedDiaryImageName}`}
+                           src={`${IMAGE_BASE_URL}/diary-images/${diary.savedDiaryImageName}`}
                            alt={diary.title}
                            className="w-full h-full object-contain bg-black/5"
                            onError={() => setImageError(true)}

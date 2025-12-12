@@ -6,9 +6,10 @@ import LoginForm from '../../domain/auth/pages/LoginForm';
 import { useAppSelector, useAppDispatch } from '../../global/store/hooks';
 import { closeLoginModal, logout, openLoginModal } from '../../global/store/slices/authSlice';
 import { authApi } from '../../global/api/authApi';
+import {IMAGE_BASE_URL } from '../../../global/constans/image'
 
 // 프로필 이미지 경로 상수
-const IMAGE_ROOT = 'http://localhost:9090/images/profile-images';
+// const IMAGE_ROOT = 'http://localhost:9090/images/profile-images';
 
 const Navbar = () => {
    const navigate = useNavigate();
@@ -150,7 +151,7 @@ const Navbar = () => {
                                  <img
                                     src={
                                        user?.savedProfileImageName
-                                          ? `${IMAGE_ROOT}/${user.savedProfileImageName}`
+                                          ? `${IMAGE_BASE_URL}/profile-images/${user.savedProfileImageName}`
                                           : "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
                                     }
                                     alt="User Avatar"

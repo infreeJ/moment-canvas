@@ -4,8 +4,9 @@ import { User, Calendar, Smile, Save, Loader2, Camera, AlertCircle } from 'lucid
 import { useAppSelector, useAppDispatch } from '../../../global/store/hooks';
 import { logout, updateUser } from '../../../global/store/slices/authSlice';
 import { userApi, type UserDetail } from '../api/userApi';
+import {IMAGE_BASE_URL } from '../../../global/constans/image'
 
-const IMAGE_BASE_URL = 'http://localhost:9090/images/profile-images';
+// const IMAGE_BASE_URL = 'http://localhost:9090/images/profile-images';
 
 // 닉네임 정규식 (영문 대소문자, 숫자, 한글, 언더바 / 4~16자)
 const NICKNAME_REGEX = /^[a-zA-Z0-9_가-힣]{4,16}$/;
@@ -240,7 +241,7 @@ const MyPage = () => {
                            <img
                               src={
                                  userInfo.savedProfileImageName
-                                    ? `${IMAGE_BASE_URL}/${userInfo.savedProfileImageName}`
+                                    ? `${IMAGE_BASE_URL}/profile-images/${userInfo.savedProfileImageName}`
                                     : "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
                               }
                               alt="Profile"

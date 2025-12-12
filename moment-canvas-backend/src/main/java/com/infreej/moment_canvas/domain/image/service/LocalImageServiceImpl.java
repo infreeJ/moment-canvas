@@ -8,6 +8,7 @@ import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -23,7 +24,8 @@ import java.util.UUID;
 @Slf4j
 @Service
 @RequiredArgsConstructor
-public class ImageServiceImpl implements ImageService {
+@Profile("default") // 로컬(default) 환경에서만 Bean이 등록된다.
+public class LocalImageServiceImpl implements ImageService {
 
     @Value("${file.upload-dir}")
     private String uploadDir;

@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Calendar, Image as ImageIcon, Plus, Loader2, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
 import { diaryApi, type DiarySummary } from '../api/diaryApi';
+import {IMAGE_BASE_URL } from '../../../global/constans/image'
 
 const DiaryList = () => {
    const navigate = useNavigate();
@@ -9,7 +10,7 @@ const DiaryList = () => {
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState('');
 
-   const IMAGE_ROOT = 'http://localhost:9090/images/diary-images';
+   // const IMAGE_ROOT = 'http://localhost:9090/images/diary-images';
 
    // 달력 input 제어용 Ref
    const dateInputRef = useRef<HTMLInputElement>(null);
@@ -180,7 +181,7 @@ const DiaryList = () => {
                      <div className="relative aspect-video bg-gray-100 overflow-hidden">
                         {diary.savedDiaryImageName ? (
                            <img
-                              src={`${IMAGE_ROOT}/${diary.savedDiaryImageName}`}
+                              src={`${IMAGE_BASE_URL}/diary-images/${diary.savedDiaryImageName}`}
                               alt={diary.title}
                               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                            />
