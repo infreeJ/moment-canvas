@@ -85,8 +85,6 @@ spring:
 
 # [파일 업로드 경로]
 file:
-  # 로컬과 서버의 경로가 다르므로 변수 처리하거나,
-  # 도커 내부 경로(/app/images)로 고정하고 볼륨을 연결하는 게 좋다.
   upload-dir: ${FILE_UPLOAD_DIR:/app/images/}
 
 server:
@@ -114,7 +112,7 @@ cloud:
 
 ---
 # [Default 프로필: 로컬 개발 환경]
-# Prod가 아닐 때 적용될 설정들입니다. (여기서 로컬 설정을 강제합니다)
+# Prod가 아닐 때 적용될 설정
 spring:
   config:
     activate:

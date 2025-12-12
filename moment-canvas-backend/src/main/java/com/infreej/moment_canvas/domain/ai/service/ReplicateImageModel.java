@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 @Primary
-@ConditionalOnProperty(name = "app.ai.provider", havingValue = "replicate")
+@ConditionalOnProperty(name = "spring.ai.provider", havingValue = "replicate")
 public class ReplicateImageModel implements ImageModel {
 
     private final RestClient restClient;

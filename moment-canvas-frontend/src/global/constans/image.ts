@@ -1,4 +1,4 @@
-// 1. 배포 환경일 때 사용할 S3 버킷 주소
+// 배포 환경일 때 사용할 S3 버킷 주소
 const S3_BUCKET_URL = 'https://moment-canvas.s3.ap-northeast-2.amazonaws.com';
 
 // 개발 환경일 때 사용할 로컬 백엔드 주소
