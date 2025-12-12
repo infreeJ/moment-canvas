@@ -1,4 +1,8 @@
 spring:
+  config:
+    # application-secret.yml 파일이 있으면 불러오고, 없으면 무시한다.
+    # 로컬에서는 이 파일이 로드되어 아래의 ${...} 설정을 실제 값으로 덮어쓰게 된다.
+    import: optional:classpath:application-secret.yml
   application:
     name: moment-canvas
 
@@ -79,6 +83,22 @@ spring:
             user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
             user-name-attribute: sub
 
+# [파일 업로드 경로]
+file:
+  # 로컬과 서버의 경로가 다르므로 변수 처리하거나,
+  # 도커 내부 경로(/app/images)로 고정하고 볼륨을 연결하는 게 좋다.
+  upload-dir: ${FILE_UPLOAD_DIR:/app/images/}
+
+server:
+  port: 9090
+
+---
+# [Prod 프로필: 배포 환경]
+spring:
+  config:
+    activate:
+      on-profile: prod
+
 # [AWS S3 설정]
 cloud:
   aws:
@@ -92,12 +112,23 @@ cloud:
       access-key: ${AWS_ACCESS_KEY} # Env
       secret-key: ${AWS_SECRET_KEY} # Env
 
+---
+# [Default 프로필: 로컬 개발 환경]
+# Prod가 아닐 때 적용될 설정들입니다. (여기서 로컬 설정을 강제합니다)
+spring:
+  config:
+    activate:
+      on-profile: default
 
-# [파일 업로드 경로]
-file:
-  # 로컬과 서버의 경로가 다르므로 변수 처리하거나,
-  # 도커 내부 경로(/app/images)로 고정하고 볼륨을 연결하는 게 좋다.
-  upload-dir: ${FILE_UPLOAD_DIR:/app/images/}
+  # 로컬 DB 주소 (Docker 내부의 mysql이 아니라 localhost)
+  datasource:
+    url: jdbc:mysql://localhost:3307/moment_canvas?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
 
-server:
-  port: 9090
+  # 로컬 Redis 주소
+  data:
+    redis:
+      host: localhost
+
+  # 로컬 파일 저장 경로
+  file:
+    upload-dir: file:../../images/
