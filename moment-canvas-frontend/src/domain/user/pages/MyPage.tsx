@@ -242,7 +242,7 @@ const MyPage = () => {
                               src={
                                  userInfo.savedProfileImageName
                                     ? `${IMAGE_BASE_URL}/profile-images/${userInfo.savedProfileImageName}`
-                                    : "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                                    : "https://api.dicebear.com/7.x/lorelei-neutral/svg?seed=Felix"
                               }
                               alt="Profile"
                               className="w-full h-full object-cover"

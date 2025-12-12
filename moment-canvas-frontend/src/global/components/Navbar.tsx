@@ -149,7 +149,7 @@ const Navbar = () => {
                                     src={
                                        user?.savedProfileImageName
                                           ? `${IMAGE_BASE_URL}/profile-images/${user.savedProfileImageName}`
-                                          : "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix"
+                                          : "https://api.dicebear.com/7.x/lorelei-neutral/svg?seed=Felix"
                                     }
                                     alt="User Avatar"
                                     className="w-full h-full object-cover"
