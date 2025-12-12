@@ -20,7 +20,6 @@ import com.infreej.moment_canvas.global.code.ErrorCode;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cglib.core.Local;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,7 +98,7 @@ public class DiaryServiceImpl implements DiaryService{
         LocalDate startDate = targetYearMonth.atDay(1);
         LocalDate endDate = targetYearMonth.atEndOfMonth();
 
-        List<DiarySummary> diaryList = diaryRepository.findAllByUser_UserIdAndTargetDateBetweenOrderByCreatedAtDesc(userId, startDate, endDate);
+        List<DiarySummary> diaryList = diaryRepository.findAllByUser_UserIdAndTargetDateBetweenOrderByTargetDateDesc(userId, startDate, endDate);
 
         return diaryList.stream()
                 .map(DiarySummaryResponse::from)
