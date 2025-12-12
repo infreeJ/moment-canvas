@@ -7,7 +7,9 @@ interface FailedRequest {
    reject: (error: unknown) => void;
 }
 
-const BASE_URL = 'http://localhost:9090/v1';
+// 개발 환경과 배포 환경을 분기 처리
+// import.meta.env.PROD는 Vite가 빌드할 때 자동으로 true로 바꿔준다.
+const BASE_URL = import.meta.env.PROD ? '/api/v1' : 'http://localhost:9090/v1';
 
 export const httpClient = axios.create({
    baseURL: BASE_URL,
