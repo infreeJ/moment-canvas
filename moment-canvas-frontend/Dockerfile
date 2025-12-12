@@ -4,6 +4,10 @@ WORKDIR /app
 COPY package.json .
 RUN npm install
 COPY . .
+
+# 경고(Warning)를 에러로 취급하지 않도록 설정
+ENV CI=false 
+
 RUN npm run build
 
 # 2. 실행 단계 (Nginx)
