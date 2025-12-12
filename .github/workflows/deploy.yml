@@ -17,10 +17,13 @@ jobs:
           java-version: '17'
           distribution: 'corretto'
 
+      # ---------------------------------------
+      # 1. 백엔드 빌드 & 푸시
+      # ---------------------------------------
       - name: Gradle 권한 부여
         run: chmod +x ./moment-canvas-backend/gradlew
 
-      - name: Gradle 빌드 (백엔드 폴더에서 실행)
+      - name: Gradle 빌드 (백엔드)
         run: |
           cd moment-canvas-backend
           ./gradlew clean build -x test
@@ -31,12 +34,21 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Docker 이미지 빌드 및 푸시
+      - name: 백엔드 이미지 빌드 및 푸시
         run: |
           cd moment-canvas-backend
-          # 이미지 태그: latest
           docker build -t ${{ secrets.DOCKER_USERNAME }}/moment-canvas-server:latest .
           docker push ${{ secrets.DOCKER_USERNAME }}/moment-canvas-server:latest
+
+      # ---------------------------------------
+      # 2. 프론트엔드 빌드 & 푸시 (새로 추가됨!)
+      # ---------------------------------------
+      - name: 프론트엔드 이미지 빌드 및 푸시
+        run: |
+          cd moment-canvas-frontend
+          # 이미지 이름: moment-canvas-client (서버랑 구분)
+          docker build -t ${{ secrets.DOCKER_USERNAME }}/moment-canvas-client:latest .
+          docker push ${{ secrets.DOCKER_USERNAME }}/moment-canvas-client:latest
 
   deploy:
     needs: build-and-push
@@ -61,43 +73,32 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.KEY }}
           script: |
-            # 폴더가 없으면 생성 및 이동
             mkdir -p /home/ubuntu/moment-canvas
             cd /home/ubuntu/moment-canvas
 
-            # 기존 .env 파일 초기화 (덮어쓰기 위해)
+            # .env 파일 생성 (Secrets -> .env)
             rm -f .env
             touch .env
 
-            # [1] 기본 설정 & DB
             echo "DOCKER_USERNAME=${{ secrets.DOCKER_USERNAME }}" >> .env
             echo "DB_PASSWORD=${{ secrets.DB_PASSWORD }}" >> .env
             # echo "REDIS_PASSWORD=${{ secrets.REDIS_PASSWORD }}" >> .env
             
-            # [2] AWS S3
             echo "AWS_ACCESS_KEY=${{ secrets.AWS_ACCESS_KEY }}" >> .env
             echo "AWS_SECRET_KEY=${{ secrets.AWS_SECRET_KEY }}" >> .env
             
-            # [3] 보안 (JWT)
             echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
             
-            # [4] AI 서비스
             echo "OPENAI_API_KEY=${{ secrets.OPENAI_API_KEY }}" >> .env
             echo "REPLICATE_API_TOKEN=${{ secrets.REPLICATE_API_TOKEN }}" >> .env
             
-            # [5] OAuth2 (카카오/구글) - 새로 추가된 부분!
             echo "KAKAO_CLIENT_ID=${{ secrets.KAKAO_CLIENT_ID }}" >> .env
             echo "KAKAO_CLIENT_SECRET=${{ secrets.KAKAO_CLIENT_SECRET }}" >> .env
             echo "GOOGLE_CLIENT_ID=${{ secrets.GOOGLE_CLIENT_ID }}" >> .env
             echo "GOOGLE_CLIENT_SECRET=${{ secrets.GOOGLE_CLIENT_SECRET }}" >> .env
-            
-            # [6] 리다이렉트 URI (운영 서버 주소)
             echo "OAUTH_REDIRECT_URI=${{ secrets.OAUTH_REDIRECT_URI }}" >> .env
             
-            # 최신 이미지 받기 및 컨테이너 재실행
-            # (docker-compose-prod.yml 파일명을 정확히 확인하세요)
+            # 최신 이미지(백엔드+프론트) 받기 및 재실행
             docker compose -f docker-compose-prod.yml pull
             docker compose -f docker-compose-prod.yml up -d
-            
-            # 불필요한 이미지 정리 (공간 확보)
             docker image prune -f

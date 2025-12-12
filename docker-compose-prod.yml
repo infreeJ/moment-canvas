@@ -1,5 +1,15 @@
 version: '3'
 services:
+  frontend: # 프론트엔드 추가
+    container_name: moment-canvas-frontend
+    image: ${DOCKER_USERNAME}/moment-canvas-client:latest
+    ports:
+      - "80:80" # 외부 80포트 -> 내부 80포트 연결
+    depends_on:
+      - backend
+    networks:
+      - app-network
+
   backend:
     container_name: moment-canvas-backend
     image: ${DOCKER_USERNAME}/moment-canvas-server:latest
