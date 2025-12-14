@@ -4,7 +4,7 @@ services:
     container_name: moment-canvas-frontend
     image: ${DOCKER_USERNAME}/moment-canvas-client:latest
     ports:
-      - "80:80" # 외부 80포트 -> 내부 80포트 연결
+      - "3000:80" # 외부 3000포트 -> 내부 80포트 연결
     depends_on:
       - backend
     networks:
