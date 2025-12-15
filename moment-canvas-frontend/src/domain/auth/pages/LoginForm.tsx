@@ -31,7 +31,9 @@ const LoginForm = ({ onClose }: LoginFormProps) => {
 
   // 소셜 로그인 핸들러
   const handleSocialLogin = (provider: 'kakao' | 'google') => {
-    const BACKEND_URL = 'http://localhost:9090';
+    const BACKEND_URL = import.meta.env.PROD 
+      ? 'https://momentcanvas.site' 
+      : 'http://localhost:9090';
     window.location.href = `${BACKEND_URL}/oauth2/authorization/${provider}`;
   };
 
