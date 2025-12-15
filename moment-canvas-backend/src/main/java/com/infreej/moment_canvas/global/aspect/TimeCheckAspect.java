@@ -19,6 +19,7 @@ public class TimeCheckAspect {
     @Around("@annotation(com.infreej.moment_canvas.global.annotation.TimeCheck)")
     public Object measureTime(ProceedingJoinPoint joinPoint) throws Throwable {
         StopWatch stopWatch = new StopWatch();
+        boolean isSuccess = true;
 
         try {
             // 시간 측정 시작
@@ -26,6 +27,9 @@ public class TimeCheckAspect {
 
             // 원래 메서드 실행
             return joinPoint.proceed();
+        } catch (Throwable e) {
+            isSuccess = false;
+            throw e; // 예외는 다시 던져서 컨트롤러나 예외 핸들러가 처리하게 둠
         } finally {
             // 메서드 실행 후 시간 측정 종료 및 로깅
             stopWatch.stop();
@@ -35,7 +39,15 @@ public class TimeCheckAspect {
             String className = joinPoint.getTarget().getClass().getSimpleName();
             String methodName = joinPoint.getSignature().getName();
 
-            log.info("실행 시간: {}.{} = {}ms", className, methodName, totalTime);
+            // 성공 여부
+            String status = isSuccess ? "성공" : "실패";
+
+            // 실행시간이 12초를 넘으면 WARN, 아니면 INFO
+            if(totalTime > 12000) {
+                log.warn("[{}]실행 시간: {}.{} = {}ms", status, className, methodName, totalTime);
+            } else {
+                log.info("[{}]실행 시간: {}.{} = {}ms", status, className, methodName, totalTime);
+            }
         }
     }
 }
