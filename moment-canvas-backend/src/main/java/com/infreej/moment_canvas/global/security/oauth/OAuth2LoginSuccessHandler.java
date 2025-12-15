@@ -70,7 +70,7 @@ public class OAuth2LoginSuccessHandler implements AuthenticationSuccessHandler {
         oAuth2CodeRepository.save(oAuth2Code);
 
         // 클라이언트로 임시코드 전달
-        String redirectUrl = frontendUrl + code;
+        String redirectUrl = frontendUrl + "/oauth/callback?code=" + code;
 
         // 리다이렉트
         response.sendRedirect(redirectUrl);
