@@ -14,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.concurrent.ThreadLocalRandom;
@@ -36,6 +37,7 @@ public class EmailServiceImpl implements EmailService {
      * @param emailRequest
      */
     @Override
+    @Transactional
     public void sendVerificationMail(EmailRequest emailRequest) {
 
         String email = emailRequest.getEmail();
@@ -50,14 +52,14 @@ public class EmailServiceImpl implements EmailService {
         String code = createVerificationCode();
 
         // 만료 시간 정의
-        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(10);
+        LocalDateTime expiresAt = LocalDateTime.now().plusMinutes(5);
 
         // 이메일 인증 테이블에서 데이터 조회
         EmailVerification emailVerification = emailRepository.findByEmail(email).orElse(null);
 
         if(emailVerification != null) { // 이미 인증 데이터가 있다면
             log.info("이미 인증 데이터가 있으므로 기존 데이터를 업데이트합니다. email: {}", email);
-            emailVerification.updateVerificationMail(email, expiresAt);
+            emailVerification.updateVerificationMail(code, expiresAt);
 
         } else { // 인증 데이터가 없다면
             log.info("인증 데이터가 없으므로 인증 데이터를 생성합니다. email: {}", email);
@@ -89,6 +91,7 @@ public class EmailServiceImpl implements EmailService {
      * 이메일 인증 코드 검증 메서드
      */
     @Override
+    @Transactional
     public void checkVerificationEmailCode(EmailVerificationRequest emailVerificationRequest) {
 
         // 인증 데이터 조회
@@ -129,4 +132,7 @@ public class EmailServiceImpl implements EmailService {
     private String createVerificationCode() {
         return String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
     }
+    
+    
+    // TODO: 만료된 이메일 인증 데이터 삭제 스케줄러 필요
 }

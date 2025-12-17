@@ -18,16 +18,16 @@ public class EmailVerification {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long emailId; // 고유 번호
 
-    @Column
+    @Column(unique = true)
     private String email;
 
-    @Column
+    @Column(length = 20)
     private String verificationCode;
 
     @Column
     private LocalDateTime expiresAt;
 
-    @Column
+    @Column(length = 1)
     @Enumerated(EnumType.STRING)
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
     private IsVerified isVerified = IsVerified.N;

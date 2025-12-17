@@ -69,7 +69,7 @@ public class SecurityConfig {
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/vip/**").hasAnyRole("ADMIN", "VIP")
                         .requestMatchers("/images/**", "/oauth2/**", "/v1/token-exchange").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/user", "/v1/reissue").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/mail-send", "/v1/verification-email-code", "/v1/user", "/v1/reissue").permitAll()
                         .anyRequest().authenticated()
                 )
 

@@ -68,8 +68,14 @@ public class UserServiceImpl implements UserService {
         String encodedPassword = passwordEncoder.encode(signupRequest.getPwd());
         signupRequest.setPwd(encodedPassword);
 
+        // 유저 엔티티 저장
         User user = signupRequest.toEntity();
-        return UserResponse.from(userRepository.save(user));
+        UserResponse userResponse = UserResponse.from(userRepository.save(user));
+
+        // 사용한 이메일 인증 데이터 삭제
+        emailRepository.delete(emailVerification);
+
+        return userResponse;
     }
 
 
