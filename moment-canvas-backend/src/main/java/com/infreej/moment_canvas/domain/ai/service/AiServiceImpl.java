@@ -36,7 +36,14 @@ public class AiServiceImpl implements AiService{
         // 이미지 프롬프트 생성 메서드 호출
         String prompt = generateImagePrompt(systemPersona, userRequest);
 
+        // JSON으로 역직렬화
         DiaryPromptJsonRequest promptObject = StringToJson(prompt);
+
+        // 정책 위반 검증 (false일 경우 위반)
+        if(!promptObject.isSafetyStatus()) {
+            log.warn("안전한 이미지 생성을 위해 포함할 수 없는 단어나 표현이 감지되었습니다. userPrompt: {}", userRequest);
+            throw new BusinessException(ErrorCode.IMAGE_POLICY_VIOLATION);
+        }
 
         ImagePrompt imagePrompt = new ImagePrompt(promptObject.getImagePrompt()); // ImagePrompt 객체 생성
 

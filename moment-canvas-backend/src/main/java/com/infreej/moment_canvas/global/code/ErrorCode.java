@@ -42,6 +42,7 @@ public enum ErrorCode {
     IMAGE_SIZE_EXCEEDED(HttpStatus.BAD_REQUEST, "E4002", "error.image.size.exceeded"),
     IMAGE_EXTENSION_NOT_SUPPORTED(HttpStatus.BAD_REQUEST, "E4003", "error.image.extension.not.supported"),
     IMAGE_GENERATED_ERROR(HttpStatus.BAD_REQUEST, "E4003", "error.image.generated.error"),
+    IMAGE_POLICY_VIOLATION(HttpStatus.BAD_REQUEST, "E4004", "error.image.policy.violation"),
 
     // ==================== AI 관련 에러 (5xxx) ====================
     AI_POLICY_VIOLATION(HttpStatus.BAD_REQUEST, "E5001", "ai.policy.violation"),
