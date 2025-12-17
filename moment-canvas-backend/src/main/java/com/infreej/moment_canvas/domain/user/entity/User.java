@@ -29,6 +29,9 @@ public class User extends BaseTimeEntity {
     @Column(nullable = false, length = 30, unique = true)
     private String nickname;
 
+    @Column(unique = true)
+    private String email;
+
     @Column
     private LocalDate birthday; // 생년월일
 

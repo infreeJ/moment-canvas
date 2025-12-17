@@ -2,6 +2,7 @@ package com.infreej.moment_canvas.domain.user.dto.request;
 
 import com.infreej.moment_canvas.domain.user.entity.Gender;
 import com.infreej.moment_canvas.domain.user.entity.User;
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,6 +32,8 @@ public class SignupRequest {
     @Pattern(regexp = "^[a-zA-Z0-9_가-힣]{4,16}$",
             message = "닉네임은 영문 소문자, 대문자, 숫자, 한글, 언더바를 사용할 수 있으며 4~16자여야 합니다.")
     private String nickname; // 닉네임
+    @Email(message = "이메일 형식으로 입력해주세요")
+    private String email;
     private LocalDate birthday; // 생년월일
     private Gender gender; // 성별
     private String persona; // 특징

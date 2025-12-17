@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "email_verification")
+@Setter
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -32,5 +33,20 @@ public class EmailVerification {
     private IsVerified isVerified = IsVerified.N;
 
 
+    /**
+     * 인증 메일 재발송 시 코드, 만료시간, 인증 여부 초기화
+     */
+    public void updateVerificationMail(String code, LocalDateTime expiresAt) {
+        this.verificationCode = code;
+        this.expiresAt = expiresAt;
+        this.isVerified = IsVerified.N;
+    }
+
+    /**
+     * 인증 성공 시 인증 여부 Y 변경 메서드
+     */
+    public void certifyEmail() {
+        this.isVerified = IsVerified.Y;
+    }
 
 }

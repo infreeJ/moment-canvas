@@ -45,7 +45,11 @@ public enum SuccessCode {
     IMAGE_GENERATED(HttpStatus.OK, "S4002", "success.image.generated"),
     IMAGE_SUCCESS(HttpStatus.OK, "S4003", "success.image.success"),
     IMAGE_UPDATED(HttpStatus.OK, "S4004", "success.image.updated"),
-    IMAGE_DELETED(HttpStatus.OK, "S4005", "success.image.deleted");
+    IMAGE_DELETED(HttpStatus.OK, "S4005", "success.image.deleted"),
+
+    // ==================== 이메일 관련 성공 (5xxx) ====================
+    EMAIL_SEND(HttpStatus.OK, "S5001", "success.email.send"),
+    EMAIL_VERIFICATION(HttpStatus.OK, "S5002", "success.email.verification");
 
     private final HttpStatus httpStatus;
     private final String code;
