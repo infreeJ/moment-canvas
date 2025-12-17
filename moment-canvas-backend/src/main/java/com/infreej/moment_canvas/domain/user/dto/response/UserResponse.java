@@ -21,6 +21,7 @@ public class UserResponse {
     private long userId; // 유저 PK
     private String loginId; // 아이디
     private String nickname; // 닉네임
+    private String email; // 이메일
     private LocalDate birthday; // 생년월일
     private Gender gender; // 성별
     private String persona; // 특징
@@ -35,6 +36,7 @@ public class UserResponse {
                 .userId(user.getUserId())
                 .loginId(user.getLoginId())
                 .nickname(user.getNickname())
+                .email(user.getEmail())
                 .birthday(user.getBirthday())
                 .gender(user.getGender())
                 .persona(user.getPersona())

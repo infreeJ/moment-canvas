@@ -45,6 +45,7 @@ public class SignupRequest {
                 .loginId(this.loginId)
                 .pwd(this.pwd)
                 .nickname(this.nickname)
+                .email(this.email)
                 .birthday(this.birthday)
                 .gender(this.gender)
                 .persona(this.persona)

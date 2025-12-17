@@ -1,5 +1,8 @@
 package com.infreej.moment_canvas.domain.user.service;
 
+import com.infreej.moment_canvas.domain.email.entity.EmailVerification;
+import com.infreej.moment_canvas.domain.email.entity.IsVerified;
+import com.infreej.moment_canvas.domain.email.repository.EmailRepository;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageType;
 import com.infreej.moment_canvas.domain.image.service.ImageService;
@@ -18,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -27,6 +31,7 @@ public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final ImageService imageService;
+    private final EmailRepository emailRepository;
 
 
     /**
@@ -48,6 +53,15 @@ public class UserServiceImpl implements UserService {
         if(userRepository.existsByNickname(signupRequest.getNickname())) {
             log.info("이미 사용 중인 닉네임입니다.");
             throw new BusinessException(ErrorCode.USER_DUPLICATE_LOGINID);
+        }
+
+        // 이메일 유효성 체크
+        EmailVerification emailVerification = emailRepository.findByEmail(signupRequest.getEmail())
+                .orElseThrow(() -> new BusinessException(ErrorCode.USER_EMAIL_NOT_FOUND));
+        if(emailVerification.getExpiresAt().isBefore(LocalDateTime.now())
+                || !emailVerification.getIsVerified().equals(IsVerified.Y)) {
+            log.info("이메일 인증 정보가 유효하지 않습니다. email: {}", signupRequest.getEmail());
+            throw new BusinessException(ErrorCode.USER_INVALID_EMAIL_CODE);
         }
 
         // 비밀번호 암호화

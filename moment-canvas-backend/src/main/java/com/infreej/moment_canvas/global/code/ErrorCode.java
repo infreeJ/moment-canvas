@@ -31,7 +31,8 @@ public enum ErrorCode {
     USER_ACCOUNT_DISABLED(HttpStatus.FORBIDDEN, "E2003", "error.user.disabled"),
     USER_DUPLICATE_NICKNAME(HttpStatus.CONFLICT, "E2004", "error.user.duplicate.nickname"),
     USER_DUPLICATE_EMAIL(HttpStatus.BAD_REQUEST, "E2005", "error.user.duplicate.email"),
-    USER_INVALID_EMAIL_CODE(HttpStatus.BAD_REQUEST, "E2005", "error.user.invalid.email.code"),
+    USER_INVALID_EMAIL_CODE(HttpStatus.BAD_REQUEST, "E2006", "error.user.invalid.email.code"),
+    USER_EMAIL_NOT_FOUND(HttpStatus.NOT_FOUND, "E2007", "error.user.email.not.found"),
 
 
     // ==================== 일기 관련 에러 (3xxx) ====================

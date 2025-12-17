@@ -99,7 +99,7 @@ public class EmailServiceImpl implements EmailService {
                 || emailVerification.getExpiresAt().isBefore(LocalDateTime.now())
                 || !emailVerification.getVerificationCode().equals(emailVerificationRequest.getVerificationCode())) {
 
-            log.info("인증 코드가 일치하지 않습니다. email: {}, code: {}", emailVerificationRequest.getEmail(), emailVerificationRequest.getVerificationCode());
+            log.info("인증 코드가 유효하지 않습니다. email: {}, code: {}", emailVerificationRequest.getEmail(), emailVerificationRequest.getVerificationCode());
             throw new BusinessException(ErrorCode.USER_INVALID_EMAIL_CODE);
         }
 
