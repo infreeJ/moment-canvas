@@ -1,5 +1,8 @@
 package com.infreej.moment_canvas.domain.ai.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.infreej.moment_canvas.domain.diary.dto.request.DiaryPromptJsonRequest;
 import com.infreej.moment_canvas.global.code.ErrorCode;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +19,7 @@ public class AiServiceImpl implements AiService{
 
     private final ImageModel imageModel;
     private final ChatModel chatModel;
+    private final ObjectMapper objectMapper;
 
 
     /**
@@ -27,12 +31,14 @@ public class AiServiceImpl implements AiService{
     @Override
     public String generateImage(String systemPersona, String userRequest) {
 
-        log.info("시스템 프롬프트: {}", systemPersona);
+//        log.info("시스템 프롬프트: {}", systemPersona);
 
         // 이미지 프롬프트 생성 메서드 호출
         String prompt = generateImagePrompt(systemPersona, userRequest);
 
-        ImagePrompt imagePrompt = new ImagePrompt(prompt); // ImagePrompt 객체 생성
+        DiaryPromptJsonRequest promptObject = StringToJson(prompt);
+
+        ImagePrompt imagePrompt = new ImagePrompt(promptObject.getImagePrompt()); // ImagePrompt 객체 생성
 
         ImageResponse imageResponse = imageModel.call(imagePrompt); // API 호출
 
@@ -66,7 +72,7 @@ public class AiServiceImpl implements AiService{
                 .call()
                 .content();
 
-        log.info("이미지 생성 프롬프트: {}", prompt);
+        log.info("이미지 생성 JSON 프롬프트: {}", prompt);
         return prompt;
     }
 
@@ -74,6 +80,18 @@ public class AiServiceImpl implements AiService{
     /**
      * LLM이 생성한 이미지 프롬프트의 JSON을 역직렬화하기 위한 메서드
      */
+    private DiaryPromptJsonRequest StringToJson(String prompt) {
+
+        DiaryPromptJsonRequest promptObject;
+
+        try {
+            promptObject = objectMapper.readValue(prompt, DiaryPromptJsonRequest.class);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
+        return promptObject;
+
+    }
 
 
 }
