@@ -2,13 +2,22 @@ import React, { useState } from 'react';
 import { X, Wand2, RotateCcw, Save, Palette, Loader2, Sparkles } from 'lucide-react';
 import { diaryApi } from '../api/diaryApi'; // 경로 확인
 
-// 스타일 프리셋 (기존 유지)
 const ART_STYLES = [
-   { id: 'watercolor', label: '수채화', emoji: '🎨', desc: '감성적이고 부드러운 느낌' },
-   { id: 'anime', label: '애니메이션', emoji: '✨', desc: '지브리 감성의 따뜻한 작화' },
-   { id: 'oil_painting', label: '유화', emoji: '🖼️', desc: '고흐 같은 예술적인 질감' },
-   { id: 'realistic', label: '실사', emoji: '📸', desc: '사진 같은 생생한 현실감' },
-   { id: '3d_render', label: '3D 렌더링', emoji: '🧊', desc: '귀엽고 입체적인 토이 스타일' },
+   { id: 'watercolor', label: '수채화', emoji: '🎨', desc: '물감이 번지는 듯한 감성적인 느낌' },
+   { id: 'colored_pencil', label: '색연필화', emoji: '🖍️', desc: '어릴 적 그림일기 같은 따뜻함' },
+
+   { id: 'ghibli_style', label: '지브리 풍', emoji: '🍃', desc: '몽글몽글한 힐링 애니메이션' },
+   { id: 'anime', label: '순정 만화', emoji: '✨', desc: '따뜻한 감성의 작화' },
+   { id: 'digital_painting', label: '디지털 아트', emoji: '🖌️', desc: '세련되고 깔끔한 채색' },
+
+   { id: 'line_drawing', label: '펜 드로잉', emoji: '✒️', desc: '펜으로 담백하게 그린 깔끔한 선화' },
+   { id: 'sketch', label: '연필 스케치', emoji: '✏️', desc: '연필 질감이 살아있는 러프화' },
+
+   { id: 'realistic', label: '실사', emoji: '📸', desc: '실제 사진처럼 생생한 현실감' },
+   { id: '3d_render', label: '3D 렌더링', emoji: '🧊', desc: '3D 토이 스타일' },
+
+   { id: 'pop_art', label: '팝아트', emoji: '💥', desc: '강렬한 색감의 만화적 연출' },
+   { id: 'cyberpunk', label: '사이버펑크', emoji: '🌃', desc: '네온 사인이 빛나는 몽환적인 세상' },
 ];
 
 interface ImageGenerationModalProps {

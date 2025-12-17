@@ -27,6 +27,8 @@ public class AiServiceImpl implements AiService{
     @Override
     public String generateImage(String systemPersona, String userRequest) {
 
+        log.info("시스템 프롬프트: {}", systemPersona);
+
         // 이미지 프롬프트 생성 메서드 호출
         String prompt = generateImagePrompt(systemPersona, userRequest);
 
@@ -67,5 +69,11 @@ public class AiServiceImpl implements AiService{
         log.info("이미지 생성 프롬프트: {}", prompt);
         return prompt;
     }
+
+
+    /**
+     * LLM이 생성한 이미지 프롬프트의 JSON을 역직렬화하기 위한 메서드
+     */
+
 
 }
