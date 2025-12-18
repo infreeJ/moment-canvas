@@ -26,15 +26,18 @@ services:
       - AWS_SECRET_KEY=${AWS_SECRET_KEY}
       # JWT
       - JWT_SECRET=${JWT_SECRET}
+      # Mail
+      - MAIL_USERNAME=${MAIL_USERNAME}
+      - MAIL_PASSWORD=${MAIL_PASSWORD}
       # AI Keys
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - REPLICATE_API_TOKEN=${REPLICATE_API_TOKEN}
-      # OAuth2 (새로 추가된 부분!)
+      # OAuth2
       - KAKAO_CLIENT_ID=${KAKAO_CLIENT_ID}
       - KAKAO_CLIENT_SECRET=${KAKAO_CLIENT_SECRET}
       - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID}
       - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET}
-      # Redirect URI (운영 서버 도메인 주소: 예 https://api.mysite.com)
+      # Redirect URI
       - OAUTH_REDIRECT_URI=${OAUTH_REDIRECT_URI}
       # File Upload
       - FILE_UPLOAD_DIR=/app/images/
