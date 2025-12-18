@@ -21,13 +21,13 @@ public class EmailVerification {
     @Column(unique = true)
     private String email;
 
-    @Column(length = 20)
+    @Column(nullable = false, length = 20)
     private String verificationCode;
 
-    @Column
+    @Column(nullable = false)
     private LocalDateTime expiresAt;
 
-    @Column(length = 1)
+    @Column(nullable = false, length = 1)
     @Enumerated(EnumType.STRING)
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
     private IsVerified isVerified = IsVerified.N;

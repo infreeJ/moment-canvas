@@ -35,6 +35,7 @@ public class ReplicateImageModel implements ImageModel {
         factory.setReadTimeout(60000);    // 읽기 타임아웃 60초 (이미지 생성 대기 시간 고려)
 
         this.restClient = builder
+                .requestFactory(factory) // factory를 사용하라고 명시
                 .baseUrl("https://api.replicate.com/v1") // API 기본 주소 설정
                 .build();
     }
