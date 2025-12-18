@@ -66,6 +66,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService {
                             .status(Status.ACTIVE)
                             .pwd("") // 비밀번호 없음
                             .loginId(null) // 소셜 유저는 LoginId null
+                            .email(null)
                             .build();
                 });
 
