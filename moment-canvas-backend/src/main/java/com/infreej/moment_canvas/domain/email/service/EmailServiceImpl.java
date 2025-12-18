@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,7 @@ public class EmailServiceImpl implements EmailService {
      * 인증 메일 발송 메서드
      * @param emailRequest
      */
+    @Async
     @Override
     @Transactional
     public void sendVerificationMail(EmailRequest emailRequest) {

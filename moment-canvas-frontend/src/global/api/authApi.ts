@@ -10,8 +10,18 @@ export interface LoginRequest {
 export interface SignupRequest {
    loginId: string;
    pwd: string;
+   email: string;
    nickname?: string; // 선택 사항
    // profileImage는 별도 API로 처리하므로 여기선 제외하거나 null 가능
+}
+
+export interface EmailRequest {
+   email: string;
+}
+
+export interface EmailVerificationRequest {
+   email: string;
+   verificationCode: string;
 }
 
 // 공통 응답 래퍼 (백엔드 표준 포맷)
@@ -60,11 +70,23 @@ export const authApi = {
       return response.data;
    },
 
+   // 인증 이메일 발송
+   sendMail: async (data: EmailRequest) => {
+      const response = await httpClient.post<ApiResponse<void>>('/mail-send', data);
+      return response.data;
+   },
+
+   // 이메일 인증 코드 확인
+   verifyCode: async (data: EmailVerificationRequest) => {
+      const response = await httpClient.post<ApiResponse<void>>('/verification-email-code', data);
+      return response.data;
+   },
+
    // 소셜 로그인 토큰 교환
    tokenExchange: async (code: string) => {
       // POST /token-exchange { code: "..." }
       const response = await httpClient.post<ApiResponse<TokenData>>('/token-exchange', { code });
       return response.data; // { success: true, data: { accessToken, refreshToken } }
    },
-   
+
 };
