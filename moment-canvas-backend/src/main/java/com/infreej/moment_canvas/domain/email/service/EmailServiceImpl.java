@@ -13,10 +13,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
 @Service
@@ -133,6 +135,17 @@ public class EmailServiceImpl implements EmailService {
         return String.valueOf(ThreadLocalRandom.current().nextInt(100000, 1000000));
     }
     
-    
-    // TODO: 만료된 이메일 인증 데이터 삭제 스케줄러 필요
+
+    @Scheduled(cron = "0 0 4 * * *") // 매일 새벽 4시
+    public void deleteExpiredEmail() {
+        log.info("만료된 이메일 인증 데이터 삭제 스케줄러 실행");
+        
+        // 만료된 이메일 인증 데이터 전체 조회
+        List<EmailVerification> list = emailRepository.findAllByExpiresAtBefore(LocalDateTime.now());
+
+        // 비어있지 않다면 삭제
+        if(!list.isEmpty()) {
+            emailRepository.deleteAll(list);
+        }
+    }
 }
