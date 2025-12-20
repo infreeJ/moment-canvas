@@ -145,8 +145,8 @@ public class DiaryServiceImpl implements DiaryService{
         Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
-        // 조회한 엔티티를 그대로 넘겨줘서 삭제한다.
-        diaryRepository.delete(diary);
+        // 조회한 엔티티 논리 삭제
+        diary.updateDiaryDeleted();
     }
 
 

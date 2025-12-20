@@ -1,7 +1,7 @@
 package com.infreej.moment_canvas.domain.user.service;
 
 import com.infreej.moment_canvas.domain.email.entity.EmailVerification;
-import com.infreej.moment_canvas.domain.email.entity.IsVerified;
+import com.infreej.moment_canvas.global.entity.yesOrNo;
 import com.infreej.moment_canvas.domain.email.repository.EmailRepository;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageType;
@@ -59,7 +59,7 @@ public class UserServiceImpl implements UserService {
         EmailVerification emailVerification = emailRepository.findByEmail(signupRequest.getEmail())
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_EMAIL_NOT_FOUND));
         if(emailVerification.getExpiresAt().isBefore(LocalDateTime.now())
-                || !emailVerification.getIsVerified().equals(IsVerified.Y)) {
+                || !emailVerification.getIsVerified().equals(yesOrNo.Y)) {
             log.info("이메일 인증 정보가 유효하지 않습니다. email: {}", signupRequest.getEmail());
             throw new BusinessException(ErrorCode.USER_INVALID_EMAIL_CODE);
         }

@@ -2,6 +2,7 @@ package com.infreej.moment_canvas.domain.diary.entity;
 
 import com.infreej.moment_canvas.domain.user.entity.User;
 import com.infreej.moment_canvas.global.entity.BaseTimeEntity;
+import com.infreej.moment_canvas.global.entity.yesOrNo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -42,6 +43,9 @@ public class Diary extends BaseTimeEntity {
     @Column(nullable = false)
     private LocalDate targetDate;
 
+    @Column(nullable = false, length = 1)
+    private yesOrNo isDeleted = yesOrNo.N;
+
     // 일기 엔티티 정보 변경 메서드
     public void updateDiaryInfo(String title, String content, Integer mood, LocalDate targetDate) {
         this.title = title;
@@ -54,6 +58,11 @@ public class Diary extends BaseTimeEntity {
     public void updateDiaryImage(String orgDiaryImageName, String savedDiaryImageName) {
         this.orgDiaryImageName = orgDiaryImageName;
         this.savedDiaryImageName = savedDiaryImageName;
+    }
+
+    // 일기 논리 삭제 메서드
+    public void updateDiaryDeleted() {
+        this.isDeleted = yesOrNo.Y;
     }
 
 
