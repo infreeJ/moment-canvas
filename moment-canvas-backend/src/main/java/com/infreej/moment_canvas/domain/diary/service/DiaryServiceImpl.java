@@ -58,6 +58,11 @@ public class DiaryServiceImpl implements DiaryService{
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.USER_NOT_FOUND));
 
+        // 이미 해당 날짜에 작성한 일기가 있다면 throw
+        if(diaryRepository.existsByUser_UserIdAndTargetDateAndIsDeleted(userId, diaryCreateRequest.getTargetDate(), YesOrNo.N)) {
+            throw new BusinessException(ErrorCode.DIARY_DUPLICATE);
+        }
+
         // 유저를 넣고 Entity로 변환
         Diary diary = diaryCreateRequest.toEntity(user);
 

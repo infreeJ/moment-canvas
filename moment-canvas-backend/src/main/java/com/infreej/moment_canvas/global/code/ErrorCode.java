@@ -22,7 +22,7 @@ public enum ErrorCode {
     AUTH_INVALID_CREDENTIALS(HttpStatus.UNAUTHORIZED, "E1003", "error.auth.invalid.credentials"), // 로그인 실패 (ID/PW 불일치)
     AUTH_TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "E1004", "error.auth.token.expired"),
     AUTH_INVALID_TOKEN(HttpStatus.UNAUTHORIZED, "E1005", "error.auth.token.invalid"),
-    AUTH_TOKEN_CODE_INVALID(HttpStatus.UNAUTHORIZED, "E1005", "error.auth.token.code.invalid"),
+    AUTH_TOKEN_CODE_INVALID(HttpStatus.UNAUTHORIZED, "E1006", "error.auth.token.code.invalid"),
 
 
     // ==================== 회원 관련 에러 (2xxx) ====================
@@ -38,6 +38,7 @@ public enum ErrorCode {
     // ==================== 일기 관련 에러 (3xxx) ====================
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "E3001", "error.diary.not.found"),
     DIARY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "E3002", "error.diary.access.denied"), // 남의 일기 접근 시도
+    DIARY_DUPLICATE(HttpStatus.FORBIDDEN, "E3003", "error.diary.duplicate"), // 남의 일기 접근 시도
 
 
     // ==================== 이미지 관련 에러 (4xxx) ====================
