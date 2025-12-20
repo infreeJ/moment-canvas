@@ -100,9 +100,14 @@ const Navbar = () => {
                         className="flex items-center gap-2 cursor-pointer"
                         onClick={() => navigate('/')}
                      >
-                        <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
+                        {/* <div className="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-lg flex items-center justify-center text-white font-bold text-lg">
                            M
-                        </div>
+                        </div> */}
+                        <img
+                           src="../../public/favicon.svg"
+                           alt="Moment Canvas Logo"
+                           className="w-8 h-8 sm:w-9 sm:h-9 object-contain transition-transform group-hover:scale-110 duration-200"
+                        />
                         {/* 모바일에서도 로고 텍스트 보이게 수정 (hidden sm:block 제거) */}
                         <span className="text-xl font-bold tracking-tight text-gray-900">
                            Moment Canvas
