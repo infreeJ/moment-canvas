@@ -11,6 +11,7 @@ import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.global.annotation.SetSuccess;
 import com.infreej.moment_canvas.global.annotation.TimeCheck;
 import com.infreej.moment_canvas.global.code.SuccessCode;
+import com.infreej.moment_canvas.global.entity.YesOrNo;
 import com.infreej.moment_canvas.global.security.CustomUserDetails;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -53,9 +54,9 @@ public class DiaryController {
     @SetSuccess(SuccessCode.DIARY_SUCCESS)
     @Operation(summary = "특정 유저의 월별 일기 목록 조회", security = @SecurityRequirement(name = "JWT"), description = "일기 목록 조회 API 입니다.")
     @GetMapping("/diary/list")
-    public List<DiarySummaryResponse> findDiaryListByUserId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody DiaryFindRequest diaryFindRequest) {
+    public List<DiarySummaryResponse> findDiaryListByUserId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam YesOrNo yesOrNo, @RequestParam String yearMonth) {
 
-        return diaryService.findDiaryListByUserId(customUserDetails.getUser().getUserId(), diaryFindRequest.getYesOrNo(), diaryFindRequest.getYearMonth());
+        return diaryService.findDiaryListByUserId(customUserDetails.getUser().getUserId(), yesOrNo, yearMonth);
     }
 
 
