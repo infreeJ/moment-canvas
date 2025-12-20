@@ -1,5 +1,6 @@
 package com.infreej.moment_canvas.domain.diary.controller;
 
+import com.infreej.moment_canvas.domain.diary.dto.request.DiaryFindRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryImageGenerateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryCreateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
@@ -52,9 +53,9 @@ public class DiaryController {
     @SetSuccess(SuccessCode.DIARY_SUCCESS)
     @Operation(summary = "특정 유저의 월별 일기 목록 조회", security = @SecurityRequirement(name = "JWT"), description = "일기 목록 조회 API 입니다.")
     @GetMapping("/diary/list")
-    public List<DiarySummaryResponse> findDiaryListByUserId(@AuthenticationPrincipal CustomUserDetails customUserDetails, String yearMonth) {
+    public List<DiarySummaryResponse> findDiaryListByUserId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestBody DiaryFindRequest diaryFindRequest) {
 
-        return diaryService.findDiaryListByUserId(customUserDetails.getUser().getUserId(), yearMonth);
+        return diaryService.findDiaryListByUserId(customUserDetails.getUser().getUserId(), diaryFindRequest.getYesOrNo(), diaryFindRequest.getYearMonth());
     }
 
 
