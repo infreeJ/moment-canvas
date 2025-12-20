@@ -7,6 +7,7 @@ import { useAppSelector, useAppDispatch } from '../../global/store/hooks';
 import { closeLoginModal, logout, openLoginModal } from '../../global/store/slices/authSlice';
 import { authApi } from '../../global/api/authApi';
 import { IMAGE_BASE_URL } from '../constans/image';
+import logoImage from '../../assets/favicon.svg';
 
 const Navbar = () => {
    const navigate = useNavigate();
@@ -104,7 +105,7 @@ const Navbar = () => {
                            M
                         </div> */}
                         <img
-                           src="../../public/favicon.svg"
+                           src={logoImage}
                            alt="Moment Canvas Logo"
                            className="w-8 h-8 sm:w-9 sm:h-9 object-contain transition-transform group-hover:scale-110 duration-200"
                         />
