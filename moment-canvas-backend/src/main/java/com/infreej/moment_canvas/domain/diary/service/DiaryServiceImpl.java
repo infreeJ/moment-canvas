@@ -17,6 +17,7 @@ import com.infreej.moment_canvas.domain.user.dto.projection.UserCharacteristic;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
 import com.infreej.moment_canvas.global.code.ErrorCode;
+import com.infreej.moment_canvas.global.entity.YesOrNo;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -89,7 +90,7 @@ public class DiaryServiceImpl implements DiaryService{
      */
     @Override
     @Transactional(readOnly = true)
-    public List<DiarySummaryResponse> findDiaryListByUserId(long userId, String yearMonth) {
+    public List<DiarySummaryResponse> findDiaryListByUserId(long userId, YesOrNo yesOrNo, String yearMonth) {
 
         // YearMonth 객체 파싱
         YearMonth targetYearMonth = YearMonth.parse(yearMonth);
@@ -98,7 +99,7 @@ public class DiaryServiceImpl implements DiaryService{
         LocalDate startDate = targetYearMonth.atDay(1);
         LocalDate endDate = targetYearMonth.atEndOfMonth();
 
-        List<DiarySummary> diaryList = diaryRepository.findAllByUser_UserIdAndTargetDateBetweenOrderByTargetDateDesc(userId, startDate, endDate);
+        List<DiarySummary> diaryList = diaryRepository.findAllByUser_UserIdAndIsDeletedAndTargetDateBetweenOrderByTargetDateDesc(userId, yesOrNo, startDate, endDate);
 
         return diaryList.stream()
                 .map(DiarySummaryResponse::from)
@@ -231,7 +232,7 @@ public class DiaryServiceImpl implements DiaryService{
     @Override
     public List<LocalDate> findDiaryDateList(long userId) {
 
-        return diaryRepository.findAllTargetDateByUserId(userId);
+        return diaryRepository.findAllTargetDateByUserId(userId, YesOrNo.N);
     }
 
 

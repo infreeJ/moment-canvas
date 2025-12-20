@@ -6,6 +6,7 @@ import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiarySummaryResponse;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
+import com.infreej.moment_canvas.global.entity.YesOrNo;
 
 import java.io.IOException;
 import java.time.LocalDate;
@@ -17,7 +18,7 @@ public interface DiaryService {
 
     public DiaryResponse findDiaryById(Long userId, long diaryId);
 
-    public List<DiarySummaryResponse> findDiaryListByUserId(long userId, String yearMonth);
+    public List<DiarySummaryResponse> findDiaryListByUserId(long userId, YesOrNo yesOrNo, String yearMonth);
 
     public DiaryResponse update(long userId, DiaryUpdateRequest diaryUpdateRequest);
 

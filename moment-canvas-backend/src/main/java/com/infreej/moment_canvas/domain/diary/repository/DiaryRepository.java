@@ -3,6 +3,7 @@ package com.infreej.moment_canvas.domain.diary.repository;
 import com.infreej.moment_canvas.domain.diary.dto.projection.DiaryContent;
 import com.infreej.moment_canvas.domain.diary.dto.projection.DiarySummary;
 import com.infreej.moment_canvas.domain.diary.entity.Diary;
+import com.infreej.moment_canvas.global.entity.YesOrNo;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -12,8 +13,8 @@ import java.util.Optional;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
-    // 날짜에 해당하는 모든 일기를 userId를 이용해 createdAt 내림차순 정렬로 조회
-    List<DiarySummary> findAllByUser_UserIdAndTargetDateBetweenOrderByTargetDateDesc(long userId, LocalDate startDate, LocalDate endDate);
+    // 날짜에 해당하는 모든 일기를 삭제 조건에 따라 userId를 이용해 createdAt 내림차순 정렬로 조회
+    List<DiarySummary> findAllByUser_UserIdAndIsDeletedAndTargetDateBetweenOrderByTargetDateDesc(long userId, YesOrNo yesOrNo, LocalDate startDate, LocalDate endDate);
 
     // diaryId와 userId가 동시에 일치하는 일기만 조회
     Optional<Diary> findByDiaryIdAndUser_UserId(Long diaryId, Long userId);
@@ -21,8 +22,8 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     // diaryId와 userId가 동시에 일치하는 일기만 조회(일기의 내용만 조회)
     Optional<DiaryContent> findDiaryContentByDiaryIdAndUser_UserId(Long diaryId, Long userId);
 
-    // 사용자가 작성한 모든 일기의 날짜(targetDate) 목록 조회
-    @Query("SELECT targetDate FROM Diary WHERE user.userId = :userId")
-    List<LocalDate> findAllTargetDateByUserId(Long userId);
+    // 사용자가 작성한 삭제되지 않은 모든 일기의 날짜(targetDate) 목록 조회
+    @Query("SELECT targetDate FROM Diary WHERE user.userId = :userId AND isDeleted = :yesOrNo")
+    List<LocalDate> findAllTargetDateByUserId(Long userId, YesOrNo yesOrNo);
 
 }

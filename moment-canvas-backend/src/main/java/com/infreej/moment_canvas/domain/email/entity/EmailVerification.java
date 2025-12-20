@@ -1,6 +1,6 @@
 package com.infreej.moment_canvas.domain.email.entity;
 
-import com.infreej.moment_canvas.global.entity.yesOrNo;
+import com.infreej.moment_canvas.global.entity.YesOrNo;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,7 +31,7 @@ public class EmailVerification {
     @Column(nullable = false, length = 1)
     @Enumerated(EnumType.STRING)
     @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
-    private yesOrNo isVerified = yesOrNo.N;
+    private YesOrNo isVerified = YesOrNo.N;
 
 
     /**
@@ -40,14 +40,14 @@ public class EmailVerification {
     public void updateVerificationMail(String code, LocalDateTime expiresAt) {
         this.verificationCode = code;
         this.expiresAt = expiresAt;
-        this.isVerified = yesOrNo.N;
+        this.isVerified = YesOrNo.N;
     }
 
     /**
      * 인증 성공 시 인증 여부 Y 변경 메서드
      */
     public void certifyEmail() {
-        this.isVerified = yesOrNo.Y;
+        this.isVerified = YesOrNo.Y;
     }
 
 }

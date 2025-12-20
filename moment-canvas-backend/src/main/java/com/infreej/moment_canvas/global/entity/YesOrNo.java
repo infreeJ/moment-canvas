@@ -1,5 +1,5 @@
 package com.infreej.moment_canvas.global.entity;
 
-public enum yesOrNo {
+public enum YesOrNo {
     Y, N
 }
