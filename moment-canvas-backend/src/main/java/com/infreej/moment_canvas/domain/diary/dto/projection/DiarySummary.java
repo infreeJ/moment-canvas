@@ -1,5 +1,7 @@
 package com.infreej.moment_canvas.domain.diary.dto.projection;
 
+import com.infreej.moment_canvas.global.entity.YesOrNo;
+
 import java.time.LocalDate;
 
 /**
@@ -11,4 +13,5 @@ public interface DiarySummary {
     Integer getMood(); // 기분
     String getSavedDiaryImageName(); // 저장된 이미지명
     LocalDate getTargetDate(); // 생성일
+    YesOrNo getIsDeleted();
 }

@@ -7,6 +7,7 @@ export interface DiarySummary {
   mood: number;
   targetDate: string;
   savedDiaryImageName?: string | null;
+  isDeleted: 'Y' | 'N';
 }
 
 // 일기 작성 요청 (Request Body)
@@ -25,6 +26,7 @@ export interface DiaryResponse {
   mood: number;
   savedDiaryImageName?: string | null; // 이미지 생성 전에는 null
   targetDate: string; // 상세 조회 시 필요할 수 있음
+  isDeleted: 'Y' | 'N';
 }
 
 // 이미지 생성 요청 DTO
@@ -60,10 +62,14 @@ interface ApiResponse<T> {
 
 export const diaryApi = {
   // 내 일기 목록 조회
-  getMyDiaries: async (yearMonth?: string) => {
-    // yearMonth가 있으면 쿼리 파라미터로 전송
-    const url = yearMonth ? `/diary/list?yearMonth=${yearMonth}` : '/diary/list';
-    const response = await httpClient.get<ApiResponse<DiarySummary[]>>(url);
+  getMyDiaries: async (yearMonth?: string, yesOrNo: 'Y' | 'N' = 'N') => {
+    // 쿼리 파라미터 조립
+    const params = new URLSearchParams();
+    if (yearMonth) params.append('yearMonth', yearMonth);
+    params.append('yesOrNo', yesOrNo);
+
+    // /diary/list?yearMonth=2024-01&yesOrNo=N 형태로 변환
+    const response = await httpClient.get<ApiResponse<DiarySummary[]>>(`/diary/list?${params.toString()}`);
     return response.data;
   },
 
@@ -80,10 +86,20 @@ export const diaryApi = {
     return response.data;
   },
 
-  // [추가] 일기 삭제
+  // 일기 삭제
   delete: async (diaryId: number) => {
-    // 응답 본문(body)이 없으므로 제네릭 없이 호출하거나 void로 처리
     await httpClient.delete(`/diary/${diaryId}`);
+  },
+
+  // 해당 날짜 일기 존재 여부 확인 (복구 전 체크용)
+  checkDateAvailability: async (targetDate: string) => {
+    const response = await httpClient.get<ApiResponse<boolean>>(`/diary/date?targetDate=${targetDate}`);
+    return response.data.data; // true: 존재함, false: 없음
+  },
+
+  // 일기 복구
+  restore: async (diaryId: number) => {
+    await httpClient.patch(`/diary/${diaryId}`);
   },
 
   // 일기 상세 조회

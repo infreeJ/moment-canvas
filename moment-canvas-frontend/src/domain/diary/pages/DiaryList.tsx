@@ -1,8 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Calendar, Image as ImageIcon, Plus, Loader2, ChevronLeft, ChevronRight, CalendarDays } from 'lucide-react';
+import { Calendar, Image as ImageIcon, Plus, Loader2, ChevronLeft, ChevronRight, CalendarDays, Trash2, List } from 'lucide-react';
 import { diaryApi, type DiarySummary } from '../api/diaryApi';
-import {IMAGE_BASE_URL } from '../../../global/constans/image'
+import { IMAGE_BASE_URL } from '../../../global/constans/image';
 
 const DiaryList = () => {
    const navigate = useNavigate();
@@ -10,9 +10,9 @@ const DiaryList = () => {
    const [isLoading, setIsLoading] = useState(true);
    const [error, setError] = useState('');
 
-   // const IMAGE_ROOT = 'http://localhost:9090/images/diary-images';
+   // 휴지통 모드 (true: 삭제된 일기 보기)
+   const [isTrashMode, setIsTrashMode] = useState(false);
 
-   // 달력 input 제어용 Ref
    const dateInputRef = useRef<HTMLInputElement>(null);
 
    const [currentDate, setCurrentDate] = useState(() => {
@@ -27,7 +27,8 @@ const DiaryList = () => {
          setIsLoading(true);
          setError('');
          try {
-            const response = await diaryApi.getMyDiaries(currentDate);
+            const yesOrNo = isTrashMode ? 'Y' : 'N';
+            const response = await diaryApi.getMyDiaries(currentDate, yesOrNo);
             setDiaries(response.data);
          } catch (err) {
             console.error('일기 목록 로드 실패:', err);
@@ -38,7 +39,7 @@ const DiaryList = () => {
       };
 
       fetchDiaries();
-   }, [currentDate]);
+   }, [currentDate, isTrashMode]);
 
    const handleMonthChange = (direction: 'prev' | 'next') => {
       const [year, month] = currentDate.split('-').map(Number);
@@ -61,12 +62,10 @@ const DiaryList = () => {
       }
    };
 
-   // 달력 열기 함수
    const openDatePicker = () => {
       try {
-         dateInputRef.current?.showPicker(); // 최신 브라우저 지원 메서드
+         dateInputRef.current?.showPicker();
       } catch (e) {
-         // showPicker를 지원하지 않는 구형 브라우저 대비 (fallback)
          dateInputRef.current?.focus();
       }
    };
@@ -89,15 +88,38 @@ const DiaryList = () => {
 
    return (
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-
          <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
-
             <div>
-               <h2 className="text-3xl font-bold text-gray-900">나의 기록들</h2>
-               <p className="text-gray-500 mt-2">차곡차곡 쌓인 당신의 순간들을 확인해보세요.</p>
+               <h2 className={`text-3xl font-bold ${isTrashMode ? 'text-red-600' : 'text-gray-900'}`}>
+                  {isTrashMode ? '휴지통' : '나의 기록들'}
+               </h2>
+               <p className="text-gray-500 mt-2">
+                  {isTrashMode
+                     ? '삭제된 일기들을 확인하고 복구할 수 있습니다.'
+                     : '차곡차곡 쌓인 당신의 순간들을 확인해보세요.'}
+               </p>
             </div>
 
             <div className="flex flex-col sm:flex-row items-center gap-4 w-full md:w-auto">
+               <button
+                  onClick={() => setIsTrashMode((prev) => !prev)}
+                  className={`flex items-center justify-center gap-2 px-4 py-2 rounded-lg border transition-all ${isTrashMode
+                        ? 'bg-gray-100 text-gray-700 border-gray-300 hover:bg-gray-200'
+                        : 'bg-white text-red-500 border-red-100 hover:bg-red-50'
+                     }`}
+               >
+                  {isTrashMode ? (
+                     <>
+                        <List className="w-4 h-4" />
+                        목록으로 돌아가기
+                     </>
+                  ) : (
+                     <>
+                        <Trash2 className="w-4 h-4" />
+                        휴지통 보기
+                     </>
+                  )}
+               </button>
 
                <div className="flex items-center bg-white border border-gray-200 rounded-xl px-2 py-1 shadow-sm relative">
                   <button
@@ -107,7 +129,6 @@ const DiaryList = () => {
                      <ChevronLeft className="w-5 h-5" />
                   </button>
 
-                  {/* 클릭 시 openDatePicker 실행 */}
                   <div
                      onClick={openDatePicker}
                      className="relative group cursor-pointer flex items-center justify-center min-w-[140px] h-full"
@@ -116,8 +137,6 @@ const DiaryList = () => {
                         <CalendarDays className="w-4 h-4 text-gray-400 group-hover:text-indigo-500" />
                         {displayMonth}
                      </span>
-
-                     {/* 숨겨진 input */}
                      <input
                         ref={dateInputRef}
                         type="month"
@@ -135,20 +154,24 @@ const DiaryList = () => {
                   </button>
                </div>
 
-               <button
-                  onClick={() => navigate('/write')}
-                  className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all hover:scale-105 font-medium w-full sm:w-auto whitespace-nowrap"
-               >
-                  <Plus className="w-5 h-5" />
-                  새 일기 쓰기
-               </button>
+               {!isTrashMode && (
+                  <button
+                     onClick={() => navigate('/write')}
+                     className="flex items-center justify-center gap-2 px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl shadow-md transition-all hover:scale-105 font-medium w-full sm:w-auto whitespace-nowrap"
+                  >
+                     <Plus className="w-5 h-5" />
+                     새 일기 쓰기
+                  </button>
+               )}
             </div>
          </div>
 
          {isLoading ? (
             <div className="flex flex-col items-center justify-center h-64">
                <Loader2 className="w-10 h-10 text-indigo-600 animate-spin mb-4" />
-               <p className="text-gray-500">추억을 불러오는 중입니다...</p>
+               <p className="text-gray-500">
+                  {isTrashMode ? '삭제된 기록을 찾는 중...' : '추억을 불러오는 중입니다...'}
+               </p>
             </div>
          ) : error ? (
             <div className="text-center py-20 bg-red-50 rounded-2xl">
@@ -156,19 +179,29 @@ const DiaryList = () => {
             </div>
          ) : diaries.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-24 bg-white rounded-3xl border-2 border-dashed border-gray-200">
-               <div className="w-20 h-20 bg-indigo-50 rounded-full flex items-center justify-center mb-6">
-                  <ImageIcon className="w-10 h-10 text-indigo-400" />
+               <div className={`w-20 h-20 rounded-full flex items-center justify-center mb-6 ${isTrashMode ? 'bg-gray-100' : 'bg-indigo-50'}`}>
+                  {isTrashMode ? (
+                     <Trash2 className="w-10 h-10 text-gray-400" />
+                  ) : (
+                     <ImageIcon className="w-10 h-10 text-indigo-400" />
+                  )}
                </div>
                <h3 className="text-xl font-bold text-gray-900 mb-2">
-                  {displayMonth}에 작성된 일기가 없어요
+                  {isTrashMode
+                     ? '휴지통이 비어있습니다'
+                     : `${displayMonth}에 작성된 일기가 없어요`}
                </h3>
-               <p className="text-gray-500 mb-8">소중한 하루를 기록으로 남겨볼까요?</p>
-               <button
-                  onClick={() => navigate('/write')}
-                  className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline"
-               >
-                  일기 작성하러 가기 &rarr;
-               </button>
+               {!isTrashMode && (
+                  <>
+                     <p className="text-gray-500 mb-8">소중한 하루를 기록으로 남겨볼까요?</p>
+                     <button
+                        onClick={() => navigate('/write')}
+                        className="text-indigo-600 font-semibold hover:text-indigo-700 hover:underline"
+                     >
+                        일기 작성하러 가기 &rarr;
+                     </button>
+                  </>
+               )}
             </div>
          ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -176,14 +209,15 @@ const DiaryList = () => {
                   <article
                      key={diary.diaryId}
                      onClick={() => navigate(`/diary/${diary.diaryId}`)}
-                     className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full transform hover:-translate-y-1"
+                     className={`group bg-white rounded-2xl overflow-hidden border shadow-sm hover:shadow-xl transition-all duration-300 cursor-pointer flex flex-col h-full transform hover:-translate-y-1 ${isTrashMode ? 'border-red-100 opacity-80 hover:opacity-100' : 'border-gray-100'
+                        }`}
                   >
                      <div className="relative aspect-video bg-gray-100 overflow-hidden">
                         {diary.savedDiaryImageName ? (
                            <img
                               src={`${IMAGE_BASE_URL}/diary-images/${diary.savedDiaryImageName}`}
                               alt={diary.title}
-                              className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                              className={`w-full h-full object-cover transition-transform duration-500 group-hover:scale-105 ${isTrashMode ? 'grayscale' : ''}`}
                            />
                         ) : (
                            <div className="w-full h-full flex flex-col items-center justify-center text-gray-400 bg-gray-50">
@@ -195,7 +229,7 @@ const DiaryList = () => {
                      </div>
 
                      <div className="p-6 flex flex-col flex-grow">
-                        <div className="flex items-center gap-2 text-xs font-medium text-indigo-600 mb-3">
+                        <div className={`flex items-center gap-2 text-xs font-medium mb-3 ${isTrashMode ? 'text-red-500' : 'text-indigo-600'}`}>
                            <Calendar className="w-4 h-4" />
                            {formatDate(diary.targetDate)}
                         </div>
@@ -204,7 +238,7 @@ const DiaryList = () => {
                         </h3>
                         <div className="mt-4 pt-4 border-t border-gray-50 flex justify-end">
                            <span className="text-sm font-medium text-gray-400 group-hover:text-indigo-500 transition-colors">
-                              자세히 보기 &rarr;
+                              {isTrashMode ? '확인 및 복구' : '자세히 보기'} &rarr;
                            </span>
                         </div>
                      </div>

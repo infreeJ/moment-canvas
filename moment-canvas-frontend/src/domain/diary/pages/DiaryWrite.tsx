@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, Loader2, Sparkles, Calendar, AlertCircle } from 'lucide-react';
 import { diaryApi } from '../api/diaryApi';
@@ -16,20 +16,20 @@ const DiaryWrite = () => {
    const { id } = useParams<{ id: string }>();
    const isEditMode = Boolean(id);
 
-   const [isLoading, setIsLoading] = useState(false);
-   const [isFetching, setIsFetching] = useState(false);
+   const [isLoading, setIsLoading] = useState(false); // 저장 중 로딩
+   const [isFetching, setIsFetching] = useState(false); // 데이터 조회 중 로딩
 
-   // 이미 작성된 날짜 리스트 저장용
+   // 이미 작성된 날짜 리스트 (isDeleted == 'N' 인 날짜들)
    const [writtenDates, setWrittenDates] = useState<string[]>([]);
-   // 수정 모드일 때, 원래 이 일기의 날짜를 기억 (중복 체크 예외용)
+
+   // 수정 모드일 때, 자기 자신의 원래 날짜 (중복 체크 예외용)
    const [originalDate, setOriginalDate] = useState('');
 
-   // 날짜 에러 메시지 상태 관리
    const [dateError, setDateError] = useState('');
 
+   // 오늘 날짜 구하기 (YYYY-MM-DD)
    const getToday = () => {
       const now = new Date();
-      // 로컬 타임존 고려
       const offset = now.getTimezoneOffset() * 60000;
       const localDate = new Date(now.getTime() - offset);
       return localDate.toISOString().split('T')[0];
@@ -42,25 +42,45 @@ const DiaryWrite = () => {
       targetDate: getToday(),
    });
 
-   // 작성된 날짜 목록 가져오기
+   // 날짜 유효성 검사 함수
+   const validateDate = useCallback((date: string, datesList: string[], originDate: string) => {
+      // 미래 날짜 체크
+      if (date > getToday()) {
+         return "미래의 일기는 작성할 수 없습니다.";
+      }
+
+      // 중복 날짜 체크
+      // 목록에 있고(datesList.includes) && 수정 중인 내 날짜가 아니라면(date !== originDate) -> 에러
+      if (datesList.includes(date)) {
+         if (isEditMode && date === originDate) {
+            return ''; // 내 날짜는 허용
+         }
+         return "해당 날짜에는 이미 작성된 일기가 있습니다.";
+      }
+
+      return '';
+   }, [isEditMode]);
+
+   // 작성된 날짜 목록 가져오기 & 초기 날짜 검증
    useEffect(() => {
       const fetchDates = async () => {
          try {
+            // 백엔드에서 isDeleted='N'인 날짜들만 받아옴
             const dates = await diaryApi.getWrittenDates();
             setWrittenDates(dates);
 
-            // 작성 모드 진입 시, 오늘 날짜가 이미 있다면 에러 표시
-            if (!isEditMode && dates.includes(getToday())) {
-               setDateError('오늘 날짜에는 이미 작성된 일기가 있습니다.');
+            if (!isEditMode) {
+               const errorMsg = validateDate(formData.targetDate, dates, '');
+               setDateError(errorMsg);
             }
          } catch (error) {
             console.error('날짜 목록 조회 실패:', error);
          }
       };
       fetchDates();
-   }, [isEditMode]);
+   }, [isEditMode, formData.targetDate, validateDate]);
 
-   // 기존 일기 데이터 불러오기 (수정 모드)
+   // 2. 기존 일기 데이터 불러오기 (수정 모드)
    useEffect(() => {
       if (isEditMode && id) {
          const fetchOriginalDiary = async () => {
@@ -71,6 +91,9 @@ const DiaryWrite = () => {
                   const { title, content, mood, targetDate } = response.data;
                   setFormData({ title, content, mood, targetDate });
                   setOriginalDate(targetDate);
+
+                  // 데이터를 불러온 후에도 날짜 검증 한 번 더 수행
+                  setDateError('');
                } else {
                   alert('일기 정보를 불러올 수 없습니다.');
                   navigate(-1);
@@ -87,27 +110,14 @@ const DiaryWrite = () => {
       }
    }, [isEditMode, id, navigate]);
 
+   // 날짜 변경 핸들러
    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const newDate = e.target.value;
-
       setFormData(prev => ({ ...prev, targetDate: newDate }));
 
-      // 유효성 검사 시작
-
-      // 미래 날짜 체크
-      if (newDate > getToday()) {
-         setDateError("미래의 일기는 작성할 수 없습니다.");
-         return;
-      }
-
-      // 중복 날짜 체크 (수정 모드일 때 자기 자신 날짜는 허용)
-      if (writtenDates.includes(newDate) && newDate !== originalDate) {
-         setDateError("해당 날짜에는 이미 일기가 존재합니다.");
-         return;
-      }
-
-      // 통과 시 에러 초기화
-      setDateError('');
+      // 공통 검증 함수 사용
+      const errorMsg = validateDate(newDate, writtenDates, originalDate);
+      setDateError(errorMsg);
    };
 
    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -120,15 +130,14 @@ const DiaryWrite = () => {
    };
 
    const handleSubmit = async () => {
-      // 저장 버튼 클릭 시 최종 유효성 검사
-      if (dateError) {
+      // 저장 직전 최종 검사
+      const currentError = validateDate(formData.targetDate, writtenDates, originalDate);
+      if (currentError) {
+         setDateError(currentError);
          alert("날짜를 확인해주세요.");
          return;
       }
-      if (!formData.targetDate) {
-         alert('날짜를 선택해주세요.');
-         return;
-      }
+
       if (!formData.title.trim()) {
          alert('제목을 입력해주세요.');
          return;
@@ -211,12 +220,12 @@ const DiaryWrite = () => {
                               type="button"
                               onClick={() => handleMoodChange(m.value)}
                               className={`
-                                group relative w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl transition-all duration-200
-                                ${formData.mood === m.value
+                                 group relative w-12 h-12 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center text-2xl sm:text-3xl transition-all duration-200
+                                 ${formData.mood === m.value
                                     ? 'bg-indigo-100 scale-110 shadow-inner ring-2 ring-indigo-500'
                                     : 'bg-gray-50 hover:bg-gray-100 grayscale hover:grayscale-0'
                                  }
-                            `}
+                             `}
                            >
                               <span className="transform transition-transform group-hover:scale-125">{m.emoji}</span>
                               {formData.mood === m.value && (
@@ -246,13 +255,12 @@ const DiaryWrite = () => {
                            onChange={handleDateChange}
                            required
                            max={getToday()}
-                           // 에러 시 빨간 테두리 및 배경 적용
                            className={`block w-full pl-10 pr-4 py-3 rounded-xl border bg-gray-50 focus:bg-white focus:ring-2 focus:border-transparent transition-all text-gray-700 font-medium
-                            ${dateError
+                             ${dateError
                                  ? 'border-red-300 focus:ring-red-500 bg-red-50 text-red-900'
                                  : 'border-gray-200 focus:ring-indigo-500'
                               }
-                        `}
+                         `}
                         />
                      </div>
 
@@ -302,7 +310,7 @@ const DiaryWrite = () => {
                   <div className="pt-4">
                      <button
                         onClick={handleSubmit}
-                        // 에러가 있거나 로딩 중이면 비활성화
+                        // 에러 메시지가 존재하면 버튼을 아예 비활성화
                         disabled={isLoading || !!dateError}
                         className="w-full flex items-center justify-center py-4 px-6 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-lg shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 transition-all disabled:opacity-70 disabled:cursor-not-allowed disabled:transform-none"
                      >

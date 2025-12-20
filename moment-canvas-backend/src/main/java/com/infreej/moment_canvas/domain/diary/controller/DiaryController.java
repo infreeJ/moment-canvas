@@ -78,6 +78,15 @@ public class DiaryController {
     }
 
 
+    @SetSuccess(SuccessCode.DIARY_DELETED)
+    @Operation(summary = "일기 복구", security = @SecurityRequirement(name = "JWT"), description = "일기 복구 API 입니다.")
+    @PatchMapping("/diary/{diaryId}")
+    public void recover(@AuthenticationPrincipal CustomUserDetails customUserDetails, @PathVariable long diaryId) {
+
+        diaryService.recover(customUserDetails.getUser().getUserId(), diaryId);
+    }
+
+
     @Operation(summary = "일기 이미지 생성", security = @SecurityRequirement(name = "JWT"), description = "OpenAI API를 사용하는 일기 이미지 생성 API 입니다.")
     @TimeCheck
     @SetSuccess(SuccessCode.IMAGE_GENERATED)
@@ -103,6 +112,14 @@ public class DiaryController {
     public List<LocalDate> findDiaryDateList(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
 
         return diaryService.findDiaryDateList(customUserDetails.getUser().getUserId());
+    }
+    
+    @SetSuccess(SuccessCode.DIARY_DATE_SUCCESS)
+    @Operation(summary = "해당 날짜의 일기 작성 여부 조회", security = @SecurityRequirement(name = "JWT"), description = "해당 날짜 일기 작성 여부 조회 API입니다.")
+    @GetMapping("/diary/date")
+    public boolean findExistDiary(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam LocalDate targetDate) {
+
+        return diaryService.findExistDiary(customUserDetails.getUser().getUserId(), targetDate);
     }
 
 

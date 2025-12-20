@@ -44,6 +44,8 @@ public class Diary extends BaseTimeEntity {
     private LocalDate targetDate;
 
     @Column(nullable = false, length = 1)
+    @Enumerated(EnumType.STRING)
+    @Builder.Default // 빌더 패턴 사용 시 기본값을 쓰라고 명시
     private YesOrNo isDeleted = YesOrNo.N;
 
     // 일기 엔티티 정보 변경 메서드
@@ -63,6 +65,11 @@ public class Diary extends BaseTimeEntity {
     // 일기 논리 삭제 메서드
     public void updateDiaryDeleted() {
         this.isDeleted = YesOrNo.Y;
+    }
+
+    // 일기 복구 메서드
+    public void updateDiaryRecover() {
+        this.isDeleted = YesOrNo.N;
     }
 
 

@@ -23,7 +23,10 @@ public interface DiaryRepository extends JpaRepository<Diary, Long> {
     Optional<DiaryContent> findDiaryContentByDiaryIdAndUser_UserId(Long diaryId, Long userId);
 
     // 사용자가 작성한 삭제되지 않은 모든 일기의 날짜(targetDate) 목록 조회
-    @Query("SELECT targetDate FROM Diary WHERE user.userId = :userId AND isDeleted = :yesOrNo")
-    List<LocalDate> findAllTargetDateByUserId(Long userId, YesOrNo yesOrNo);
+    @Query("SELECT targetDate FROM Diary WHERE user.userId = :userId AND isDeleted = :isDeleted")
+    List<LocalDate> findAllTargetDateByUserIdAndIsDeleted(Long userId, YesOrNo isDeleted);
+
+    // 특정 날짜에 삭제하지 않은 일기가 있는지 여부
+    boolean existsByUser_UserIdAndTargetDateAndIsDeleted(Long userId, LocalDate targetDate, YesOrNo isDeleted);
 
 }

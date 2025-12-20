@@ -1,7 +1,7 @@
 package com.infreej.moment_canvas.domain.diary.dto.response;
 
 import com.infreej.moment_canvas.domain.diary.dto.projection.DiarySummary;
-import com.infreej.moment_canvas.domain.diary.entity.Diary;
+import com.infreej.moment_canvas.global.entity.YesOrNo;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -20,6 +20,7 @@ public class DiarySummaryResponse {
     private int mood; // 기분
     private String savedDiaryImageName; // 저장된 이미지명
     private LocalDate targetDate; // 생성일
+    private YesOrNo isDeleted;
 
     // Dto 변환 메서드
     public static DiarySummaryResponse from(DiarySummary diarySummary) {
@@ -29,6 +30,7 @@ public class DiarySummaryResponse {
                 .mood(diarySummary.getMood())
                 .savedDiaryImageName(diarySummary.getSavedDiaryImageName())
                 .targetDate((diarySummary.getTargetDate()))
+                .isDeleted(diarySummary.getIsDeleted())
                 .build();
     }
 }

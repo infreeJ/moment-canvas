@@ -3,10 +3,10 @@ package com.infreej.moment_canvas.domain.email.service;
 import com.infreej.moment_canvas.domain.email.dto.request.EmailRequest;
 import com.infreej.moment_canvas.domain.email.dto.request.EmailVerificationRequest;
 import com.infreej.moment_canvas.domain.email.entity.EmailVerification;
-import com.infreej.moment_canvas.domain.email.entity.IsVerified;
 import com.infreej.moment_canvas.domain.email.repository.EmailRepository;
 import com.infreej.moment_canvas.domain.user.repository.UserRepository;
 import com.infreej.moment_canvas.global.code.ErrorCode;
+import com.infreej.moment_canvas.global.entity.YesOrNo;
 import com.infreej.moment_canvas.global.exception.BusinessException;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
@@ -71,7 +71,7 @@ public class EmailServiceImpl implements EmailService {
                     .email(email)
                     .verificationCode(code)
                     .expiresAt(expiresAt)
-                    .isVerified(IsVerified.N)
+                    .isVerified(YesOrNo.N)
                     .build();
 
             emailRepository.save(newEmailVerification);

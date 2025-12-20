@@ -1,6 +1,7 @@
 package com.infreej.moment_canvas.domain.diary.dto.response;
 
 import com.infreej.moment_canvas.domain.diary.entity.Diary;
+import com.infreej.moment_canvas.global.entity.YesOrNo;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -21,6 +22,7 @@ public class DiaryResponse {
     private int mood; // 기본
     private String savedDiaryImageName; // 저장된 이미지명
     private LocalDate targetDate;
+    private YesOrNo isDeleted;
 
     // Dto 변환 메서드
     public static DiaryResponse from(Diary diary) {
@@ -31,6 +33,7 @@ public class DiaryResponse {
                 .mood(diary.getMood())
                 .savedDiaryImageName(diary.getSavedDiaryImageName())
                 .targetDate(diary.getTargetDate())
+                .isDeleted(diary.getIsDeleted())
                 .build();
     }
 }

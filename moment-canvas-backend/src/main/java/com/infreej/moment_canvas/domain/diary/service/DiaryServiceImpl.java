@@ -150,6 +150,23 @@ public class DiaryServiceImpl implements DiaryService{
         diary.updateDiaryDeleted();
     }
 
+    /**
+     * 일기 복구
+     * @param userId 유저 PK
+     * @param diaryId 일기 PK
+     */
+    @Override
+    @Transactional
+    public void recover(long userId, long diaryId) {
+        // 일기 조회(현재 접속된 사용자의 일기 중 diaryId가 일치하는 것을 찾는다.)
+        // 일치하지 않을 경우 403이 아닌 404를 응답하기 때문에 보안적으로 더 안전하다.
+        Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryId, userId)
+                .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
+
+        // 조회한 엔티티 복구
+        diary.updateDiaryRecover();
+    }
+
 
     /**
      * 일기 이미지 생성 메서드
@@ -232,7 +249,13 @@ public class DiaryServiceImpl implements DiaryService{
     @Override
     public List<LocalDate> findDiaryDateList(long userId) {
 
-        return diaryRepository.findAllTargetDateByUserId(userId, YesOrNo.N);
+        return diaryRepository.findAllTargetDateByUserIdAndIsDeleted(userId, YesOrNo.N);
+    }
+
+    @Override
+    public boolean findExistDiary(long userId, LocalDate targetDate) {
+
+        return diaryRepository.existsByUser_UserIdAndTargetDateAndIsDeleted(userId, targetDate, YesOrNo.N);
     }
 
 

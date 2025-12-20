@@ -24,9 +24,13 @@ public interface DiaryService {
 
     public void delete(long userId, long diaryId);
 
+    public void recover(long userId, long diaryId);
+
     public String generateDiaryImage(long userId, DiaryImageGenerateRequest diaryImageGenerateRequest);
 
     public DiaryResponse diaryImageSave(long userId, long diaryId, ImageDownloadRequest imageDownloadRequest) throws IOException;
 
     public List<LocalDate> findDiaryDateList(long userId);
+
+    public boolean findExistDiary(long userId, LocalDate targetDate);
     }
