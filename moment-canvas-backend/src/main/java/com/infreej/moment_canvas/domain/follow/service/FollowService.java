@@ -11,4 +11,8 @@ public interface FollowService {
     List<FollowerResponse> findFollowerList(Long userId);
 
     List<FollowingResponse> findFollowingList(Long userId);
+
+    void follow(Long userId, Long targetUserId);
+
+    void unfollow(Long userId, Long targetUserId);
 }

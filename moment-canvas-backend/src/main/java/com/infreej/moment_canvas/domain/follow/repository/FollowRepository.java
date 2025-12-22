@@ -8,12 +8,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
-public interface FollowRepository extends JpaRepository<Long, Follow> {
+public interface FollowRepository extends JpaRepository<Follow, Long> {
 
     /**
-     * 특정 유저의 팔로워 조회
+     * 특정 유저의 팔로워 목록 조회
      */
     @Query("""
             SELECT new com.infreej.moment_canvas.domain.follow.dto.response.FollowerResponse(f.follower.userId, f.follower.nickname, f.follower.savedProfileImageName)
@@ -23,7 +24,7 @@ public interface FollowRepository extends JpaRepository<Long, Follow> {
     List<FollowerResponse> findFollowerList(Long userId);
 
     /**
-     * 특정 유저의 팔로잉 조회
+     * 특정 유저의 팔로잉 목록 조회
      */
     @Query("""
             SELECT new com.infreej.moment_canvas.domain.follow.dto.response.FollowingResponse(f.f.follower.userId, f.follower.nickname, f.follower.savedProfileImageName)
@@ -31,4 +32,17 @@ public interface FollowRepository extends JpaRepository<Long, Follow> {
             WHERE f.follower.userId = :userId
             """)
     List<FollowingResponse> findFollowingList(Long userId);
+
+    /**
+     * 팔로우 상태인지 확인
+     */
+    boolean existsByFollower_UserIdAndFollowing_UserId(Long followerId, Long followingId);
+
+
+    /**
+     * 팔로우 엔티티 조회(팔로우 해제에서 사용)
+     * @param followerId 팔로워 Id
+     * @param followingId 팔로잉 Id
+     */
+    Optional<Follow> findByFollower_UserIdAndFollowing_UserId(Long followerId, Long followingId);
 }

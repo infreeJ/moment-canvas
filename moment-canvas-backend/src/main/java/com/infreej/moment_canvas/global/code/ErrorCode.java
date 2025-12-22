@@ -57,7 +57,11 @@ public enum ErrorCode {
     AI_UNKNOWN_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "E5006", "ai.unknown.error"),
 
     // ==================== ADMIN 관련 에러 (6xxx) ====================
-    ADMIN_FORBIDDEN(HttpStatus.FORBIDDEN, "E5001", "admin.forbidden");
+    ADMIN_FORBIDDEN(HttpStatus.FORBIDDEN, "E6001", "admin.forbidden"),
+
+    // ==================== FOLLOW 관련 에러 (7xxx) ====================
+    FOLLOW_ALREADY_FOLLOWING(HttpStatus.FORBIDDEN, "E7001", "follow.already.following"),
+    FOLLOW_NOT_FOLLOWING(HttpStatus.FORBIDDEN, "E7002", "follow.not.following");
 
 
 
