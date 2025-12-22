@@ -49,9 +49,17 @@ public enum SuccessCode {
     IMAGE_UPDATED(HttpStatus.OK, "S4004", "success.image.updated"),
     IMAGE_DELETED(HttpStatus.OK, "S4005", "success.image.deleted"),
 
+
     // ==================== 이메일 관련 성공 (5xxx) ====================
     EMAIL_SEND(HttpStatus.OK, "S5001", "success.email.send"),
-    EMAIL_VERIFICATION(HttpStatus.OK, "S5002", "success.email.verification");
+    EMAIL_VERIFICATION(HttpStatus.OK, "S5002", "success.email.verification"),
+
+
+    // ==================== 팔로우 관련 성공 (6xxx) ====================
+    FOLLOW_FOLLOWER_SUCCESS(HttpStatus.OK, "S6001", "success.follow.follower.success"),
+    FOLLOW_FOLLOWING_SUCCESS(HttpStatus.OK, "S6002", "success.follow.following.success");
+
+
 
     private final HttpStatus httpStatus;
     private final String code;
