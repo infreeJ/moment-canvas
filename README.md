@@ -15,12 +15,7 @@
 나만의 일기가 전시된 **디지털 갤러리**를 완성해보세요!
 * **개발 기간:** 2024.11.21 ~ 진행 중
 * **참여 인원:** 1명
-* **배포 URL:** 12월 중 배포 예정
-
-### 프로젝트 목표
-* **AI 프로세스 통합:** Spring AI를 활용하여 프롬프트 엔지니어링 및 생성형 AI 모델을 서비스 로직에 녹여내는 경험 축적
-* **도메인 설계:** JPA를 활용하여 사용자, 일기, 이미지, 감정 데이터 간의 관계를 효율적으로 설계
-* **End-to-End:** 기획부터 개발, AWS 배포까지 웹 서비스의 전 과정을 수행
+* **배포 URL:** https://momentcanvas.site/
 
 ## 주요 기능
 ### 1. 감성 일기 작성 및 분석
@@ -38,13 +33,13 @@
 
 ## 기술 스택
 ### Backend
-* Java 17, Spring Boot 3.4.12, Spring Data JPA, MySQL, Redis, Spring AI, Spring Security, JWT
+* Java 17, Spring Boot 3.4.12, Spring Data JPA, MySQL, Redis, Spring AI, Spring Security, JWT, OAuth2
 
 ### Frontend
 * React, TypeScript, Tailwind CSS, Axios, Redux
 
 ### Infrastructure
-* Doker, AWS EC2, GitHub Actions
+* Doker, AWS EC2, AWS S3, GitHub Actions
 
 ### AI Model
 * Replicate Flux-schnell, OpenAI Dall-E-3
