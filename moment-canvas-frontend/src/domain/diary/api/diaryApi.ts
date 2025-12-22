@@ -86,7 +86,7 @@ export const diaryApi = {
     return response.data;
   },
 
-  // 일기 삭제
+  // 일기 논리 삭제
   delete: async (diaryId: number) => {
     await httpClient.delete(`/diary/${diaryId}`);
   },

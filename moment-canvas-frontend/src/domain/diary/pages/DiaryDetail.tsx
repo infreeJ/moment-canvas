@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Edit2, Trash2, Sparkles, Loader2, RotateCcw, ArchiveRestore } from 'lucide-react';
+import { ArrowLeft, Edit2, Trash2, Sparkles, Loader2, RotateCcw, ArchiveRestore, XCircle } from 'lucide-react';
 import { diaryApi, type DiaryResponse } from '../api/diaryApi';
 import ImageGenerationModal from '../components/ImageGenerationModal';
 import { IMAGE_BASE_URL } from '../../../global/constans/image';
@@ -56,19 +56,41 @@ const DiaryDetail = () => {
       fetchDiary();
    }, [id]);
 
-   // 삭제 핸들러
-   const handleDelete = async () => {
+   // 통합된 삭제 핸들러
+   // 현재 상태(isDeleted)에 따라 백엔드에서 로직 분기
+   const handleDeleteAction = async () => {
       if (!diary) return;
-      if (!window.confirm('정말로 이 일기를 삭제하시겠습니까?\n삭제된 일기는 휴지통으로 이동합니다.')) {
+
+      const isAlreadyDeleted = diary.isDeleted === 'Y';
+
+      // 사용자 확인 메시지 분기
+      let confirmMessage = '';
+      if (isAlreadyDeleted) {
+         confirmMessage = '🚨 정말로 영구 삭제하시겠습니까?\n이 작업은 절대 되돌릴 수 없습니다.';
+      } else {
+         confirmMessage = '이 일기를 삭제하시겠습니까?\n삭제된 일기는 휴지통으로 이동하며 복구할 수 있습니다.';
+      }
+
+      if (!window.confirm(confirmMessage)) {
          return;
       }
+
       try {
+         // API 호출 (백엔드에서 상태에 따라 분기하여 처리함)
          await diaryApi.delete(diary.diaryId);
-         alert('일기가 삭제되었습니다.');
+
+         // 완료 메시지 분기
+         if (isAlreadyDeleted) {
+            alert('일기가 영구적으로 삭제되었습니다.');
+         } else {
+            alert('일기가 휴지통으로 이동되었습니다.');
+         }
+
+         // 목록으로 이동 (뒤로가기 방지)
          navigate('/diaries', { replace: true });
       } catch (err) {
-         console.error('일기 삭제 실패:', err);
-         alert('일기 삭제 중 오류가 발생했습니다.');
+         console.error('삭제 작업 실패:', err);
+         alert('삭제 처리 중 오류가 발생했습니다.');
       }
    };
 
@@ -76,24 +98,19 @@ const DiaryDetail = () => {
    const handleRestore = async () => {
       if (!diary) return;
 
-      // 해당 날짜에 이미 활성화된 일기가 있는지 확인
       try {
          const isExist = await diaryApi.checkDateAvailability(diary.targetDate);
 
          if (isExist) {
-            // 이미 일기가 존재하는 경우
-            alert(`[${diary.targetDate}] 해당 날짜에 이미 작성된 일기가 있습니다.\n복구하려면 기존 일기를 삭제해주세요.`);
+            alert(`[${diary.targetDate}] 해당 날짜에 이미 작성된 일기가 있습니다.\n복구하려면 해당 날짜의 기존 일기를 먼저 정리해주세요.`);
             return;
          }
 
-         // 존재하지 않는다면 복구 진행
          if (window.confirm('이 일기를 복구하시겠습니까?')) {
             await diaryApi.restore(diary.diaryId);
             alert('일기가 성공적으로 복구되었습니다.');
-
             window.location.reload();
          }
-
       } catch (err) {
          console.error('복구 중 오류 발생:', err);
          alert('일기 복구 중 문제가 발생했습니다.');
@@ -105,7 +122,6 @@ const DiaryDetail = () => {
       return mood ? mood.emoji : '😐';
    };
 
-   // 삭제 상태 판별 (API 응답 기준)
    const isDeleted = diary?.isDeleted === 'Y';
 
    if (isLoading) {
@@ -141,17 +157,32 @@ const DiaryDetail = () => {
                </button>
 
                <div className="flex gap-2">
-                  {/* 삭제된 상태라면 복구 버튼 표시, 아니면 수정/삭제 버튼 표시 */}
+                  {/* 버튼 분기 */}
                   {isDeleted ? (
-                     <button
-                        onClick={handleRestore}
-                        className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-sm transition-colors"
-                     >
-                        <ArchiveRestore className="w-4 h-4" />
-                        일기 복구하기
-                     </button>
+                     <>
+                        {/* 복구 버튼 */}
+                        <button
+                           onClick={handleRestore}
+                           className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg shadow-sm transition-colors text-sm font-medium"
+                           title="일기 복구"
+                        >
+                           <ArchiveRestore className="w-4 h-4" />
+                           복구
+                        </button>
+
+                        {/* 영구 삭제 버튼 (핸들러는 동일하지만 UI상 구분) */}
+                        <button
+                           onClick={handleDeleteAction}
+                           className="flex items-center gap-2 px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg shadow-sm transition-colors text-sm font-medium"
+                           title="영구 삭제"
+                        >
+                           <XCircle className="w-4 h-4" />
+                           영구 삭제
+                        </button>
+                     </>
                   ) : (
                      <>
+                        {/* 수정 버튼 */}
                         <button
                            onClick={() => navigate(`/edit/${id}`)}
                            className="p-2 text-gray-400 hover:text-indigo-600 transition-colors"
@@ -159,10 +190,11 @@ const DiaryDetail = () => {
                         >
                            <Edit2 className="w-5 h-5" />
                         </button>
+                        {/* 논리 삭제 버튼 */}
                         <button
-                           onClick={handleDelete}
+                           onClick={handleDeleteAction}
                            className="p-2 text-gray-400 hover:text-red-600 transition-colors"
-                           title="일기 삭제"
+                           title="휴지통으로 이동"
                         >
                            <Trash2 className="w-5 h-5" />
                         </button>
@@ -171,11 +203,13 @@ const DiaryDetail = () => {
                </div>
             </div>
 
-            {/* 삭제된 일기일 경우 경고 배너 */}
+            {/* 삭제된 일기 경고 배너 */}
             {isDeleted && (
-               <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-600 rounded-xl flex items-center justify-center gap-2">
+               <div className="mb-6 p-4 bg-red-50 border border-red-100 text-red-700 rounded-xl flex items-center justify-center gap-2">
                   <Trash2 className="w-5 h-5" />
-                  <span className="font-medium">삭제된 일기입니다.</span>
+                  <span className="font-medium">
+                     휴지통에 있는 일기입니다.
+                  </span>
                </div>
             )}
 
@@ -190,7 +224,6 @@ const DiaryDetail = () => {
                            className={`w-full h-full object-contain bg-black/5 ${isDeleted ? 'grayscale' : ''}`}
                            onError={() => setImageError(true)}
                         />
-                        {/* 삭제되지 않은 경우에만 이미지 재생성 버튼 노출 */}
                         {!isDeleted && (
                            <div className="absolute inset-0 bg-black/30 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center backdrop-blur-[2px]">
                               <button
@@ -261,7 +294,6 @@ const DiaryDetail = () => {
             </div>
          </div>
 
-         {/* 삭제된 상태가 아닐 때만 렌더링 */}
          {diary && !isDeleted && (
             <ImageGenerationModal
                isOpen={isGenModalOpen}

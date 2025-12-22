@@ -150,10 +150,16 @@ public class DiaryServiceImpl implements DiaryService{
         // 일치하지 않을 경우 403이 아닌 404를 응답하기 때문에 보안적으로 더 안전하다.
         Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
-
-        // 조회한 엔티티 논리 삭제
-        diary.updateDiaryDeleted();
+        
+        if(diary.getIsDeleted().equals(YesOrNo.Y)) {
+            // 이미 논리 삭제 상태라면 영구 삭제
+            diaryRepository.delete(diary);
+        } else {
+            // 논리 삭제 상태가 아니라면 논리 삭제
+            diary.updateDiaryDeleted();
+        }
     }
+
 
     /**
      * 일기 복구

@@ -65,12 +65,12 @@ public class SecurityConfig {
 
                 // 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(whiteList).permitAll()
+                                .requestMatchers(whiteList).permitAll()
 //                        .requestMatchers("/admin/**").hasRole("ADMIN")
 //                        .requestMatchers("/vip/**").hasAnyRole("ADMIN", "VIP")
-                        .requestMatchers("/images/**", "/oauth2/**", "/v1/token-exchange").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/mail-send", "/v1/verification-email-code", "/v1/user", "/v1/reissue").permitAll()
-                        .anyRequest().authenticated()
+                                .requestMatchers("/images/**", "/oauth2/**", "/v1/token-exchange").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/v1/login", "/v1/mail-send", "/v1/verification-email-code", "/v1/user", "/v1/reissue").permitAll()
+                                .anyRequest().authenticated()
                 )
 
                 // OAuth2 로그인 설정
