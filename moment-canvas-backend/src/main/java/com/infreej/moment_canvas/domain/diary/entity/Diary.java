@@ -34,6 +34,10 @@ public class Diary extends BaseTimeEntity {
     @Column(nullable = false, columnDefinition = "INT CHECK (mood IN (1, 2, 3, 4, 5))")
     private int mood;
 
+    @Column(nullable = false, length = 20)
+    @Enumerated(EnumType.STRING)
+    private Visibility visibility; // 일기 공개 상태
+
     @Column(length = 1000)
     private String orgDiaryImageName;
 
