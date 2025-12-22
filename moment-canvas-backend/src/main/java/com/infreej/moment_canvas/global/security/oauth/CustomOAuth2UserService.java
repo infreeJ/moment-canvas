@@ -18,7 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Security가 카카오에서 유저 정보까지 받아온 후 호출되는 객체
- * DB에 유저가 없으면 회원가입, 있으면 업데이트한다.
+ * DB에 유저가 없으면 회원가입 후 로그인, 있으면 로그인한다.
  * (DefaultOAuth2UserService가 카카오 API에서 유저 정보를 가져오는 로직을 수행해준다.)
  */
 @Slf4j
