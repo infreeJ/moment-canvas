@@ -6,7 +6,13 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "diary_likes")
+@Table(name = "diary_likes",
+    uniqueConstraints = {
+    @UniqueConstraint(
+            name = "uk_diary_like_user_diary",
+            columnNames = {"diary_id", "user_id"} // 중복 좋아요 방지
+    )
+})
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -18,11 +24,10 @@ public class DiaryLike {
     private Long likeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "diary_id")
-    private Diary diary;
-
-    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "diary_id")
+    private Diary diary;
 }

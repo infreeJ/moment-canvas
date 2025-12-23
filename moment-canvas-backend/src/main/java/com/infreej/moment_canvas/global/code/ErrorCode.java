@@ -61,7 +61,11 @@ public enum ErrorCode {
 
     // ==================== FOLLOW 관련 에러 (7xxx) ====================
     FOLLOW_ALREADY_FOLLOWING(HttpStatus.FORBIDDEN, "E7001", "follow.already.following"),
-    FOLLOW_NOT_FOLLOWING(HttpStatus.FORBIDDEN, "E7002", "follow.not.following");
+    FOLLOW_NOT_FOLLOWING(HttpStatus.FORBIDDEN, "E7002", "follow.not.following"),
+
+    // ==================== DIARY_LIKE 관련 에러 (7xxx) ====================
+    DIARY_LIKE_ALREADY_LIKE(HttpStatus.FORBIDDEN, "E7001", "diary.like.already.like"),
+    DIARY_LIKE_NOT_LIKE(HttpStatus.FORBIDDEN, "E7002", "diary.like.not.like");
 
 
 
