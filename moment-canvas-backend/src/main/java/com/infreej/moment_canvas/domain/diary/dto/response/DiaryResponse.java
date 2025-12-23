@@ -1,6 +1,7 @@
 package com.infreej.moment_canvas.domain.diary.dto.response;
 
 import com.infreej.moment_canvas.domain.diary.entity.Diary;
+import com.infreej.moment_canvas.domain.diary.entity.Visibility;
 import com.infreej.moment_canvas.global.entity.YesOrNo;
 import lombok.*;
 
@@ -23,6 +24,11 @@ public class DiaryResponse {
     private String savedDiaryImageName; // 저장된 이미지명
     private LocalDate targetDate;
     private YesOrNo isDeleted;
+    private Visibility visibility; // 일기 공개 상태
+    private int likeCount;
+    private Long userId;
+    private String nickname;
+    private String savedProfileImageName;
 
     // Dto 변환 메서드
     public static DiaryResponse from(Diary diary) {
@@ -34,6 +40,11 @@ public class DiaryResponse {
                 .savedDiaryImageName(diary.getSavedDiaryImageName())
                 .targetDate(diary.getTargetDate())
                 .isDeleted(diary.getIsDeleted())
+                .visibility(diary.getVisibility())
+                .likeCount(diary.getLikeCount())
+                .userId(diary.getUser().getUserId())
+                .nickname(diary.getUser().getNickname())
+                .savedProfileImageName(diary.getUser().getSavedProfileImageName())
                 .build();
     }
 }

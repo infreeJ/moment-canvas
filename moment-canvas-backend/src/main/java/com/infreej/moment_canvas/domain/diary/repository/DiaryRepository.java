@@ -13,10 +13,18 @@ import java.util.Optional;
 
 public interface DiaryRepository extends JpaRepository<Diary, Long> {
 
+    // TODO: 작성자 PK, 닉네임, 일기 좋아요 수 포함하기
     // 날짜에 해당하는 모든 일기를 삭제 조건에 따라 userId를 이용해 createdAt 내림차순 정렬로 조회
     List<DiarySummary> findAllByUser_UserIdAndIsDeletedAndTargetDateBetweenOrderByTargetDateDesc(long userId, YesOrNo yesOrNo, LocalDate startDate, LocalDate endDate);
 
+    // TODO: 작성자 PK, 닉네임, 일기 좋아요 수 포함하기
     // diaryId와 userId가 동시에 일치하는 일기만 조회
+    @Query("""
+            SELECT d
+            FROM Diary d
+            JOIN FETCH d.user
+            WHERE d.diaryId = :diaryId AND d.user.userId = :userId
+            """)
     Optional<Diary> findByDiaryIdAndUser_UserId(Long diaryId, Long userId);
 
     // diaryId와 userId가 동시에 일치하는 일기만 조회(일기의 내용만 조회)
