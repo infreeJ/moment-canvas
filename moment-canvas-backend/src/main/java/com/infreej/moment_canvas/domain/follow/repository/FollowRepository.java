@@ -17,7 +17,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
      * 특정 유저의 팔로워 목록 조회
      */
     @Query("""
-            SELECT new com.infreej.moment_canvas.domain.follow.dto.response.FollowerResponse(f.follower.userId, f.follower.nickname, f.follower.savedProfileImageName)
+            SELECT new com.infreej.moment_canvas.domain.follow.dto.response.FollowerResponse(
+                f.follower.userId, f.follower.nickname, f.follower.savedProfileImageName)
             FROM Follow f
             WHERE f.following.userId = :userId
             """)
@@ -27,7 +28,8 @@ public interface FollowRepository extends JpaRepository<Follow, Long> {
      * 특정 유저의 팔로잉 목록 조회
      */
     @Query("""
-            SELECT new com.infreej.moment_canvas.domain.follow.dto.response.FollowingResponse(f.f.follower.userId, f.follower.nickname, f.follower.savedProfileImageName)
+            SELECT new com.infreej.moment_canvas.domain.follow.dto.response.FollowingResponse(
+                f.following.userId, f.following.nickname, f.following.savedProfileImageName)
             FROM Follow f
             WHERE f.follower.userId = :userId
             """)

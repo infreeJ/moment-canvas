@@ -58,8 +58,13 @@ public enum SuccessCode {
     // ==================== 팔로우 관련 성공 (6xxx) ====================
     FOLLOW_FOLLOWER_SUCCESS(HttpStatus.OK, "S6001", "success.follow.follower.success"),
     FOLLOW_FOLLOWING_SUCCESS(HttpStatus.OK, "S6002", "success.follow.following.success"),
-    FOLLOW_FOLLOW_CREATED(HttpStatus.CREATED, "S6003", "success.follow.follow.created"),
-    FOLLOW_FOLLOW_DELETED(HttpStatus.OK, "S6004", "success.follow.follower.deleted");
+    FOLLOW_CREATED(HttpStatus.CREATED, "S6003", "success.follow.created"),
+    FOLLOW_DELETED(HttpStatus.OK, "S6004", "success.follower.deleted"),
+
+
+    // ==================== 일기 좋아요 관련 성공 (7xxx) ====================
+    DIARY_LIKE_CREATED(HttpStatus.CREATED, "S7001", "success.diary.like.created"),
+    DIARY_LIKE_DELETED(HttpStatus.OK, "S7002", "success.diary.like.deleted");
 
 
 

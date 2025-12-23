@@ -39,7 +39,7 @@ public class Diary extends BaseTimeEntity {
     private Visibility visibility; // 일기 공개 상태
 
     @Column(nullable = false)
-    private int likeCount;
+    private int likeCount = 0;
 
     @Column(length = 1000)
     private String orgDiaryImageName;

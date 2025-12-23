@@ -49,7 +49,7 @@ public class FollowController {
     /**
      * 팔로우 추가
      */
-    @SetSuccess(SuccessCode.FOLLOW_FOLLOW_CREATED)
+    @SetSuccess(SuccessCode.FOLLOW_CREATED)
     @Operation(summary = "팔로우 추가", security = @SecurityRequirement(name = "JWT"), description = "팔로잉 추가 API 입니다.")
     @PostMapping("/follow")
     public void follow(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam Long targetUserId) {
@@ -61,7 +61,7 @@ public class FollowController {
     /**
      * 팔로우 해제
      */
-    @SetSuccess(SuccessCode.FOLLOW_FOLLOW_CREATED)
+    @SetSuccess(SuccessCode.FOLLOW_DELETED)
     @Operation(summary = "팔로우 해제", security = @SecurityRequirement(name = "JWT"), description = "팔로잉 해제 API 입니다.")
     @DeleteMapping("/follow")
     public void unfollow(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam Long targetUserId) {
