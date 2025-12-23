@@ -52,7 +52,7 @@ public class DiaryController {
 
 
     @SetSuccess(SuccessCode.DIARY_SUCCESS)
-    @Operation(summary = "특정 유저의 월별 일기 목록 조회", security = @SecurityRequirement(name = "JWT"), description = "일기 목록 조회 API 입니다.")
+    @Operation(summary = "특정 유저의 월별 일기 목록 조회", security = @SecurityRequirement(name = "JWT"), description = "일기 목록 조회 API 입니다. \n * yesOrNo - 삭제 여부 \n * yearMonth - 2025-12 와 같은 형식으로 작성")
     @GetMapping("/diary/list")
     public List<DiarySummaryResponse> findDiaryListByUserId(@AuthenticationPrincipal CustomUserDetails customUserDetails, @RequestParam YesOrNo yesOrNo, @RequestParam String yearMonth) {
 

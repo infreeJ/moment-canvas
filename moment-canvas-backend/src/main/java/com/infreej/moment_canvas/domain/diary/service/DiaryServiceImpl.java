@@ -104,11 +104,11 @@ public class DiaryServiceImpl implements DiaryService{
         LocalDate startDate = targetYearMonth.atDay(1);
         LocalDate endDate = targetYearMonth.atEndOfMonth();
 
-        List<DiarySummary> diaryList = diaryRepository.findAllByUser_UserIdAndIsDeletedAndTargetDateBetweenOrderByTargetDateDesc(userId, yesOrNo, startDate, endDate);
+        return diaryRepository.findDiaryList(userId, yesOrNo, startDate, endDate);
 
-        return diaryList.stream()
-                .map(DiarySummaryResponse::from)
-                .collect(Collectors.toList());
+//        return diaryList.stream()
+//                .map(DiarySummaryResponse::from)
+//                .collect(Collectors.toList());
     }
 
     /**
