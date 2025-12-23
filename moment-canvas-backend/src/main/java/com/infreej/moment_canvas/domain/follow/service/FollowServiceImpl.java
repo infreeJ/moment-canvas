@@ -49,6 +49,7 @@ public class FollowServiceImpl implements FollowService {
      * @param targetUserId 팔로잉 Id
      */
     @Override
+    @Transactional
     public void follow(Long userId, Long targetUserId) {
 
         if(followRepository.existsByFollower_UserIdAndFollowing_UserId(userId, targetUserId)) {
@@ -75,6 +76,7 @@ public class FollowServiceImpl implements FollowService {
      * @param targetUserId 팔로잉 Id
      */
     @Override
+    @Transactional
     public void unfollow(Long userId, Long targetUserId) {
 
         Follow follow = followRepository.findByFollower_UserIdAndFollowing_UserId(userId, targetUserId)

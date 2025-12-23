@@ -79,5 +79,14 @@ public class Diary extends BaseTimeEntity {
         this.isDeleted = YesOrNo.N;
     }
 
+    // 조회수 증가 메서드
+    public void increaseLikeCount() {
+        this.likeCount++;
+    }
+
+    // 조회수 감소 메서드
+    public void decreaseLikeCount() {
+        this.likeCount--;
+    }
 
 }

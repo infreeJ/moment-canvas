@@ -11,6 +11,7 @@ import com.infreej.moment_canvas.global.exception.BusinessException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -26,6 +27,7 @@ public class DiaryLikeServiceImpl implements DiaryLikeService {
      * @param diaryId 좋아요 대상 일기
      */
     @Override
+    @Transactional
     public void diaryLike(Long userId, Long diaryId) {
 
         // 이미 좋아요를 눌렀는지 검증
@@ -48,6 +50,9 @@ public class DiaryLikeServiceImpl implements DiaryLikeService {
                 .diary(diary)
                 .build();
 
+        // 조회수 증가
+        diary.increaseLikeCount();
+
         // 데이터 저장
         diaryLikeRepository.save(diaryLike);
     }
@@ -57,13 +62,19 @@ public class DiaryLikeServiceImpl implements DiaryLikeService {
      * @param diaryId 해제 대상 일기
      */
     @Override
+    @Transactional
     public void diaryUnlike(Long userId, Long diaryId) {
 
         // 엔티티가 없다면 (좋아요 상태가 아니라면) throw
         DiaryLike diaryLike = diaryLikeRepository.findByUser_UserIdAndDiary_DiaryId(userId, diaryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_LIKE_NOT_LIKE));
 
-        // 엔티티 삭제
+        // 조회수 감소
+        if(diaryLike.getDiary().getLikeCount() > 0) {
+            diaryLike.getDiary().decreaseLikeCount();
+        }
+
+        // 데이터 삭제
         diaryLikeRepository.delete(diaryLike);
     }
 }
