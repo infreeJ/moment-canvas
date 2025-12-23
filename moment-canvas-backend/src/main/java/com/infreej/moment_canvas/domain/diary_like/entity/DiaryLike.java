@@ -1,4 +1,4 @@
-package com.infreej.moment_canvas.domain.like;
+package com.infreej.moment_canvas.domain.diary_like.entity;
 
 import com.infreej.moment_canvas.domain.diary.entity.Diary;
 import com.infreej.moment_canvas.domain.user.entity.User;
@@ -6,12 +6,12 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Table(name = "likes")
+@Table(name = "diary_likes")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 @Builder
-public class Like {
+public class DiaryLike {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

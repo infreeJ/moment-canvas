@@ -38,6 +38,9 @@ public class Diary extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private Visibility visibility; // 일기 공개 상태
 
+    @Column(nullable = false)
+    private int likeCount;
+
     @Column(length = 1000)
     private String orgDiaryImageName;
 
