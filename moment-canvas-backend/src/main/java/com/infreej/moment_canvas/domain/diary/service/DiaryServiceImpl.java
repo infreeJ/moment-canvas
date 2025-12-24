@@ -88,20 +88,23 @@ public class DiaryServiceImpl implements DiaryService{
         Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
-        // 일기의 공개 상태
-        Visibility visibility = diary.getVisibility();
+        Visibility visibility = diary.getVisibility(); // 일기 공개 상태
+        YesOrNo isDeleted = diary.getIsDeleted(); // 일기 논리 삭제 여부
 
-        // PUBLIC 이라면 즉시 리턴
-        if(visibility.equals(Visibility.PUBLIC)) {
+        // PUBLIC 이라면 즉시 리턴 (삭제되지 않은 경우)
+        if(visibility.equals(Visibility.PUBLIC) && isDeleted.equals(YesOrNo.N)) {
             return DiaryResponse.from(diary);
         }
 
         // 조회할 일기의 작성자 PK
         Long targetUserId = diary.getUser().getUserId();
 
-        // FOLLOW_ONLY 라면 맞팔로우 관계이거나 자기 자신의 일기인지 검증 후 리턴
+        // FOLLOW_ONLY 라면 자기 자신의 일기이거나 맞팔로우 관계인지 검증 후 리턴
         if(visibility.equals(Visibility.FOLLOW_ONLY)) {
-            if(followService.existsMutualFollow(userId, targetUserId) || userId.equals(targetUserId)) {
+            if(userId.equals(targetUserId)) {
+                return DiaryResponse.from(diary);
+            }
+            if(followService.existsMutualFollow(userId, targetUserId) && isDeleted.equals(YesOrNo.N)) {
                 return DiaryResponse.from(diary);
             }
         }
@@ -145,10 +148,12 @@ public class DiaryServiceImpl implements DiaryService{
 
         // 맞팔로우 관계의 유저를 조회하는 경우 PUBLIC, FOLLOW_ONLY 일기 응답
         } else if(followService.existsMutualFollow(userId, targetUserId)) {
+            isDeleted = YesOrNo.N; // 다른 유저가 삭제된 일기를 조회하려 하는 경우 방어
             visibilities = List.of(Visibility.PUBLIC, Visibility.FOLLOW_ONLY);
 
         // 맞팔로우 관계가 아닌 유저를 조회하는 경우 PUBLIC 일기 응답
         } else {
+            isDeleted = YesOrNo.N; // 다른 유저가 삭제된 일기를 조회하려 하는 경우 방어
             visibilities = List.of(Visibility.PUBLIC);
 
         }
@@ -179,6 +184,7 @@ public class DiaryServiceImpl implements DiaryService{
                 diaryUpdateRequest.getTitle(),
                 diaryUpdateRequest.getContent(),
                 diaryUpdateRequest.getMood(),
+                diaryUpdateRequest.getVisibility(),
                 diaryUpdateRequest.getTargetDate()
         );
 

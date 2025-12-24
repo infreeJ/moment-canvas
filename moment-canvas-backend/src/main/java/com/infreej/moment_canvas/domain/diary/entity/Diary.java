@@ -56,10 +56,11 @@ public class Diary extends BaseTimeEntity {
     private YesOrNo isDeleted = YesOrNo.N;
 
     // 일기 엔티티 정보 변경 메서드
-    public void updateDiaryInfo(String title, String content, Integer mood, LocalDate targetDate) {
+    public void updateDiaryInfo(String title, String content, Integer mood, Visibility visibility, LocalDate targetDate) {
         this.title = title;
         this.content = content;
         this.mood = mood;
+        this.visibility = visibility;
         this.targetDate = targetDate;
     }
 

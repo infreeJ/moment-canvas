@@ -1,5 +1,6 @@
 package com.infreej.moment_canvas.domain.diary.dto.request;
 
+import com.infreej.moment_canvas.domain.diary.entity.Visibility;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,5 +20,6 @@ public class DiaryUpdateRequest {
     private String title; // 제목
     private String content; // 본문
     private int mood; // 기분
+    private Visibility visibility;
     private LocalDate targetDate;
 }

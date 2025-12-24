@@ -1,6 +1,7 @@
 package com.infreej.moment_canvas.domain.diary.dto.request;
 
 import com.infreej.moment_canvas.domain.diary.entity.Diary;
+import com.infreej.moment_canvas.domain.diary.entity.Visibility;
 import com.infreej.moment_canvas.domain.user.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,6 +23,7 @@ public class DiaryCreateRequest {
     private String title;
     private String content;
     private int mood;
+    private Visibility visibility;
     private LocalDate targetDate;
 
 
@@ -32,6 +34,7 @@ public class DiaryCreateRequest {
                 .title(this.title)
                 .content(this.content)
                 .mood(this.mood)
+                .visibility((this.visibility))
                 .targetDate(this.targetDate)
                 .build();
     }
