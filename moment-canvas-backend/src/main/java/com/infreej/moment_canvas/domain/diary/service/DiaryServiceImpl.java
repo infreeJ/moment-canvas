@@ -229,8 +229,12 @@ public class DiaryServiceImpl implements DiaryService{
         Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryId, userId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
-        // 조회한 엔티티 복구
-        diary.updateDiaryRecover();
+        if(diary.getIsDeleted().equals(YesOrNo.Y)) {
+            // 논리 삭제 상태인 경우에만 복구
+            diary.updateDiaryRecover();
+        } else {
+            throw new BusinessException(ErrorCode.DIARY_ALREADY_RECOVER);
+        }
     }
 
 

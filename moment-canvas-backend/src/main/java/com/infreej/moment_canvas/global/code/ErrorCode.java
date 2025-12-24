@@ -39,6 +39,8 @@ public enum ErrorCode {
     DIARY_NOT_FOUND(HttpStatus.NOT_FOUND, "E3001", "error.diary.not.found"),
     DIARY_ACCESS_DENIED(HttpStatus.FORBIDDEN, "E3002", "error.diary.access.denied"), // 남의 일기 접근 시도
     DIARY_DUPLICATE(HttpStatus.FORBIDDEN, "E3003", "error.diary.duplicate"), // 남의 일기 접근 시도
+    DIARY_ALREADY_RECOVER(HttpStatus.BAD_REQUEST, "E3004", "error.diary.already.recover"), // 남의 일기 접근 시도
+
 
 
     // ==================== 이미지 관련 에러 (4xxx) ====================
