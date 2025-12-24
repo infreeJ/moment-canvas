@@ -9,7 +9,10 @@ import com.infreej.moment_canvas.domain.diary.dto.request.DiaryUpdateRequest;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiaryResponse;
 import com.infreej.moment_canvas.domain.diary.dto.response.DiarySummaryResponse;
 import com.infreej.moment_canvas.domain.diary.entity.Diary;
+import com.infreej.moment_canvas.domain.diary.entity.Visibility;
 import com.infreej.moment_canvas.domain.diary.repository.DiaryRepository;
+import com.infreej.moment_canvas.domain.follow.repository.FollowRepository;
+import com.infreej.moment_canvas.domain.follow.service.FollowService;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageDownloadRequest;
 import com.infreej.moment_canvas.domain.image.dto.request.ImageSaveRequest;
 import com.infreej.moment_canvas.domain.image.service.ImageService;
@@ -40,6 +43,7 @@ public class DiaryServiceImpl implements DiaryService{
     private final UserRepository userRepository;
     private final ImageService imageService;
     private final AiService aiService;
+    private final FollowService followService;
 
 
     @Value("${diary.image.persona}")
@@ -89,13 +93,16 @@ public class DiaryServiceImpl implements DiaryService{
 
 
     /**
-     * 특정 유저의 일기 목록을 내림차순으로 조회
-     * @param userId 유저 고유번호
+     * 날짜에 해당하는 일기를 공개 여부와 팔로우 관계에 따라 동적으로 내림차순 조회
+     * @param userId 일기를 조회하는 유저의 PK
+     * @param targetUserId 일기를 조회할 유저
+     * @param isDeleted 일기의 논리 삭제 여부
+     * @param yearMonth 조회할 일기 목록의 연월
      * @return List<DiarySummaryResponse> (content가 제외된 일기 상세 정보)
      */
     @Override
     @Transactional(readOnly = true)
-    public List<DiarySummaryResponse> findDiaryListByUserId(long userId, YesOrNo yesOrNo, String yearMonth) {
+    public List<DiarySummaryResponse> findDiaryListByUserId(long userId, long targetUserId, YesOrNo isDeleted, String yearMonth) {
 
         // YearMonth 객체 파싱
         YearMonth targetYearMonth = YearMonth.parse(yearMonth);
@@ -104,7 +111,23 @@ public class DiaryServiceImpl implements DiaryService{
         LocalDate startDate = targetYearMonth.atDay(1);
         LocalDate endDate = targetYearMonth.atEndOfMonth();
 
-        return diaryRepository.findDiaryList(userId, yesOrNo, startDate, endDate);
+        List<Visibility> visibilities;
+
+        // 자신의 일기를 조회하는 경우 모든 일기 응답
+        if(userId == targetUserId) {
+            visibilities = List.of(Visibility.PUBLIC, Visibility.FOLLOW_ONLY, Visibility.PRIVATE);
+
+        // 맞팔로우 관계의 유저를 조회하는 경우 PUBLIC, FOLLOW_ONLY 일기 응답
+        } else if(followService.existsMutualFollow(userId, targetUserId)) {
+            visibilities = List.of(Visibility.PUBLIC, Visibility.FOLLOW_ONLY);
+
+        // 맞팔로우 관계가 아닌 유저를 조회하는 경우 PUBLIC 일기 응답
+        } else {
+            visibilities = List.of(Visibility.PUBLIC);
+
+        }
+
+        return diaryRepository.findDiaryList(targetUserId, isDeleted, startDate, endDate, visibilities);
 
 //        return diaryList.stream()
 //                .map(DiarySummaryResponse::from)

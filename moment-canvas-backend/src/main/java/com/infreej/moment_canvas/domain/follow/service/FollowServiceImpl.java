@@ -84,4 +84,20 @@ public class FollowServiceImpl implements FollowService {
 
         followRepository.delete(follow);
     }
+
+    /**
+     * 맞팔로우 상태인지 검증하는 메서드
+     * @param userIdA 유저 A의 PK
+     * @param userIdB 유저 B의 PK
+     */
+    @Override
+    public boolean existsMutualFollow(Long userIdA, Long userIdB) {
+
+        boolean followAToB = followRepository.existsByFollower_UserIdAndFollowing_UserId(userIdA, userIdB);
+        boolean followBToA = followRepository.existsByFollower_UserIdAndFollowing_UserId(userIdB, userIdA);
+
+        // 서로 팔로우 상태라면 true 반환
+        return followAToB && followBToA;
+
+    }
 }

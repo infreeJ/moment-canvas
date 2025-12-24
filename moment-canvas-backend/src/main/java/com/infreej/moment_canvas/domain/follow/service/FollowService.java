@@ -15,4 +15,6 @@ public interface FollowService {
     void follow(Long userId, Long targetUserId);
 
     void unfollow(Long userId, Long targetUserId);
+
+    boolean existsMutualFollow(Long userIdA, Long userIdB);
 }
