@@ -140,25 +140,29 @@ public class DiaryServiceImpl implements DiaryService{
         LocalDate startDate = targetYearMonth.atDay(1);
         LocalDate endDate = targetYearMonth.atEndOfMonth();
 
-        List<Visibility> visibilities;
+        List<Visibility> visibilities = null;
 
         // 자신의 일기를 조회하는 경우 모든 일기 응답
         if(userId == targetUserId) {
             visibilities = List.of(Visibility.PUBLIC, Visibility.FOLLOW_ONLY, Visibility.PRIVATE);
 
         // 맞팔로우 관계의 유저를 조회하는 경우 PUBLIC, FOLLOW_ONLY 일기 응답
-        } else if(followService.existsMutualFollow(userId, targetUserId)) {
-            isDeleted = YesOrNo.N; // 다른 유저가 삭제된 일기를 조회하려 하는 경우 방어
+        // 다른 유저가 삭제된 일기를 조회하려 하는 경우 방어
+        } else if(followService.existsMutualFollow(userId, targetUserId) && isDeleted.equals(YesOrNo.N)) {
             visibilities = List.of(Visibility.PUBLIC, Visibility.FOLLOW_ONLY);
 
         // 맞팔로우 관계가 아닌 유저를 조회하는 경우 PUBLIC 일기 응답
-        } else {
-            isDeleted = YesOrNo.N; // 다른 유저가 삭제된 일기를 조회하려 하는 경우 방어
+        } else if(isDeleted.equals(YesOrNo.N)){
             visibilities = List.of(Visibility.PUBLIC);
 
         }
 
-        return diaryRepository.findDiaryList(targetUserId, isDeleted, startDate, endDate, visibilities);
+        // 위의 조건문에 해당하지 못할 경우 throw
+        if(visibilities != null) {
+            return diaryRepository.findDiaryList(targetUserId, isDeleted, startDate, endDate, visibilities);
+        } else {
+            throw new BusinessException(ErrorCode.DIARY_NOT_FOUND);
+        }
 
 //        return diaryList.stream()
 //                .map(DiarySummaryResponse::from)
