@@ -76,24 +76,50 @@ public class DiaryServiceImpl implements DiaryService{
 
     /**
      * 일기 1개의 상세 정보 조회
-     * @param diaryId 일기 고유번호
+     * @param userId 일기 조회를 요청하는 유저의 PK
+     * @param diaryId 조회할 일기의 PK
      * @return DiaryResponse
      */
     @Override
     @Transactional(readOnly = true)
     public DiaryResponse findDiaryById(Long userId, long diaryId) {
 
-        // 일기 조회(현재 접속된 사용자의 일기 중 diaryId가 일치하는 것을 찾는다.)
-        // 일치하지 않을 경우 403이 아닌 404를 응답하기 때문에 보안적으로 더 안전하다.
-        Diary diary = diaryRepository.findByDiaryIdAndUser_UserId(diaryId, userId)
+        // 일기 조회
+        Diary diary = diaryRepository.findById(diaryId)
                 .orElseThrow(() -> new BusinessException(ErrorCode.DIARY_NOT_FOUND));
 
-        return DiaryResponse.from(diary);
+        // 일기의 공개 상태
+        Visibility visibility = diary.getVisibility();
+
+        // PUBLIC 이라면 즉시 리턴
+        if(visibility.equals(Visibility.PUBLIC)) {
+            return DiaryResponse.from(diary);
+        }
+
+        // 조회할 일기의 작성자 PK
+        Long targetUserId = diary.getUser().getUserId();
+
+        // FOLLOW_ONLY 라면 맞팔로우 관계이거나 자기 자신의 일기인지 검증 후 리턴
+        if(visibility.equals(Visibility.FOLLOW_ONLY)) {
+            if(followService.existsMutualFollow(userId, targetUserId) || userId.equals(targetUserId)) {
+                return DiaryResponse.from(diary);
+            }
+        }
+
+        // PRIVATE 인 경우 자기 자신의 일기인지 검증 후 리턴
+        if(visibility.equals(Visibility.PRIVATE)) {
+            if(userId.equals(targetUserId)) {
+                return DiaryResponse.from(diary);
+            }
+        }
+
+        // 리턴하지 못할 경우 예외 발생
+        throw new BusinessException(ErrorCode.DIARY_NOT_FOUND);
     }
 
 
     /**
-     * 날짜에 해당하는 일기를 공개 여부와 팔로우 관계에 따라 동적으로 내림차순 조회
+     * 날짜에 해당하는 일기 목록을 공개 여부와 팔로우 관계에 따라 동적으로 내림차순 조회
      * @param userId 일기를 조회하는 유저의 PK
      * @param targetUserId 일기를 조회할 유저
      * @param isDeleted 일기의 논리 삭제 여부
